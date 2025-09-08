@@ -72,7 +72,11 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     const cols = liveSummary.columns || [];
     const idx = (name: string) => cols.indexOf(name);
     const iUID = idx('UID'), iModel = idx('Model'), iRev = idx('Rev'), iSAT = idx('SAT'), iABD = idx('ABD'), iDED = idx('DED'), iELR = idx('ELR'), iL1 = idx('L1'), iL2 = idx('L2'), iL3 = idx('L3'), iL4 = idx('L4'), iPts = idx('Pts'), iElig = idx('Elig'), iWgt = idx('Wgt');
-    const parseScore = (v: unknown): number | null => v == null ? null : parseFloat(String(v).replace(/\*/g, '').split('/')[0]) || null;
+    const parseScore = (v: unknown): number | null => {
+      if (v == null) return null;
+      const n = parseFloat(String(v).replace(/\*/g, '').split('/')[0]);
+      return Number.isFinite(n) ? n : null; // preserve 0 instead of coercing to null
+    };
     const parseNum = (v: unknown): number | null => v == null || v === '' ? null : (typeof v === 'number' ? v : parseFloat(String(v))) || null;
     const parseBoolY = (v: unknown): boolean => v != null && String(v).trim().toUpperCase().startsWith('Y');
 
@@ -292,7 +296,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                     <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{model.uid}</div>
                     <div className={`text-sm font-mono truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.model}>{midTrunc(model.model, 48)}</div>
                     <div className={`text-xs font-mono whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.rev}>{midTrunc(model.rev, 10)}</div>
-                    <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{fmt(isLive ? model.avgScore : model.overall_avg_score)}</div>
+                    <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{fmt(isLive ? model.avgScore : model.overall_avg_score, 2)}</div>
                     <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{isLive ? (enriched?.success_rate_percent != null ? `${enriched.success_rate_percent.toFixed(1)}%` : dash) : (model.success_rate_percent != null ? `${model.success_rate_percent.toFixed(1)}%` : dash)}</div>
                     <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{isLive ? fmt(model.weight, 4) : fmt(model.avg_latency, 2)}</div>
                     <div className="flex items-center justify-center">{model.eligible ? <Check size={16} className={theme === 'dark' ? 'text-green-400' : 'text-green-600'} /> : <span className={`text-sm font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{dash}</span>}</div>
@@ -326,7 +330,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                       {/* Common fields */}
                       <div><span className="font-bold">UID:</span> {model.uid}</div>
                       <div className="break-all"><span className="font-bold">Rev:</span> {model.rev}</div>
-                      <div><span className="font-bold">Avg Score:</span> {fmt(isLive ? model.avgScore : model.overall_avg_score)}</div>
+                      <div><span className="font-bold">Avg Score:</span> {fmt(isLive ? model.avgScore : model.overall_avg_score, 2)}</div>
                       <div><span className="font-bold">Success %:</span> {isLive ? (enriched?.success_rate_percent != null ? `${enriched.success_rate_percent.toFixed(1)}%` : dash) : (model.success_rate_percent != null ? `${model.success_rate_percent.toFixed(1)}%` : dash)}</div>
                       <div><span className="font-bold">Eligible:</span> {model.eligible ? 'Yes' : 'No'}</div>
                       {/* View-specific fields */}

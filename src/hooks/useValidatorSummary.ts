@@ -133,11 +133,10 @@ function transformMinersToSummary(resp: MinersResponse): SummaryResponse {
     'Wgt',
   ];
 
-  const toScore10 = (v: number | undefined): number | null => {
+  const toScore100 = (v: number | undefined): number | null => {
     if (v == null || Number.isNaN(v)) return null;
-    const n = v * 10; // convert 0..1 success_rate to 0..10 scale
+    const n = v * 100; // convert 0..1 success_rate to 0..100 scale to match historical view
     return Number.isFinite(n) ? n : null;
-    // OverviewTable.parseScore will handle numeric values fine.
   };
 
   const rows: (string | number | null)[][] = resp.data.map((m) => {
@@ -145,10 +144,10 @@ function transformMinersToSummary(resp: MinersResponse): SummaryResponse {
     const model = m.detail?.model ?? '';
     const rev = m.detail?.revision ?? '';
 
-    const sat = toScore10(m.envs?.SAT?.success_rate);
-    const abd = toScore10(m.envs?.ABD?.success_rate);
-    const ded = toScore10(m.envs?.DED?.success_rate);
-    const elr = toScore10(m.envs?.ELR?.success_rate);
+    const sat = toScore100(m.envs?.SAT?.success_rate);
+    const abd = toScore100(m.envs?.ABD?.success_rate);
+    const ded = toScore100(m.envs?.DED?.success_rate);
+    const elr = toScore100(m.envs?.ELR?.success_rate);
 
     const [l1, l2, l3, l4] = extractL1toL4(m.score);
 
