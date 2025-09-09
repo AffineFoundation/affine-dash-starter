@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchSubnetOverview, type SubnetOverviewRow, fetchLiveEnvLeaderboard, type LiveEnvLeaderboardRow } from '../services/api';
+import { fetchLiveEnvLeaderboard, type LiveEnvLeaderboardRow } from '../services/api';
 import { useEnvironments } from '../contexts/EnvironmentsContext';
 import PaginationControls from '../components/PaginationControls';
 import CodeViewer from '../components/CodeViewer';
@@ -17,24 +17,14 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const envName = (rawEnv || '').toUpperCase();
   const envKey = envName.toLowerCase();
 
-  // Table view mode for this environment (Live default for consistency with overview)
-  const [viewMode, setViewMode] = useState<'live' | 'historical'>('live');
 
-  const { data, error, isLoading } = useQuery({
-    queryKey: ['subnet-overview'],
-    queryFn: fetchSubnetOverview,
-    enabled: viewMode === 'historical',
-    staleTime: 60000,
-    refetchOnMount: false,
-  });
 
   // Live environment leaderboard for this specific env
   const { data: liveData, error: liveError, isLoading: isLiveLoading } = useQuery({
     queryKey: ['live-env-leaderboard', envName],
     queryFn: () => fetchLiveEnvLeaderboard(envName),
-    enabled: viewMode === 'live',
     staleTime: 5000,
-    refetchInterval: viewMode === 'live' ? 6000 : false,
+    refetchInterval: 6000,
     refetchOnMount: false,
   });
 
@@ -45,24 +35,14 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     }
   }
 
-  const rows = Array.isArray(data) ? data : [];
-
-  // Build a per-environment ranking from subnet overview by looking up the dynamic property
-  const ranked = rows
-    .map((r) => {
-      const value = (r as any)[envKey] as number | null | undefined;
-      return { row: r, value: value == null ? null : value };
-    })
-    .filter((x) => x.value != null)
-    .sort((a, b) => (b.value! - a.value!));
 
   // Live dataset from API
   const liveRows: LiveEnvLeaderboardRow[] = Array.isArray(liveData) ? (liveData as LiveEnvLeaderboardRow[]) : [];
 
   // Unified table state derived from current mode
-  const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length;
-  const tableLoading = viewMode === 'historical' ? isLoading : isLiveLoading;
-  const tableError = viewMode === 'historical' ? (error as unknown) : (liveError as unknown);
+  const tableTotal = liveRows.length;
+  const tableLoading = isLiveLoading;
+  const tableError = liveError as unknown;
 
   // Pagination state
   const [pageSize, setPageSize] = useState<number>(20);
@@ -82,26 +62,20 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
   const startIndex = tableTotal === 0 ? 0 : (page - 1) * pageSize;
   const endIndex = Math.min(tableTotal, startIndex + pageSize);
-  const pagedHistorical = ranked.slice(startIndex, Math.min(ranked.length, startIndex + pageSize));
   const pagedLive = liveRows.slice(startIndex, Math.min(liveRows.length, startIndex + pageSize));
 
-  // Environment-specific overview stats
-  const envTotals = ranked.length;
-  const envEligible = ranked.filter(({ row }) => row.eligible).length;
-  const envHighest = ranked.length > 0 ? ranked[0].value : null;
-  const overviewLoading = viewMode === 'historical' ? isLoading : isLiveLoading;
-  const envTotalsDisplay = viewMode === 'historical' ? envTotals : liveRows.length;
-  const envEligibleDisplay = viewMode === 'historical' ? envEligible : liveRows.length;
+  // Environment-specific overview stats (live only)
+  const overviewLoading = isLiveLoading;
+  const envTotalsDisplay = liveRows.length;
+  const envEligibleDisplay = liveRows.length;
   const envHighestDisplay =
-    viewMode === 'historical'
-      ? envHighest
-      : (liveRows.length > 0
-          ? liveRows.reduce<number | null>((max, r) => {
-              const val = r.average_score ?? null;
-              if (val == null) return max;
-              return max == null ? val : Math.max(max, val);
-            }, null)
-          : null);
+    liveRows.length > 0
+      ? liveRows.reduce<number | null>((max, r) => {
+          const val = r.average_score ?? null;
+          if (val == null) return max;
+          return max == null ? val : Math.max(max, val);
+        }, null)
+      : null;
 
   // Environment metadata and repo mapping (fallbacks; replace with real mappings when available)
   const repoMap: Record<string, string> = {
@@ -127,7 +101,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     name: envName,
     description: descriptionMap[envKey] || `${envName} environment`,
     repoUrl: `https://github.com/AffineFoundation/affine/blob/main/affine/envs/${envKey}.py`,
-    models: Array.from({ length: envTotals }),
+    models: Array.from({ length: liveRows.length }),
   };
 
   // Formatting helpers aligned with OverviewTable
@@ -265,29 +239,6 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             <div className={`text-lg font-mono font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Top Models in {envName}
             </div>
-            {/* Live / Historical toggle (match OverviewTable styling) */}
-            <div className="inline-flex items-center gap-0">
-              <button
-                onClick={() => setViewMode('live')}
-                className={`h-8 px-3 text-xs font-mono border rounded-l-sm ${viewMode === 'live'
-                    ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900')
-                    : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')
-                  }`}
-                aria-pressed={viewMode === 'live'}
-              >
-                Live
-              </button>
-              <button
-                onClick={() => setViewMode('historical')}
-                className={`h-8 px-3 text-xs font-mono border rounded-r-sm -ml-px ${viewMode === 'historical'
-                    ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900')
-                    : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')
-                  }`}
-                aria-pressed={viewMode === 'historical'}
-              >
-                Historical
-              </button>
-            </div>
           </div>
         </div>
 
@@ -356,42 +307,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
               {/* Body */}
               <div className="divide-y-2 divide-gray-300">
-                {viewMode === 'historical' && pagedHistorical.map(({ row, value }, idx) => (
-                  <div key={`${row.uid}-${row.model}-${row.rev}`}>
-                    <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
-                      <div className={`${gridCols} text-center`}>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {startIndex + idx + 1}
-                        </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {row.uid}
-                        </div>
-                        <div className={`text-sm font-mono truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={row.model}>
-                          {midTrunc(row.model, 48)}
-                        </div>
-                        <div className={`text-xs font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(row.rev)}>
-                          {midTrunc(String(row.rev), 10)}
-                        </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {fmt(value, 1)}
-                        </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {fmt(row.overall_avg_score, 1)}
-                        </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {row.success_rate_percent.toFixed(1)}%
-                        </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {row.avg_latency == null ? dash : row.avg_latency.toFixed(2)}
-                        </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {row.total_rollouts.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {viewMode === 'live' && pagedLive.map((lr, idx) => (
+                {pagedLive.map((lr, idx) => (
                   <div key={`${lr.hotkey}-${lr.model}-${lr.revision ?? ''}`}>
                     <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
                       <div className={`${gridCols} text-center`}>

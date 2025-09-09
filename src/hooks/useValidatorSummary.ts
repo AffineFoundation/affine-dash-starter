@@ -181,13 +181,17 @@ function transformMinersToSummary(resp: MinersResponse): SummaryResponse {
   };
 }
 
-export const useValidatorSummary = () => {
+export const useValidatorSummary = (options?: { autoRefreshMs?: number | null }) => {
   const [data, setData] = useState<SummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   const fetchData = async () => {
-    setLoading(true);
+    const hadData = data != null;
+    if (!hadData) setLoading(true);
+    else setRefreshing(true);
     setError(null);
 
     // Try primary (new miners endpoint)
@@ -197,6 +201,7 @@ export const useValidatorSummary = () => {
       const json: MinersResponse = await res.json();
       const summary = transformMinersToSummary(json);
       setData(summary);
+      setLastUpdated(new Date().toISOString());
       setError(null);
       return;
     } catch (primaryErr) {
@@ -299,6 +304,7 @@ export const useValidatorSummary = () => {
         }
 
         setData(normalized);
+        setLastUpdated(new Date().toISOString());
         setError(null);
         return;
       } catch (fallbackErr) {
@@ -311,15 +317,23 @@ export const useValidatorSummary = () => {
         );
       }
     } finally {
-      setLoading(false);
+      if (!hadData) setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    const id = setInterval(fetchData, 30000);
-    return () => clearInterval(id);
-  }, []);
+    // Treat null as "disable auto refresh"; undefined => default 60s
+    const ms = options?.autoRefreshMs === null ? 0 : (options?.autoRefreshMs ?? 60000);
+    let id: number | undefined;
+    if (ms && ms > 0) {
+      id = window.setInterval(fetchData, ms);
+    }
+    return () => {
+      if (id) window.clearInterval(id);
+    };
+  }, [options?.autoRefreshMs]);
 
-  return { data, loading, error, refetch: fetchData } as const;
+  return { data, loading, error, refetch: fetchData, refreshing, lastUpdated } as const;
 };

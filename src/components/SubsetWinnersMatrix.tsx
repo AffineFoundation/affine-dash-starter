@@ -161,7 +161,7 @@ const Dot: React.FC<{ active: boolean; theme: Theme }> = ({ active, theme }) => 
 };
 
 const SubsetWinnersMatrix: React.FC<{ theme: Theme }> = ({ theme }) => {
-  const { data: summary, loading, error } = useValidatorSummary();
+  const { data: summary, loading, error, refetch, refreshing, lastUpdated } = useValidatorSummary({ autoRefreshMs: null });
 
   // Choose which columns count as "environments"
   const envs = useMemo(() => {
@@ -380,39 +380,56 @@ const SubsetWinnersMatrix: React.FC<{ theme: Theme }> = ({ theme }) => {
     <div className={`p-4 border-2 rounded-none ${frameCls}`}>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-mono font-bold">Subset Winners (UpSet-style)</h3>
-        <div className={`flex items-center gap-3 px-3 py-2 border rounded-sm ${theme === 'dark' ? 'border-white/30 bg-white/5' : 'border-gray-300 bg-gray-50'}`}>
-          <label className="text-xs font-mono flex items-center gap-2">
-            <span>Bar Metric</span>
-            <select
-              className={`h-8 px-2 border text-xs font-mono rounded-sm ${
-                theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'
-              }`}
-              value={barMetric}
-              onChange={(e) => setBarMetric(e.target.value as any)}
-              title="Choose value for bar height"
-            >
-              <option value="pts">Pts (winner)</option>
-              <option value="weight">Weight (winner)</option>
-              <option value="sum">Sum scores (winner, |S|)</option>
-            </select>
-          </label>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={refetch}
+            disabled={refreshing}
+            className={`px-3 h-8 border text-xs font-mono rounded-sm ${theme === 'dark'
+              ? 'border-white text-white hover:bg-gray-800 disabled:opacity-50'
+              : 'border-gray-400 text-gray-800 hover:bg-cream-100 disabled:opacity-50'
+            }`}
+            title="Refresh data"
+          >
+            {refreshing ? 'Refreshing…' : 'Refresh'}
+          </button>
+          <span className="text-[11px] opacity-70 font-mono hidden sm:inline" title={lastUpdated || ''}>
+            {lastUpdated ? new Date(lastUpdated).toLocaleTimeString() : ''}
+          </span>
+          <div className={`flex items-center gap-3 px-3 py-2 border rounded-sm ${theme === 'dark' ? 'border-white/30 bg-white/5' : 'border-gray-300 bg-gray-50'}`}>
+            <label className="text-xs font-mono flex items-center gap-2">
+              <span>Bar Metric</span>
+              <select
+                className={`h-8 px-2 border text-xs font-mono rounded-sm ${
+                  theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'
+                }`}
+                value={barMetric}
+                onChange={(e) => setBarMetric(e.target.value as any)}
+                title="Choose value for bar height"
+              >
+                <option value="pts">Pts (winner)</option>
+                <option value="weight">Weight (winner)</option>
+                <option value="sum">Sum scores (winner, |S|)</option>
+              </select>
+            </label>
 
-          <label className="text-xs font-mono flex items-center gap-2">
-            <span>Show Top M Subsets</span>
-            <input
-              type="number"
-              placeholder="Top 20"
-              min={5}
-              max={200}
-              step={5}
-              className={`h-8 w-20 px-2 border text-xs font-mono rounded-sm ${
-                theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'
-              }`}
-              value={topM}
-              onChange={(e) => setTopM(Math.max(5, Math.min(200, Number(e.target.value) || 0)))}
-              title="Limit number of columns; remainder is aggregated as 'other' per subset-size"
-            />
-          </label>
+            <label className="text-xs font-mono flex items-center gap-2">
+              <span>Show Top M Subsets</span>
+              <input
+                type="number"
+                placeholder="Top 20"
+                min={5}
+                max={200}
+                step={5}
+                className={`h-8 w-20 px-2 border text-xs font-mono rounded-sm ${
+                  theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'
+                }`}
+                value={topM}
+                onChange={(e) => setTopM(Math.max(5, Math.min(200, Number(e.target.value) || 0)))}
+                title="Limit number of columns; remainder is aggregated as 'other' per subset-size"
+              />
+            </label>
+          </div>
         </div>
       </div>
 

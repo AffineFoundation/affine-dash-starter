@@ -71,11 +71,11 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
               <XAxis
                 type="number"
                 dataKey="avg_token_cost_usd"
-                name="Avg Cost ($ / Million Tokens)"
+                name="Avg Output Cost ($ / Million Tokens)"
                 stroke={theme === 'dark' ? '#ddd' : '#333'}
                 tickMargin={8}
                 tickFormatter={(v: number) => `$${v.toFixed(2)}`}
-                label={{ value: 'Avg Cost ($ / Million Tokens)', position: 'bottom', offset: 32, fill: theme === 'dark' ? '#ddd' : '#333' }}
+                label={{ value: 'Avg Output Cost ($ / Million Tokens)', position: 'bottom', offset: 32, fill: theme === 'dark' ? '#ddd' : '#333' }}
               />
               <YAxis
                 type="number"
@@ -91,7 +91,7 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
                 cursor={{ strokeDasharray: '3 3' }}
                 contentStyle={{ background: theme === 'dark' ? '#111' : '#fff', border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}` }}
                 formatter={(value: any, name: any) => {
-                  if (name === 'avg_token_cost_usd') return [`$${Number(value).toFixed(3)}`, 'Avg Cost ($ / Million Tokens)'];
+                  if (name === 'avg_token_cost_usd') return [`$${Number(value).toFixed(3)}`, 'Avg Output Cost ($ / Million Tokens)'];
                   if (name === 'avg_score') return [Number(value).toFixed(3), 'Avg Score'];
                   return [value, name];
                 }}

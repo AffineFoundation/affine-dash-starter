@@ -261,29 +261,88 @@ function App() {
                   </div>
                 </div>
 
-                <React.Suspense
-                  fallback={
-                    <div className="space-y-6">
-                      <div className="h-64 border-2 rounded-none flex items-center justify-center"><span className="text-xs font-mono">Loading charts…</span></div>
-                      <div className="h-64 border-2 rounded-none flex items-center justify-center"><span className="text-xs font-mono">Loading charts…</span></div>
-                      <div className="h-64 border-2 rounded-none flex items-center justify-center"><span className="text-xs font-mono">Loading charts…</span></div>
-                    </div>
-                  }
-                >
-                  <div className="space-y-6">
+                <div className="space-y-6">
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <NetworkActivityChart theme={theme} />
+                  </React.Suspense>
+
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <EnvironmentStatsChart theme={theme} />
+                  </React.Suspense>
+
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <MinerEfficiencyChart theme={theme} />
+                  </React.Suspense>
 
-                    {/* Advanced Insights */}
+                  {/* Advanced Insights */}
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <SubsetWinnersMatrix theme={theme} />
-                    <PointsBySubsetSize theme={theme} />
-                    <SubsetWinnersLedger theme={theme} />
+                  </React.Suspense>
 
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
+                    <PointsBySubsetSize theme={theme} />
+                  </React.Suspense>
+
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
+                    <SubsetWinnersLedger theme={theme} />
+                  </React.Suspense>
+
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <GpuMarketShareDonut theme={theme} />
+                  </React.Suspense>
+
+                  <React.Suspense
+                    fallback={
+                      <div className="h-64 border-2 rounded-none flex items-center justify-center">
+                        <span className="text-xs font-mono">Loading chart…</span>
+                      </div>
+                    }
+                  >
                     <CostPerformanceScatter theme={theme} />
-                  </div>
-                </React.Suspense>
+                  </React.Suspense>
+                </div>
               </div>
             }
           />

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useValidatorSummary } from '../hooks/useValidatorSummary';
 
 type Theme = 'light' | 'dark';
@@ -221,7 +221,7 @@ function computeWinnerDetail(envs: string[], miners: Miner[], mask: number): Win
 }
 
 const SubsetWinnersLedger: React.FC<{ theme: Theme }> = ({ theme }) => {
-  const { data: summary, loading, error } = useValidatorSummary();
+  const { data: summary, loading, error, refetch, refreshing, lastUpdated } = useValidatorSummary({ autoRefreshMs: null });
 
   // Infer environment columns (same strategy as other visuals)
   const envs = useMemo(() => {
@@ -345,6 +345,11 @@ const SubsetWinnersLedger: React.FC<{ theme: Theme }> = ({ theme }) => {
     return out;
   }, [envs, miners]);
 
+  const limit = 16;
+  const [expanded, setExpanded] = useState(false);
+  const hasMore = rows.length > limit;
+  const visibleRows = useMemo(() => (expanded ? rows : rows.slice(0, limit)), [expanded, rows]);
+  
   const frameCls = theme === 'dark'
     ? 'border-white bg-black text-white'
     : 'border-gray-300 bg-white text-gray-900';
@@ -390,6 +395,34 @@ const SubsetWinnersLedger: React.FC<{ theme: Theme }> = ({ theme }) => {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={refetch}
+            disabled={refreshing}
+            className={`px-3 h-8 border text-xs font-mono rounded-sm ${theme === 'dark'
+              ? 'border-white text-white hover:bg-gray-800 disabled:opacity-50'
+              : 'border-gray-400 text-gray-800 hover:bg-cream-100 disabled:opacity-50'
+            }`}
+            title="Refresh data"
+          >
+            {refreshing ? 'Refreshing…' : 'Refresh'}
+          </button>
+          <span className="text-[11px] opacity-70 font-mono hidden sm:inline" title={lastUpdated || ''}>
+            {lastUpdated ? new Date(lastUpdated).toLocaleTimeString() : ''}
+          </span>
+          {hasMore && (
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              className={`px-3 h-8 border text-xs font-mono rounded-sm ${theme === 'dark'
+                ? 'border-white text-white hover:bg-gray-800'
+                : 'border-gray-400 text-gray-800 hover:bg-cream-100'
+              }`}
+              title={expanded ? 'Collapse to first 16 rows' : 'Show all rows'}
+            >
+              {expanded ? 'Collapse' : `Expand (${Math.max(rows.length - limit, 0)} more)`}
+            </button>
+          )}
+          <button
+            type="button"
             onClick={exportCsv}
             className={`px-3 h-8 border text-xs font-mono rounded-sm ${theme === 'dark'
               ? 'border-white text-white hover:bg-gray-800'
@@ -420,7 +453,7 @@ const SubsetWinnersLedger: React.FC<{ theme: Theme }> = ({ theme }) => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, i) => (
+              {visibleRows.map((r, i) => (
                 <tr key={`${r.mask}-${i}`} className={i % 2 === 0 ? (theme === 'dark' ? 'bg-black' : 'bg-white') : (theme === 'dark' ? 'bg-gray-950' : 'bg-cream-50')}>
                   <td className="px-2 py-1 border font-mono text-sm">{r.subset}</td>
                   <td className="px-2 py-1 border font-mono text-sm">{r.size}</td>

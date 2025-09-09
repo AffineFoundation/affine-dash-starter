@@ -127,7 +127,7 @@ function parseScoreAny(v: unknown): number | null {
  * is the total points (Pts) won by a miner across all subsets of size s.
  */
 const PointsBySubsetSize: React.FC<{ theme: Theme }> = ({ theme }) => {
-  const { data: summary, loading, error } = useValidatorSummary();
+  const { data: summary, loading, error, refetch, refreshing, lastUpdated } = useValidatorSummary({ autoRefreshMs: null });
 
   // Choose which columns count as "environments" — same logic as SubsetWinnersMatrix
   const envs = useMemo(() => {
@@ -279,7 +279,24 @@ const PointsBySubsetSize: React.FC<{ theme: Theme }> = ({ theme }) => {
     <div className={`p-4 border-2 rounded-none ${frameCls}`}>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-mono font-bold">Points by subset size (stacked by winner)</h3>
-        <div className="text-[11px] font-mono opacity-70">Metric: Pts per winning subset</div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={refetch}
+            disabled={refreshing}
+            className={`px-3 h-8 border text-xs font-mono rounded-sm ${theme === 'dark'
+              ? 'border-white text-white hover:bg-gray-800 disabled:opacity-50'
+              : 'border-gray-400 text-gray-800 hover:bg-cream-100 disabled:opacity-50'
+            }`}
+            title="Refresh data"
+          >
+            {refreshing ? 'Refreshing…' : 'Refresh'}
+          </button>
+          <span className="text-[11px] opacity-70 font-mono hidden sm:inline" title={lastUpdated || ''}>
+            {lastUpdated ? new Date(lastUpdated).toLocaleTimeString() : ''}
+          </span>
+          <div className="text-[11px] font-mono opacity-70">Metric: Pts per winning subset</div>
+        </div>
       </div>
 
       {error && (

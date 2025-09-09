@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight, Check, MoreVertical } from 'lucide-react';
-import { fetchSubnetOverview, SubnetOverviewRow, enrichLiveSubnetRows, LiveEnrichmentRow } from '../services/api';
-import { useQuery } from '@tanstack/react-query';
+import { enrichLiveSubnetRows, LiveEnrichmentRow } from '../services/api';
 import { useEnvironments } from '../contexts/EnvironmentsContext';
 import { Skeleton, SkeletonText } from './Skeleton';
 import { useValidatorSummary } from '../hooks/useValidatorSummary';
@@ -11,7 +10,6 @@ interface OverviewTableProps {
   theme: 'light' | 'dark';
 }
 
-type HistoricalDisplayRow = SubnetOverviewRow & { uniqueId: string };
 
 // Live (API) display row derived from the summary endpoint
 type LiveDisplayRow = {
@@ -35,7 +33,7 @@ type LiveDisplayRow = {
 };
 
 const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
-  const [viewMode, setViewMode] = useState<'historical' | 'live'>('live');
+  const viewMode: 'live' = 'live';
   const [enrichedMap, setEnrichedMap] = useState<Record<string, LiveEnrichmentRow>>({});
   const [enriching, setEnriching] = useState<boolean>(false);
   const [enrichmentError, setEnrichmentError] = useState<string | null>(null);
@@ -45,24 +43,6 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   const liveKey = (uid: string | number, model: string) => `${Number(uid)}|${model.toLowerCase()}`;
 
-  // Data fetching for Historical view
-  const {
-    data: historicalData,
-    error: historicalQueryError,
-    isLoading: isHistoricalLoading,
-  } = useQuery({
-    queryKey: ['subnet-overview'],
-    queryFn: fetchSubnetOverview,
-    staleTime: 60000,
-    enabled: viewMode === 'historical',
-    refetchInterval: viewMode === 'historical' ? 6000 : false,
-    refetchOnMount: false,
-  });
-
-  const historicalRows: HistoricalDisplayRow[] = (historicalData ?? []).map((r) => ({
-    ...r,
-    uniqueId: `${r.uid}-${r.model}-${r.rev}`,
-  }));
 
   // Data fetching for Live view
   const { data: liveSummary, loading: isLiveLoading, error: liveError } = useValidatorSummary();
@@ -94,11 +74,10 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     });
   }, [liveSummary]);
 
-  const baseRows = (viewMode === 'historical' ? historicalRows : liveRows) as Array<any & { uniqueId: string; eligible: boolean }>;
+  const baseRows = liveRows as Array<any & { uniqueId: string; eligible: boolean }>;
 
   // Sorting logic for Live view
   const rows = useMemo(() => {
-    if (viewMode !== 'live') return baseRows;
     const arr = [...(baseRows as any[])];
     const getVal = (r: any): any => {
       switch (sortField) {
@@ -117,10 +96,10 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return arr;
-  }, [baseRows, viewMode, sortField, sortDir, enrichedMap]);
+  }, [baseRows, sortField, sortDir, enrichedMap]);
 
-  const loading = viewMode === 'historical' ? isHistoricalLoading && historicalRows.length === 0 : isLiveLoading && liveRows.length === 0;
-  const errorMsg = viewMode === 'historical' ? (historicalQueryError ? String(historicalQueryError) : null) : (liveError ?? null);
+  const loading = isLiveLoading && liveRows.length === 0;
+  const errorMsg = liveError ?? null;
 
   const [expandedModel, setExpandedModel] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -135,12 +114,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   const endIndex = Math.min(rows.length, startIndex + pageSize);
   const pagedRows = rows.slice(startIndex, endIndex);
 
-  useEffect(() => setPage(1), [pageSize, rows.length, sortField, sortDir, viewMode]);
+  useEffect(() => setPage(1), [pageSize, rows.length, sortField, sortDir]);
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
 
   // Data enrichment effect for visible live rows
   useEffect(() => {
-    if (viewMode !== 'live' || !pagedRows.length) return;
+    if (!pagedRows.length) return;
     const toFetch = pagedRows
       .map(r => ({ uid: Number(r.uid), model: r.model }))
       .filter(r => Number.isFinite(r.uid) && r.model && !enrichedMap[liveKey(r.uid, r.model)]);
@@ -152,7 +131,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       .then(rows => setEnrichedMap(prev => ({ ...prev, ...Object.fromEntries(rows.map(r => [liveKey(r.uid, r.model), r])) })))
       .catch(err => setEnrichmentError(String(err)))
       .finally(() => setEnriching(false));
-  }, [viewMode, page, pageSize, pagedRows, liveSummary]); // Re-run when pagedRows change
+  }, [page, pageSize, pagedRows, liveSummary]); // Re-run when pagedRows change
 
   const fmt = (n: number | null | undefined, digits = 1) => (n == null ? '—' : n.toFixed(digits));
   const fmtTs = (iso: string | null | undefined) => (!iso ? '—' : new Date(iso).toLocaleString());
@@ -160,11 +139,10 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   const midTrunc = (s: string, max = 36) => s && s.length > max ? `${s.slice(0, max/2)}…${s.slice(s.length - max/2)}` : s;
   
   const toggleSort = (field: typeof sortField) => {
-    if (viewMode !== 'live') return;
     setSortDir(prev => (sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc'));
     setSortField(field);
   };
-  const sortIndicator = (field: typeof sortField) => viewMode !== 'live' || sortField !== field ? '' : (sortDir === 'asc' ? '▲' : '▼');
+  const sortIndicator = (field: typeof sortField) => sortField !== field ? '' : (sortDir === 'asc' ? '▲' : '▼');
   const toggleExpanded = (uniqueId: string) => setExpandedModel(prev => prev === uniqueId ? null : uniqueId);
 
   // Keyboard shortcut handler
@@ -200,10 +178,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             SUBNET OVERVIEW
           </h3>
           <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-0">
-              <button onClick={() => setViewMode('live')} className={`h-8 px-3 text-xs font-mono border rounded-l-sm ${viewMode === 'live' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'live'}>Live</button>
-              <button onClick={() => setViewMode('historical')} className={`h-8 px-3 text-xs font-mono border rounded-r-sm -ml-px ${viewMode === 'historical' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'historical'}>Historical</button>
-            </div>
+            <span className={`px-2 py-1 text-xs font-mono border rounded-sm ${theme === 'dark' ? 'border-white text-white' : 'border-gray-700 text-gray-900'}`}>Live</span>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
@@ -251,12 +226,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
           <div className={`${gridCols} text-center`}>
             {/* Headers with sort functionality */}
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('uid')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>UID</span><span>{sortIndicator('uid')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('model')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Model</span><span>{sortIndicator('model')}</span></button></div>
+            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button onClick={() => toggleSort('uid')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>UID</span><span>{sortIndicator('uid')}</span></button></div>
+            <div className={`text-xs font-mono uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button onClick={() => toggleSort('model')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Model</span><span>{sortIndicator('model')}</span></button></div>
             <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('avgScore')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Avg Score</span><span>{sortIndicator('avgScore')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('success')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Success %</span><span>{sortIndicator('success')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{viewMode === 'live' ? <button onClick={() => toggleSort('weight')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Weight</span><span>{sortIndicator('weight')}</span></button> : 'Avg Latency (s)'}</div>
+            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button onClick={() => toggleSort('avgScore')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Avg Score</span><span>{sortIndicator('avgScore')}</span></button></div>
+            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button onClick={() => toggleSort('success')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Success %</span><span>{sortIndicator('success')}</span></button></div>
+            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button onClick={() => toggleSort('weight')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Weight</span><span>{sortIndicator('weight')}</span></button></div>
             <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Eligible</div>
             <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actions</div>
           </div>
@@ -284,7 +259,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
           {/* Render Rows based on viewMode */}
           {!loading && !errorMsg && pagedRows.map((model: any) => {
-            const isLive = viewMode === 'live';
+            const isLive = true;
             const enriched = isLive ? enrichedMap[liveKey(model.uid, model.model)] : null;
             const chuteId = isLive ? enriched?.chute_id : model.chute_id;
 
