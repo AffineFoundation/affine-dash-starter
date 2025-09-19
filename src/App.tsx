@@ -51,11 +51,13 @@ function App() {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  // Effect for keyboard navigation shortcut (press 'n' then digits)
+  // Refs for keyboard navigation shortcut (press 'n' then digits)
+  const captureRef = React.useRef(false);
+  const bufferRef = React.useRef<string>('');
+  const timeoutRef = React.useRef<number | null>(null);
+
+  // Effect for keyboard navigation shortcut
   React.useEffect(() => {
-    const captureRef = React.useRef(false);
-    const bufferRef = React.useRef<string>('');
-    const timeoutRef = React.useRef<number | null>(null);
 
     const clearTimer = () => {
       if (timeoutRef.current) {
