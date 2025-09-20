@@ -192,51 +192,51 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       {/* Overview Stats */}
       <div className={`p-4 border-2 rounded-none ${ theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-cream-100' }`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className={`text-lg font-mono font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>
+          <h3 className={`text-lg font-sans font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>
             SUBNET OVERVIEW
           </h3>
           <div className="flex items-center gap-2">
             <div className="inline-flex items-center gap-0">
-              <button onClick={() => setViewMode('live')} className={`h-8 px-3 text-xs font-mono border rounded-l-sm ${viewMode === 'live' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'live'}>Live</button>
-              <button onClick={() => setViewMode('historical')} className={`h-8 px-3 text-xs font-mono border rounded-r-sm -ml-px ${viewMode === 'historical' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'historical'}>Historical</button>
+              <button onClick={() => setViewMode('live')} className={`h-8 px-3 text-xs font-sans border rounded-l-sm ${viewMode === 'live' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'live'}>Live</button>
+              <button onClick={() => setViewMode('historical')} className={`h-8 px-3 text-xs font-sans border rounded-r-sm -ml-px ${viewMode === 'historical' ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900') : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')}`} aria-pressed={viewMode === 'historical'}>Historical</button>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>{loading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : rows.length}</div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Total Models</div>
+            <div className={`text-2xl font-sans font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>{loading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : rows.length}</div>
+            <div className={`text-xs font-sans uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Total Models</div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${ theme === 'dark' ? 'text-green-400' : 'text-green-600' }`}>{loading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : rows.filter(r => r.eligible).length}</div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Eligible</div>
+            <div className={`text-2xl font-sans font-bold ${ theme === 'dark' ? 'text-green-400' : 'text-green-600' }`}>{loading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : rows.filter(r => r.eligible).length}</div>
+            <div className={`text-xs font-sans uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Eligible</div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>{envLoading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : envs.length}</div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Environments</div>
+            <div className={`text-2xl font-sans font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>{envLoading ? <Skeleton theme={theme} className="h-6 w-12 mx-auto" /> : envs.length}</div>
+            <div className={`text-xs font-sans uppercase tracking-wider ${ theme === 'dark' ? 'text-gray-300' : 'text-gray-600' }`}>Environments</div>
           </div>
         </div>
       </div>
 
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+        <div className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
           Showing {rows.length === 0 ? 0 : startIndex + 1}–{endIndex} of {rows.length}
         </div>
         <div className="flex items-center gap-2">
-          <label className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Rows per page:</label>
-          <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} className={`h-8 px-2 border text-xs font-mono rounded-sm ${theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'}`}>
+          <label className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Rows per page:</label>
+          <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))} className={`h-8 px-2 border text-xs font-sans rounded-sm ${theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'}`}>
             <option value={20}>20</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
             <option value={200}>200</option>
           </select>
           <div className="flex items-center gap-1">
-            <button onClick={() => setPage(1)} disabled={page === 1} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="First page">«</button>
-            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Previous page">‹</button>
-            <span className={`text-xs font-mono px-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Page {page} of {totalPages}</span>
-            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Next page">›</button>
-            <button onClick={() => setPage(totalPages)} disabled={page >= totalPages} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Last page">»</button>
+            <button onClick={() => setPage(1)} disabled={page === 1} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="First page">«</button>
+            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Previous page">‹</button>
+            <span className={`text-xs font-sans px-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Page {page} of {totalPages}</span>
+            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Next page">›</button>
+            <button onClick={() => setPage(totalPages)} disabled={page >= totalPages} className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`} title="Last page">»</button>
           </div>
         </div>
       </div>
@@ -247,14 +247,14 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
           <div className={`${gridCols} text-center`}>
             {/* Headers with sort functionality */}
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('uid')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>UID</span><span>{sortIndicator('uid')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('model')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Model</span><span>{sortIndicator('model')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('avgScore')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Avg Score</span><span>{sortIndicator('avgScore')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('success')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Success %</span><span>{sortIndicator('success')}</span></button></div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{viewMode === 'live' ? <button onClick={() => toggleSort('weight')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Weight</span><span>{sortIndicator('weight')}</span></button> : 'Avg Latency (s)'}</div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Eligible</div>
-            <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actions</div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('uid')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>UID</span><span>{sortIndicator('uid')}</span></button></div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('model')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Model</span><span>{sortIndicator('model')}</span></button></div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('avgScore')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Avg Score</span><span>{sortIndicator('avgScore')}</span></button></div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('success')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>Success %</span><span>{sortIndicator('success')}</span></button></div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{viewMode === 'live' ? <button onClick={() => toggleSort('weight')} className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"><span>Weight</span><span>{sortIndicator('weight')}</span></button> : 'Avg Latency (s)'}</div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Eligible</div>
+            <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actions</div>
           </div>
         </div>
 
@@ -289,13 +289,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                 {/* Main Row */}
                 <div className={`p-3 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-cream-50'}`}>
                   <div className={`${gridCols} text-center`}>
-                    <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{model.uid}</div>
-                    <div className={`text-sm font-mono truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.model}>{midTrunc(model.model, 48)}</div>
-                    <div className={`text-xs font-mono whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.rev}>{midTrunc(model.rev, 10)}</div>
-                    <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{fmt(isLive ? model.avgScore : model.overall_avg_score)}</div>
-                    <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap`}>{isLive ? (enriched?.success_rate_percent != null ? `${enriched.success_rate_percent.toFixed(1)}%` : dash) : (model.success_rate_percent != null ? `${model.success_rate_percent.toFixed(1)}%` : dash)}</div>
-                    <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{isLive ? fmt(model.weight, 4) : fmt(model.avg_latency, 2)}</div>
-                    <div className="flex items-center justify-center">{model.eligible ? <Check size={16} className={theme === 'dark' ? 'text-green-400' : 'text-green-600'} /> : <span className={`text-sm font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{dash}</span>}</div>
+                    <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap`}>{model.uid}</div>
+                    <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.model}>{midTrunc(model.model, 48)}</div>
+                    <div className={`text-xs font-sans whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.rev}>{midTrunc(model.rev, 10)}</div>
+                    <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap`}>{fmt(isLive ? model.avgScore : model.overall_avg_score)}</div>
+                    <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap`}>{isLive ? (enriched?.success_rate_percent != null ? `${enriched.success_rate_percent.toFixed(1)}%` : dash) : (model.success_rate_percent != null ? `${model.success_rate_percent.toFixed(1)}%` : dash)}</div>
+                    <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{isLive ? fmt(model.weight, 4) : fmt(model.avg_latency, 2)}</div>
+                    <div className="flex items-center justify-center">{model.eligible ? <Check size={16} className={theme === 'dark' ? 'text-green-400' : 'text-green-600'} /> : <span className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{dash}</span>}</div>
                     
                     {/* Actions */}
                     <div className="flex items-center justify-center gap-2">
@@ -311,7 +311,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                             <button onClick={() => { toggleExpanded(model.uniqueId); setOpenMenuId(null); }} className={`flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><span>Toggle details</span><span className="text-xs opacity-70">T</span></button>
                             <a href={`https://huggingface.co/${model.model}`} target="_blank" rel="noopener noreferrer" onClick={() => setOpenMenuId(null)} className={`flex w-full items-center justify-between px-3 h-9 text-sm transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><span>View on Hugging Face</span><span className="text-xs opacity-70">H</span></a>
                             {chuteId ? (<a href={`https://chutes.ai/app/chute/${chuteId}`} target="_blank" rel="noopener noreferrer" onClick={() => setOpenMenuId(null)} className={`flex w-full items-center justify-between px-3 h-9 text-sm transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><span>Open Chutes</span><span className="text-xs opacity-70">C</span></a>) : (<div className={`flex w-full items-center justify-between px-3 h-9 text-sm opacity-50`}><span>Open Chutes</span><span className="text-xs opacity-70">C</span></div>)}
-                            <div className={`px-3 py-2 border-t text-[11px] font-mono opacity-70 ${theme === 'dark' ? 'border-white/30' : 'border-gray-300'}`}>Shortcuts: T, H, C, Esc</div>
+                            <div className={`px-3 py-2 border-t text-[11px] font-sans opacity-70 ${theme === 'dark' ? 'border-white/30' : 'border-gray-300'}`}>Shortcuts: T, H, C, Esc</div>
                           </div>
                         )}
                       </div>
@@ -322,7 +322,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                 {/* Expanded Details Panel */}
                 {expandedModel === model.uniqueId && (
                   <div className={`px-3 pb-3 text-left ${theme === 'dark' ? 'bg-gray-900/50' : 'bg-cream-50'}`}>
-                    <div className="text-xs font-mono grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
+                    <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                       {/* Common fields */}
                       <div><span className="font-bold">UID:</span> {model.uid}</div>
                       <div className="break-all"><span className="font-bold">Rev:</span> {model.rev}</div>

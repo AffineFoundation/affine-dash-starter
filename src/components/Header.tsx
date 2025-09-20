@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               href="https://taostats.io/subnets/120/metagraph"
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-white hover:text-black'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-900 hover:text-white'
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               href="https://github.com/AffineFoundation/affine"
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-white hover:text-black'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-900 hover:text-white'

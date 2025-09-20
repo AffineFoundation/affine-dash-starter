@@ -28,10 +28,10 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       <div className={`p-4 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className={`text-lg font-mono font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-lg font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               ACTIVITY FEED (Live)
             </h3>
-            <p className={`mt-1 text-xs font-mono uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`mt-1 text-xs font-sans uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               Latest rollouts across environments
             </p>
           </div>
@@ -45,7 +45,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
               }
             }}
             disabled={manualRefreshing}
-            className={`flex items-center gap-2 px-3 h-9 border-2 font-mono text-xs uppercase tracking-wider transition-colors disabled:opacity-60 ${
+            className={`flex items-center gap-2 px-3 h-9 border-2 font-sans text-xs uppercase tracking-wider transition-colors disabled:opacity-60 ${
               theme === 'dark'
                 ? 'border-white text-white hover:bg-gray-800'
                 : 'border-gray-400 text-gray-700 hover:bg-gray-100'
@@ -91,13 +91,13 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
         )}
 
         {queryError && (
-          <div className={`text-sm font-mono ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+          <div className={`text-sm font-sans ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
             {queryError instanceof Error ? queryError.message : String(queryError)}
           </div>
         )}
 
         {!isLoading && !queryError && rows.length === 0 && (
-          <div className={`text-sm font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             No recent activity available.
           </div>
         )}
@@ -112,25 +112,25 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
                   className={`py-3 grid grid-cols-12 gap-2 items-center ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}
                 >
                   <div className="col-span-3">
-                    <div className="text-xs font-mono">{ts.toLocaleString()}</div>
-                    <div className={`text-[10px] font-mono ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className="text-xs font-sans">{ts.toLocaleString()}</div>
+                    <div className={`text-[10px] font-sans ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       UID: {r.uid}
                     </div>
                   </div>
                   <div className="col-span-3">
-                    <div className="text-xs font-mono break-all">{r.hotkey}</div>
-                    <div className={`text-[10px] font-mono ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className="text-xs font-sans break-all">{r.hotkey}</div>
+                    <div className={`text-[10px] font-sans ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       {r.model}
                     </div>
                   </div>
                   <div className="col-span-2">
-                    <div className="text-xs font-mono uppercase tracking-wider">{r.env_name}</div>
+                    <div className="text-xs font-sans uppercase tracking-wider">{r.env_name}</div>
                   </div>
                   <div className="col-span-2 text-right">
-                    <div className="text-xs font-mono">
+                    <div className="text-xs font-sans">
                       {r.score.toFixed(3)}
                     </div>
-                    <div className={`text-[10px] font-mono ${r.success ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}`}>
+                    <div className={`text-[10px] font-sans ${r.success ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}`}>
                       {r.success ? 'success' : 'fail'}
                     </div>
                   </div>

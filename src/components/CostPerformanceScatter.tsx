@@ -48,7 +48,7 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
 
   return (
     <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-mono font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className={`text-lg font-sans font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
         Cost vs Performance (Avg by Hotkey, Last 7 Days)
       </h3>
 

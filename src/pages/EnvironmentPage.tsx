@@ -154,10 +154,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       }`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className={`text-xl font-mono font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-xl font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {envName} Environment
             </h2>
-            <p className={`text-xs font-mono uppercase tracking-wider mt-1 ${
+            <p className={`text-xs font-sans uppercase tracking-wider mt-1 ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Dynamic view powered by live environments registry
@@ -168,7 +168,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               href={activeEnvMeta.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-gray-800'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-100'
@@ -179,7 +179,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </a>
             <button
               onClick={() => setShowCode(true)}
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-gray-800'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-100'
@@ -206,43 +206,43 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           ? 'border-white bg-black'
           : 'border-gray-300 bg-cream-100'
       }`}>
-        <h3 className={`text-lg font-mono font-bold mb-3 ${
+        <h3 className={`text-lg font-sans font-bold mb-3 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
           {envName} OVERVIEW
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {overviewLoading ? '—' : envTotalsDisplay}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Total Models
             </div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-green-400' : 'text-green-600'
             }`}>
               {overviewLoading ? '—' : envEligibleDisplay}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Eligible
             </div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {overviewLoading ? '—' : fmt(envHighestDisplay, 1)}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Highest Score
@@ -262,14 +262,14 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'
         }`}>
           <div className="flex items-center justify-between">
-            <div className={`text-lg font-mono font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className={`text-lg font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Top Models in {envName}
             </div>
             {/* Live / Historical toggle (match OverviewTable styling) */}
             <div className="inline-flex items-center gap-0">
               <button
                 onClick={() => setViewMode('live')}
-                className={`h-8 px-3 text-xs font-mono border rounded-l-sm ${viewMode === 'live'
+                className={`h-8 px-3 text-xs font-sans border rounded-l-sm ${viewMode === 'live'
                     ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900')
                     : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')
                   }`}
@@ -279,7 +279,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               </button>
               <button
                 onClick={() => setViewMode('historical')}
-                className={`h-8 px-3 text-xs font-mono border rounded-r-sm -ml-px ${viewMode === 'historical'
+                className={`h-8 px-3 text-xs font-sans border rounded-r-sm -ml-px ${viewMode === 'historical'
                     ? (theme === 'dark' ? 'bg-white text-black border-white' : 'bg-gray-900 text-white border-gray-900')
                     : (theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100')
                   }`}
@@ -327,12 +327,12 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </div>
           )}
           {tableError != null && (
-            <div className={`text-sm font-mono ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+            <div className={`text-sm font-sans ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
               {tableError instanceof Error ? tableError.message : String(tableError)}
             </div>
           )}
           {!tableLoading && !tableError && tableTotal === 0 && (
-            <div className={`text-sm font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
               No data available for {envName}.
             </div>
           )}
@@ -342,15 +342,15 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               {/* Header Row */}
               <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
                 <div className={`${gridCols} text-center`}>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>#</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>UID</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Model</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{envName} Score</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Overall Avg</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Success %</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Avg Latency (s)</div>
-                  <div className={`text-xs font-mono uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rollouts</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>#</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>UID</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Model</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{envName} Score</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Overall Avg</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Success %</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Avg Latency (s)</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rollouts</div>
                 </div>
               </div>
 
@@ -360,31 +360,31 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   <div key={`${row.uid}-${row.model}-${row.rev}`}>
                     <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
                       <div className={`${gridCols} text-center`}>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {startIndex + idx + 1}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {row.uid}
                         </div>
-                        <div className={`text-sm font-mono truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={row.model}>
+                        <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={row.model}>
                           {midTrunc(row.model, 48)}
                         </div>
-                        <div className={`text-xs font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(row.rev)}>
+                        <div className={`text-xs font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(row.rev)}>
                           {midTrunc(String(row.rev), 10)}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {fmt(value, 1)}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {fmt(row.overall_avg_score, 1)}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {row.success_rate_percent.toFixed(1)}%
                         </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           {row.avg_latency == null ? dash : row.avg_latency.toFixed(2)}
                         </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           {row.total_rollouts.toLocaleString()}
                         </div>
                       </div>
@@ -395,31 +395,31 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   <div key={`${lr.hotkey}-${lr.model}-${lr.revision ?? ''}`}>
                     <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
                       <div className={`${gridCols} text-center`}>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {startIndex + idx + 1}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {lr.last_seen_uid}
                         </div>
-                        <div className={`text-sm font-mono truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={lr.model}>
+                        <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={lr.model}>
                           {midTrunc(lr.model, 48)}
                         </div>
-                        <div className={`text-xs font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(lr.revision ?? '')}>
+                        <div className={`text-xs font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(lr.revision ?? '')}>
                           {midTrunc(String(lr.revision ?? ''), 10)}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {fmt(lr.average_score, 1)}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {dash}
                         </div>
-                        <div className={`text-sm font-mono font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {lr.success_rate_percent == null ? '—' : `${lr.success_rate_percent.toFixed(1)}%`}
                         </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           {lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2)}
                         </div>
-                        <div className={`text-sm font-mono tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           {lr.total_rollouts.toLocaleString()}
                         </div>
                       </div>

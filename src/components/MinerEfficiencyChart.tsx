@@ -112,7 +112,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
 
   return (
     <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-mono font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className={`text-lg font-sans font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
         Performance vs. Latency (7d Active Miners)
       </h3>
 
@@ -121,7 +121,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
           theme === 'dark'
             ? 'bg-black/40 border border-white/20 text-white'
             : 'bg-gray-50 border border-gray-200 text-gray-900'
-        } font-mono text-xs`}
+        } font-sans text-xs`}
         style={{ minHeight: 80 }}
       >
         <div className="flex flex-wrap gap-x-6 gap-y-1">

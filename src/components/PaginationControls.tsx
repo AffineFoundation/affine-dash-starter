@@ -27,15 +27,15 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 
   return (
     <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${className}`}>
-      <div className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+      <div className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
         Showing {startIndex}–{endIndex} of {total}
       </div>
       <div className="flex items-center gap-2">
-        <label className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Rows per page:</label>
+        <label className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Rows per page:</label>
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className={`h-8 px-2 border text-xs font-mono rounded-sm ${theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'}`}
+          className={`h-8 px-2 border text-xs font-sans rounded-sm ${theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'}`}
           aria-label="Rows per page"
         >
           <option value={20}>20</option>
@@ -47,7 +47,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage(1)}
             disabled={page === 1}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
             aria-label="First page"
             title="First page"
           >
@@ -56,19 +56,19 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
             aria-label="Previous page"
             title="Previous page"
           >
             ‹
           </button>
-          <span className={`text-xs font-mono px-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <span className={`text-xs font-sans px-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             Page {page} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
             aria-label="Next page"
             title="Next page"
           >
@@ -77,7 +77,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage(totalPages)}
             disabled={page >= totalPages}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-mono disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
             aria-label="Last page"
             title="Last page"
           >

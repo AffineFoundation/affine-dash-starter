@@ -156,7 +156,7 @@ function App() {
 
   const tabClass = (active: boolean) => {
     const base =
-      'px-6 py-3 font-mono text-xs uppercase tracking-wider border-r-2 last:border-r-0 transition-colors min-w-0 text-left'
+      'px-6 py-3 font-sans text-xs uppercase tracking-wider border-r-2 last:border-r-0 transition-colors min-w-0 text-left'
     if (active) {
       return `${base} ${
         theme === 'dark'
@@ -193,7 +193,7 @@ function App() {
                 <span
                   className={`${
                     theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  } mt-1 text-[10px] leading-none font-mono`}
+                  } mt-1 text-[10px] leading-none font-sans`}
                 >
                   N + 0
                 </span>
@@ -227,7 +227,7 @@ function App() {
                               theme === 'dark'
                                 ? 'text-gray-400'
                                 : 'text-gray-600'
-                            } mt-1 text-[10px] leading-none font-mono`}
+                            } mt-1 text-[10px] leading-none font-sans`}
                           >
                             N + {i + 1}
                           </span>
@@ -275,7 +275,7 @@ function App() {
                                   key={env}
                                   to={`/environment/${encodeURIComponent(env)}`}
                                   className={({ isActive }) =>
-                                    `flex items-center justify-between gap-2 px-3 py-2 font-mono text-sm hover:underline ${
+                                    `flex items-center justify-between gap-2 px-3 py-2 font-sans text-sm hover:underline ${
                                       isActive
                                         ? theme === 'dark'
                                           ? 'bg-gray-800'
@@ -322,17 +322,17 @@ function App() {
                   fallback={
                     <div className="space-y-6">
                       <div className="h-64 border-2 rounded-none flex items-center justify-center">
-                        <span className="text-xs font-mono">
+                        <span className="text-xs font-sans">
                           Loading charts…
                         </span>
                       </div>
                       <div className="h-64 border-2 rounded-none flex items-center justify-center">
-                        <span className="text-xs font-mono">
+                        <span className="text-xs font-sans">
                           Loading charts…
                         </span>
                       </div>
                       <div className="h-64 border-2 rounded-none flex items-center justify-center">
-                        <span className="text-xs font-mono">
+                        <span className="text-xs font-sans">
                           Loading charts…
                         </span>
                       </div>

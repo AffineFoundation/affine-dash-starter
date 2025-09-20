@@ -117,7 +117,7 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
           theme === 'dark' ? 'border-white' : 'border-gray-300'
         }`}>
           <div>
-            <h3 className={`font-mono text-lg font-bold ${
+            <h3 className={`font-sans text-lg font-bold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {environment.name} - CODE VIEW
@@ -133,7 +133,7 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
               href={environment.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-gray-800'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-100'
@@ -158,19 +158,19 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
         {/* Code Content */}
         <div className="p-4 overflow-auto max-h-[70vh]">
           {loading ? (
-            <div className={`font-mono text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               Loading code…
             </div>
           ) : error ? (
-            <div className={`font-mono text-sm ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
               Failed to load code from {rawUrl}: {error}
             </div>
           ) : code ? (
-            <pre className={`font-mono text-sm leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+            <pre className={`font-sans text-sm leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
               <code>{code}</code>
             </pre>
           ) : (
-            <div className={`font-mono text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               No code available.
             </div>
           )}
@@ -181,14 +181,14 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
           theme === 'dark' ? 'border-white' : 'border-gray-300'
         }`}>
           <div className="flex items-center justify-between">
-            <div className={`font-mono text-xs uppercase tracking-wider ${
+            <div className={`font-sans text-xs uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
             }`}>
               Environment loaded • {environment.models.length} active models
             </div>
             <div className="flex items-center gap-2">
               <Code size={12} className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
-              <span className={`font-mono text-xs ${
+              <span className={`font-sans text-xs ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
               }`}>
                 Python 3.9+ • Affine Gym

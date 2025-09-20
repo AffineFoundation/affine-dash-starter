@@ -83,43 +83,43 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
           ? 'border-white bg-black'
           : 'border-gray-300 bg-cream'
       }`}>
-        <h3 className={`text-lg font-mono font-bold mb-3 ${
+        <h3 className={`text-lg font-sans font-bold mb-3 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
           {environmentId.toUpperCase()} ENVIRONMENT OVERVIEW
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {totalModels}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Total Models
             </div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-green-400' : 'text-green-600'
             }`}>
               {activeTraining}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Active Training
             </div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-mono font-bold ${
+            <div className={`text-2xl font-sans font-bold ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {bestScore.toFixed(2)}
             </div>
-            <div className={`text-xs font-mono uppercase tracking-wider ${
+            <div className={`text-xs font-sans uppercase tracking-wider ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Best Score
@@ -135,7 +135,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
             ? 'border-white bg-black text-gray-300'
             : 'border-gray-300 bg-white text-gray-600'
         }`}>
-          <p className="font-mono text-sm uppercase tracking-wider">
+          <p className="font-sans text-sm uppercase tracking-wider">
             No models available for this environment
           </p>
         </div>
@@ -156,12 +156,12 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
-                    <span className={`text-lg font-mono font-bold ${
+                    <span className={`text-lg font-sans font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
                       Model-{model.uid.slice(-3)}
                     </span>
-                    <span className={`ml-3 text-sm font-mono ${
+                    <span className={`ml-3 text-sm font-sans ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                     }`}>
                       #{index + 1} • UID: {model.uid}
@@ -169,7 +169,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                   </div>
                   <div className="flex items-center">
                     <span className={getStatusDot(model.status)}></span>
-                    <span className={`text-xs font-mono uppercase tracking-wider ${getStatusColor(model.status)}`}>
+                    <span className={`text-xs font-sans uppercase tracking-wider ${getStatusColor(model.status)}`}>
                       {model.status}
                     </span>
                   </div>
@@ -180,24 +180,24 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <div className={`text-xl font-mono font-bold ${
+                    <div className={`text-xl font-sans font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
                       {model.score.toFixed(3)}
                     </div>
-                    <div className={`text-xs font-mono uppercase tracking-wider ${
+                    <div className={`text-xs font-sans uppercase tracking-wider ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                     }`}>
                       Score
                     </div>
                   </div>
                   <div>
-                    <div className={`text-xl font-mono font-bold ${
+                    <div className={`text-xl font-sans font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
                       {model.epochs}
                     </div>
-                    <div className={`text-xs font-mono uppercase tracking-wider ${
+                    <div className={`text-xs font-sans uppercase tracking-wider ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                     }`}>
                       Epochs
@@ -205,7 +205,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                   </div>
                 </div>
 
-                <div className={`text-xs font-mono ${
+                <div className={`text-xs font-sans ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   Last Updated: {new Date(model.last_updated).toLocaleString()}
@@ -218,12 +218,12 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
               }`}>
                 <button
                   onClick={() => toggleExpanded(model.uid)}
-                  className={`flex items-center text-sm font-mono uppercase tracking-wider mb-3 hover:opacity-70 transition-opacity ${
+                  className={`flex items-center text-sm font-sans uppercase tracking-wider mb-3 hover:opacity-70 transition-opacity ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}
                 >
                   <Activity className="w-4 h-4 mr-2" />
-                  <span className={`ml-3 text-sm font-mono font-bold ${
+                  <span className={`ml-3 text-sm font-sans font-bold ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Model-{model.uid.slice(-3)}
@@ -235,7 +235,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                 </button>
 
                 {expandedModel === model.uid && model.live_metrics && (
-                  <div className={`space-y-2 text-xs font-mono ${
+                  <div className={`space-y-2 text-xs font-sans ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                   }`}>
                     <div className="flex justify-between">
@@ -260,12 +260,12 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
               }`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className={`text-sm font-mono uppercase tracking-wider ${
+                    <div className={`text-sm font-sans uppercase tracking-wider ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
                       Daily Rollouts
                     </div>
-                    <div className={`text-xs font-mono ${
+                    <div className={`text-xs font-sans ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                     }`}>
                       {model.daily_rollouts} available
@@ -274,7 +274,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                   <button
                     onClick={() => handleExport(model.uid, model.daily_rollouts)}
                     disabled={model.daily_rollouts === 0}
-                    className={`flex items-center px-3 py-2 text-xs font-mono uppercase tracking-wider border transition-colors ${
+                    className={`flex items-center px-3 py-2 text-xs font-sans uppercase tracking-wider border transition-colors ${
                       model.daily_rollouts === 0
                         ? theme === 'dark'
                           ? 'border-gray-600 text-gray-600 cursor-not-allowed'
