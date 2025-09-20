@@ -1,6 +1,7 @@
 import React from 'react'
-import { NavLink, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
+import Sidebar from './components/Sidebar'
 import OverviewTable from './components/OverviewTable'
 import ActivityFeed from './components/ActivityFeed'
 import { useTheme } from './hooks/useTheme'
@@ -154,156 +155,21 @@ function App() {
     }
   }, [environments, navigate])
 
-  const tabClass = (active: boolean) => {
-    const base =
-      'px-6 py-3 font-sans text-xs uppercase tracking-wider border-r-2 last:border-r-0 transition-colors min-w-0 text-left'
-    if (active) {
-      return `${base} ${
-        theme === 'dark'
-          ? 'bg-gray-800 text-white border-white'
-          : 'bg-white text-gray-900 border-gray-300'
-      }`
-    }
-    return `${base} ${
-      theme === 'dark'
-        ? 'bg-black text-gray-300 border-white hover:bg-gray-800 hover:text-white'
-        : 'bg-slate-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800'
-    }`
-  }
+
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${
+      className={`min-h-screen flex transition-colors duration-300 ${
         theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-gray-800'
       }`}
     >
       <Header theme={theme} toggleTheme={toggleTheme} />
-      <main className="mt-20 container mx-auto px-6 py-8">
-        {/* Top Navigation Tabs */}
-        <div className="mb-6">
-          <div className="relative flex gap-0 border-2 border-b-0 rounded-none overflow-visible">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) => tabClass(isActive)}
-              title="Press N then 0 to switch to Overview"
-            >
-              <div className="flex flex-col items-start">
-                <span className="truncate">Overview</span>
-                <span
-                  className={`${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  } mt-1 text-[10px] leading-none font-sans`}
-                >
-                  N + 0
-                </span>
-              </div>
-            </NavLink>
+      <Sidebar theme={theme} />
 
-            {/* Dynamic environment tabs */}
-            {envLoading && <div className={tabClass(false)}>Loading…</div>}
-            {!envLoading && envError && (
-              <div className={tabClass(false)}>Error</div>
-            )}
-            {!envLoading &&
-              !envError &&
-              (() => {
-                const items = environments.map((env, i) => ({ env, i }))
-                const visible = items.slice(0, maxVisible)
-                const overflow = items.slice(maxVisible)
-                return (
-                  <>
-                    {visible.map(({ env, i }) => (
-                      <NavLink
-                        key={env}
-                        to={`/environment/${encodeURIComponent(env)}`}
-                        className={({ isActive }) => tabClass(isActive)}
-                        title={`Press N then ${i + 1} to switch to ${env}`}
-                      >
-                        <div className="flex flex-col items-start min-w-0">
-                          <span className="truncate max-w-[12rem]">{env}</span>
-                          <span
-                            className={`${
-                              theme === 'dark'
-                                ? 'text-gray-400'
-                                : 'text-gray-600'
-                            } mt-1 text-[10px] leading-none font-sans`}
-                          >
-                            N + {i + 1}
-                          </span>
-                        </div>
-                      </NavLink>
-                    ))}
+      {/* Main Content */}
+      <main className="flex-1 ml-64 mt-20 px-6 py-8">
 
-                    {overflow.length > 0 && (
-                      <div className="relative" ref={moreRef}>
-                        <button
-                          type="button"
-                          className={tabClass(false)}
-                          onClick={() => setMoreOpen((v) => !v)}
-                          aria-haspopup="menu"
-                          aria-expanded={moreOpen}
-                          title="Show more environments"
-                        >
-                          <span className="sr-only">More environments</span>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            aria-hidden="true"
-                            className="mx-1"
-                          >
-                            <circle cx="12" cy="5" r="2"></circle>
-                            <circle cx="12" cy="12" r="2"></circle>
-                            <circle cx="12" cy="19" r="2"></circle>
-                          </svg>
-                        </button>
-
-                        {moreOpen && (
-                          <div
-                            className={`absolute right-0 top-full z-20 w-72 max-h-80 overflow-auto border-2 ${
-                              theme === 'dark'
-                                ? 'bg-gray-900 border-white text-gray-100'
-                                : 'bg-white border-gray-300 text-gray-800'
-                            }`}
-                            role="menu"
-                          >
-                            <div className="py-1">
-                              {overflow.map(({ env, i }) => (
-                                <NavLink
-                                  key={env}
-                                  to={`/environment/${encodeURIComponent(env)}`}
-                                  className={({ isActive }) =>
-                                    `flex items-center justify-between gap-2 px-3 py-2 font-sans text-sm hover:underline ${
-                                      isActive
-                                        ? theme === 'dark'
-                                          ? 'bg-gray-800'
-                                          : 'bg-slate-100'
-                                        : ''
-                                    }`
-                                  }
-                                  onClick={() => setMoreOpen(false)}
-                                  role="menuitem"
-                                >
-                                  <span className="truncate">{env}</span>
-                                  <span className="text-[10px] opacity-70">
-                                    N + {i + 1}
-                                  </span>
-                                </NavLink>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </>
-                )
-              })()}
-          </div>
-        </div>
-
-        {/* Routed Content */}
+        {/* Content */}
         <Routes>
           <Route
             path="/"

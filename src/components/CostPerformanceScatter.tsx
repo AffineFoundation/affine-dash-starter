@@ -1,6 +1,9 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchMinerEfficiencyCost, MinerEfficiencyCostRow } from '../services/api';
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import {
+  fetchMinerEfficiencyCost,
+  MinerEfficiencyCostRow,
+} from '../services/api'
 import {
   ResponsiveContainer,
   ScatterChart,
@@ -10,18 +13,18 @@ import {
   Scatter,
   Tooltip,
   Legend,
-} from 'recharts';
+} from 'recharts'
 
 interface Props {
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark'
 }
 
 type Point = {
-  hotkey: string;
-  model: string | null;
-  avg_token_cost_usd: number;
-  avg_score: number;
-};
+  hotkey: string
+  model: string | null
+  avg_token_cost_usd: number
+  avg_score: number
+}
 
 function buildPoints(rows: MinerEfficiencyCostRow[]): Point[] {
   const pts: Point[] = rows.map((r) => ({
@@ -29,10 +32,10 @@ function buildPoints(rows: MinerEfficiencyCostRow[]): Point[] {
     model: r.model,
     avg_token_cost_usd: Number(r.avg_token_cost_usd),
     avg_score: Number(r.avg_score),
-  }));
+  }))
   // Optional: clamp/clean extremes if needed. For now just sort by cost asc.
-  pts.sort((a, b) => a.avg_token_cost_usd - b.avg_token_cost_usd);
-  return pts;
+  pts.sort((a, b) => a.avg_token_cost_usd - b.avg_token_cost_usd)
+  return pts
 }
 
 const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
@@ -42,13 +45,21 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
     staleTime: 60_000,
     refetchInterval: 60_000,
     refetchOnMount: false,
-  });
+  })
 
-  const points = React.useMemo(() => buildPoints(data ?? []), [data]);
+  const points = React.useMemo(() => buildPoints(data ?? []), [data])
 
   return (
-    <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+    <div
+      className={`rounded-md p-4 border-2 ${
+        theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'
+      }`}
+    >
+      <h3
+        className={`text-lg font-sans font-bold mb-3 ${
+          theme === 'dark' ? 'text-white' : 'text-gray-900'
+        }`}
+      >
         Cost vs Performance (Avg by Hotkey, Last 7 Days)
       </h3>
 
@@ -59,15 +70,24 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 300 }}>
-          <div className={`h-full w-full animate-pulse ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`} />
+          <div
+            className={`h-full w-full animate-pulse ${
+              theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
+            }`}
+          />
         </div>
       )}
 
       {!isLoading && !error && (
         <div style={{ width: '100%', height: 360 }}>
           <ResponsiveContainer>
-            <ScatterChart margin={{ top: 28, right: 56, left: 68, bottom: 120 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#333' : '#ddd'} />
+            <ScatterChart
+              margin={{ top: 28, right: 56, left: 68, bottom: 120 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={theme === 'dark' ? '#333' : '#ddd'}
+              />
               <XAxis
                 type="number"
                 dataKey="avg_token_cost_usd"
@@ -75,7 +95,12 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
                 stroke={theme === 'dark' ? '#ddd' : '#333'}
                 tickMargin={8}
                 tickFormatter={(v: number) => `$${v.toFixed(2)}`}
-                label={{ value: 'Avg Cost ($ / Million Tokens)', position: 'bottom', offset: 32, fill: theme === 'dark' ? '#ddd' : '#333' }}
+                label={{
+                  value: 'Avg Cost ($ / Million Tokens)',
+                  position: 'bottom',
+                  offset: 32,
+                  fill: theme === 'dark' ? '#ddd' : '#333',
+                }}
               />
               <YAxis
                 type="number"
@@ -85,24 +110,43 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
                 tickMargin={8}
                 domain={[0, 1]}
                 tickFormatter={(v: number) => v.toFixed(2)}
-                label={{ value: 'Avg Score', angle: -90, position: 'left', offset: 12, fill: theme === 'dark' ? '#ddd' : '#333' }}
+                label={{
+                  value: 'Avg Score',
+                  angle: -90,
+                  position: 'left',
+                  offset: 12,
+                  fill: theme === 'dark' ? '#ddd' : '#333',
+                }}
               />
               <Tooltip
                 cursor={{ strokeDasharray: '3 3' }}
-                contentStyle={{ background: theme === 'dark' ? '#111' : '#fff', border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}` }}
+                contentStyle={{
+                  background: theme === 'dark' ? '#111' : '#fff',
+                  border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                }}
                 formatter={(value: any, name: any) => {
-                  if (name === 'avg_token_cost_usd') return [`$${Number(value).toFixed(3)}`, 'Avg Cost ($ / Million Tokens)'];
-                  if (name === 'avg_score') return [Number(value).toFixed(3), 'Avg Score'];
-                  return [value, name];
+                  if (name === 'avg_token_cost_usd')
+                    return [
+                      `$${Number(value).toFixed(3)}`,
+                      'Avg Cost ($ / Million Tokens)',
+                    ]
+                  if (name === 'avg_score')
+                    return [Number(value).toFixed(3), 'Avg Score']
+                  return [value, name]
                 }}
                 labelFormatter={(_: any, payload: readonly any[]) => {
-                  if (!payload || payload.length === 0) return '';
-                  const p = (payload[0] as any)?.payload as Point;
-                  const modelStr = p.model ? ` (${p.model})` : '';
-                  return `Hotkey: ${p.hotkey}${modelStr}`;
+                  if (!payload || payload.length === 0) return ''
+                  const p = (payload[0] as any)?.payload as Point
+                  const modelStr = p.model ? ` (${p.model})` : ''
+                  return `Hotkey: ${p.hotkey}${modelStr}`
                 }}
               />
-              <Legend verticalAlign="bottom" align="center" height={32} wrapperStyle={{ paddingTop: 8, marginTop: 12 }} />
+              <Legend
+                verticalAlign="bottom"
+                align="center"
+                height={32}
+                wrapperStyle={{ paddingTop: 8, marginTop: 12 }}
+              />
               <Scatter
                 name="Miners"
                 data={points}
@@ -113,7 +157,7 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CostPerformanceScatter;
+export default CostPerformanceScatter

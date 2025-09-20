@@ -9,7 +9,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
     <header
-      className={`fixed top-0 left-0 right-0 h-20 border-b-2 ${
+      className={`z-50 fixed top-0 left-0 right-0 h-20 border-b-2 ${
         theme === 'dark'
           ? 'border-white bg-black'
           : 'border-gray-300 bg-slate-100'
@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               href="https://taostats.io/subnets/120/metagraph"
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
+              className={`rounded-md flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-white hover:text-black'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-900 hover:text-white'
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               href="https://github.com/AffineFoundation/affine"
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
+              className={`rounded-md flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
                 theme === 'dark'
                   ? 'border-white text-white hover:bg-white hover:text-black'
                   : 'border-gray-400 text-gray-700 hover:bg-gray-900 hover:text-white'
@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
           <button
             onClick={toggleTheme}
-            className={`p-2 border-2 transition-colors ${
+            className={`rounded-full p-2 border-2 transition-colors ${
               theme === 'dark'
                 ? 'border-white text-white hover:bg-gray-800'
                 : 'border-gray-400 text-gray-700 hover:bg-gray-100'
