@@ -91,7 +91,7 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
 
   return (
     <div className={`p-4 border-2 rounded-none overflow-hidden ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
         Latency Distribution (Top Miners) — {env}
       </h3>
 
@@ -160,3 +160,4 @@ min=${p.min.toFixed(3)}s  q1=${p.q1.toFixed(3)}s  median=${p.median.toFixed(3)}s
 };
 
 export default LatencyBoxPlot;
+

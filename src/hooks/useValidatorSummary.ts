@@ -231,3 +231,4 @@ export const useValidatorSummary = () => {
 
   return { data, loading, error, refetch: fetchData } as const;
 };
+

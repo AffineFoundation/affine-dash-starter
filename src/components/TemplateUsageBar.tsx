@@ -54,7 +54,7 @@ const TemplateUsageBar: React.FC<Props> = ({ theme }) => {
 
   return (
     <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
         Inference Template Usage (Last 7 Days)
       </h3>
 
@@ -99,3 +99,4 @@ const TemplateUsageBar: React.FC<Props> = ({ theme }) => {
 };
 
 export default TemplateUsageBar;
+

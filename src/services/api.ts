@@ -343,3 +343,4 @@ export function fetchGpuMarketShare() {
 export function fetchMinerEfficiencyCost() {
   return getJSON<MinerEfficiencyCostRow[]>('/api/miner-efficiency-cost');
 }
+

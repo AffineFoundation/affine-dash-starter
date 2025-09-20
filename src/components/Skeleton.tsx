@@ -30,3 +30,4 @@ export const SkeletonText: React.FC<SkeletonProps> = ({ theme, className = '' })
     />
   );
 };
+

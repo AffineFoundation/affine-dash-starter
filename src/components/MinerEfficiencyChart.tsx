@@ -142,7 +142,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
     >
       <h3
         className={`text-lg font-sans font-bold mb-3 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
+          'text-gray-900 dark:text-white'
         }`}
       >
         Performance vs. Latency (7d Active Miners)
@@ -215,3 +215,4 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
 }
 
 export default MinerEfficiencyChart
+

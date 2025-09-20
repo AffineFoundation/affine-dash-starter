@@ -305,7 +305,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   return (
     <div
       className={`space-y-4 ${
-        theme === 'dark' ? 'text-white' : 'text-gray-900'
+        'text-gray-900 dark:text-white'
       }`}
     >
       {/* Overview Stats */}
@@ -319,7 +319,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         <div className="flex items-center justify-between mb-3">
           <h3
             className={`text-lg font-sans font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}
           >
             SUBNET OVERVIEW
@@ -363,7 +363,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           <div className="text-center">
             <div
               className={`text-2xl font-sans font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               {loading ? (
@@ -374,7 +374,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                'text-gray-600 dark:text-gray-300'
               }`}
             >
               Total Models
@@ -394,7 +394,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                'text-gray-600 dark:text-gray-300'
               }`}
             >
               Eligible
@@ -403,7 +403,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           <div className="text-center">
             <div
               className={`text-2xl font-sans font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               {envLoading ? (
@@ -414,7 +414,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                'text-gray-600 dark:text-gray-300'
               }`}
             >
               Environments
@@ -427,7 +427,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div
           className={`text-xs font-sans ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            'text-gray-600 dark:text-gray-300'
           }`}
         >
           Showing {rows.length === 0 ? 0 : startIndex + 1}–{endIndex} of{' '}
@@ -436,7 +436,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         <div className="flex items-center gap-2">
           <label
             className={`text-xs font-sans ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}
           >
             Rows per page:
@@ -482,7 +482,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </button>
             <span
               className={`text-xs font-sans px-2 ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                'text-gray-600 dark:text-gray-300'
               }`}
             >
               Page {page} of {totalPages}
@@ -535,7 +535,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             {/* Headers with sort functionality */}
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               <button
@@ -553,7 +553,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               <button
@@ -571,14 +571,14 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               Rev
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               <button
@@ -596,7 +596,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               <button
@@ -614,7 +614,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               {viewMode === 'live' ? (
@@ -631,14 +631,14 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               Eligible
             </div>
             <div
               className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               Actions
@@ -722,7 +722,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                       </div>
                       <div
                         className={`text-sm font-sans truncate whitespace-nowrap text-left ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                          'text-gray-600 dark:text-gray-300'
                         }`}
                         title={model.model}
                       >
@@ -730,7 +730,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                       </div>
                       <div
                         className={`text-xs font-sans whitespace-nowrap ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                          'text-gray-600 dark:text-gray-300'
                         }`}
                         title={model.rev}
                       >
@@ -754,7 +754,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                       </div>
                       <div
                         className={`text-sm font-sans tabular-nums whitespace-nowrap ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                          'text-gray-600 dark:text-gray-300'
                         }`}
                       >
                         {isLive
@@ -1034,3 +1034,4 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 }
 
 export default OverviewTable
+

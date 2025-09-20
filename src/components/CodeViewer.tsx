@@ -114,16 +114,16 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
       }`}>
         {/* Header */}
         <div className={`p-4 border-b-2 flex items-center justify-between ${
-          theme === 'dark' ? 'border-white' : 'border-gray-300'
+          'border-gray-300 dark:border-dark-400'
         }`}>
           <div>
             <h3 className={`font-sans text-lg font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}>
               {environment.name} - CODE VIEW
             </h3>
             <p className={`font-sans text-sm mt-1 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               {environment.description}
             </p>
@@ -178,7 +178,7 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
 
         {/* Footer */}
         <div className={`p-4 border-t-2 ${
-          theme === 'dark' ? 'border-white' : 'border-gray-300'
+          'border-gray-300 dark:border-dark-400'
         }`}>
           <div className="flex items-center justify-between">
             <div className={`font-sans text-xs uppercase tracking-wider ${
@@ -202,3 +202,4 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
 };
 
 export default CodeViewer;
+

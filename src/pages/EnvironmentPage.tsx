@@ -145,7 +145,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_112px_96px_96px_128px_104px] gap-2 items-center';
 
   return (
-    <div className={`space-y-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+    <div className={`space-y-6 ${'text-gray-900 dark:text-white'}`}>
       {/* Header / Summary */}
       <div className={`p-4 border-2 rounded-none ${
         theme === 'dark'
@@ -154,11 +154,11 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       }`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className={`text-xl font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-xl font-sans font-bold ${'text-gray-900 dark:text-white'}`}>
               {envName} Environment
             </h2>
             <p className={`text-xs font-sans uppercase tracking-wider mt-1 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Dynamic view powered by live environments registry
             </p>
@@ -207,19 +207,19 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           : 'border-gray-300 bg-slate-100'
       }`}>
         <h3 className={`text-lg font-sans font-bold mb-3 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
+          'text-gray-900 dark:text-white'
         }`}>
           {envName} OVERVIEW
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className={`text-2xl font-sans font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}>
               {overviewLoading ? '—' : envTotalsDisplay}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Total Models
             </div>
@@ -231,19 +231,19 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               {overviewLoading ? '—' : envEligibleDisplay}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Eligible
             </div>
           </div>
           <div className="text-center">
             <div className={`text-2xl font-sans font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}>
               {overviewLoading ? '—' : fmt(envHighestDisplay, 1)}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Highest Score
             </div>
@@ -262,7 +262,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'
         }`}>
           <div className="flex items-center justify-between">
-            <div className={`text-lg font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className={`text-lg font-sans font-bold ${'text-gray-900 dark:text-white'}`}>
               Top Models in {envName}
             </div>
             {/* Live / Historical toggle (match OverviewTable styling) */}
@@ -332,7 +332,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </div>
           )}
           {!tableLoading && !tableError && tableTotal === 0 && (
-            <div className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className={`text-sm font-sans ${'text-gray-600 dark:text-gray-300'}`}>
               No data available for {envName}.
             </div>
           )}
@@ -342,15 +342,15 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               {/* Header Row */}
               <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
                 <div className={`${gridCols} text-center`}>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>#</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>UID</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Model</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rev</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{envName} Score</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Overall Avg</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Success %</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Avg Latency (s)</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rollouts</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>#</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>UID</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${'text-gray-900 dark:text-white'}`}>Model</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Rev</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>{envName} Score</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Overall Avg</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Success %</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Avg Latency (s)</div>
+                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Rollouts</div>
                 </div>
               </div>
 
@@ -360,10 +360,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   <div key={`${row.uid}-${row.model}-${row.rev}`}>
                     <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-slate-50'}`}>
                       <div className={`${gridCols} text-center`}>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {startIndex + idx + 1}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {row.uid}
                         </div>
                         <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={row.model}>
@@ -372,13 +372,13 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                         <div className={`text-xs font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(row.rev)}>
                           {midTrunc(String(row.rev), 10)}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {fmt(value, 1)}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {fmt(row.overall_avg_score, 1)}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {row.success_rate_percent.toFixed(1)}%
                         </div>
                         <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -395,10 +395,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   <div key={`${lr.hotkey}-${lr.model}-${lr.revision ?? ''}`}>
                     <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-slate-50'}`}>
                       <div className={`${gridCols} text-center`}>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {startIndex + idx + 1}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {lr.last_seen_uid}
                         </div>
                         <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={lr.model}>
@@ -407,13 +407,13 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                         <div className={`text-xs font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={String(lr.revision ?? '')}>
                           {midTrunc(String(lr.revision ?? ''), 10)}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {fmt(lr.average_score, 1)}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {dash}
                         </div>
-                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                           {lr.success_rate_percent == null ? '—' : `${lr.success_rate_percent.toFixed(1)}%`}
                         </div>
                         <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -442,3 +442,4 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 };
 
 export default EnvironmentPage;
+

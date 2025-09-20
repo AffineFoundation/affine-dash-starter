@@ -42,7 +42,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
       case 'idle':
         return theme === 'dark' ? 'text-gray-400' : 'text-gray-500';
       default:
-        return theme === 'dark' ? 'text-white' : 'text-gray-900';
+        return 'text-gray-900 dark:text-white';
     }
   };
 
@@ -76,7 +76,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
   const bestScore = models.length > 0 ? Math.max(...models.map(m => m.score)) : 0;
 
   return (
-    <div className={`space-y-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+    <div className={`space-y-6 ${'text-gray-900 dark:text-white'}`}>
       {/* Environment Summary */}
       <div className={`p-4 border-2 rounded-none ${
         theme === 'dark'
@@ -84,19 +84,19 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
           : 'border-gray-300 bg-cream'
       }`}>
         <h3 className={`text-lg font-sans font-bold mb-3 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
+          'text-gray-900 dark:text-white'
         }`}>
           {environmentId.toUpperCase()} ENVIRONMENT OVERVIEW
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className={`text-2xl font-sans font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}>
               {totalModels}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Total Models
             </div>
@@ -108,19 +108,19 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
               {activeTraining}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Active Training
             </div>
           </div>
           <div className="text-center">
             <div className={`text-2xl font-sans font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              'text-gray-900 dark:text-white'
             }`}>
               {bestScore.toFixed(2)}
             </div>
             <div className={`text-xs font-sans uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}>
               Best Score
             </div>
@@ -152,17 +152,17 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
             >
               {/* Model Header */}
               <div className={`p-4 border-b ${
-                theme === 'dark' ? 'border-white' : 'border-gray-300'
+                'border-gray-300 dark:border-dark-400'
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <span className={`text-lg font-sans font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      'text-gray-900 dark:text-white'
                     }`}>
                       Model-{model.uid.slice(-3)}
                     </span>
                     <span className={`ml-3 text-sm font-sans ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      'text-gray-600 dark:text-gray-300'
                     }`}>
                       #{index + 1} • UID: {model.uid}
                     </span>
@@ -181,24 +181,24 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <div className={`text-xl font-sans font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      'text-gray-900 dark:text-white'
                     }`}>
                       {model.score.toFixed(3)}
                     </div>
                     <div className={`text-xs font-sans uppercase tracking-wider ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      'text-gray-600 dark:text-gray-300'
                     }`}>
                       Score
                     </div>
                   </div>
                   <div>
                     <div className={`text-xl font-sans font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      'text-gray-900 dark:text-white'
                     }`}>
                       {model.epochs}
                     </div>
                     <div className={`text-xs font-sans uppercase tracking-wider ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      'text-gray-600 dark:text-gray-300'
                     }`}>
                       Epochs
                     </div>
@@ -206,7 +206,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
                 </div>
 
                 <div className={`text-xs font-sans ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  'text-gray-600 dark:text-gray-300'
                 }`}>
                   Last Updated: {new Date(model.last_updated).toLocaleString()}
                 </div>
@@ -214,17 +214,17 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
 
               {/* Live Feed Section */}
               <div className={`p-4 border-t ${
-                theme === 'dark' ? 'border-white' : 'border-gray-300'
+                'border-gray-300 dark:border-dark-400'
               }`}>
                 <button
                   onClick={() => toggleExpanded(model.uid)}
                   className={`flex items-center text-sm font-sans uppercase tracking-wider mb-3 hover:opacity-70 transition-opacity ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    'text-gray-900 dark:text-white'
                   }`}
                 >
                   <Activity className="w-4 h-4 mr-2" />
                   <span className={`ml-3 text-sm font-sans font-bold ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    'text-gray-900 dark:text-white'
                   }`}>
                     Model-{model.uid.slice(-3)}
                   </span>
@@ -236,7 +236,7 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
 
                 {expandedModel === model.uid && model.live_metrics && (
                   <div className={`space-y-2 text-xs font-sans ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                    'text-gray-600 dark:text-gray-300'
                   }`}>
                     <div className="flex justify-between">
                       <span>Current Loss:</span>
@@ -256,17 +256,17 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
 
               {/* Export Section */}
               <div className={`p-4 border-t ${
-                theme === 'dark' ? 'border-white' : 'border-gray-300'
+                'border-gray-300 dark:border-dark-400'
               }`}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className={`text-sm font-sans uppercase tracking-wider ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      'text-gray-900 dark:text-white'
                     }`}>
                       Daily Rollouts
                     </div>
                     <div className={`text-xs font-sans ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      'text-gray-600 dark:text-gray-300'
                     }`}>
                       {model.daily_rollouts} available
                     </div>
@@ -298,3 +298,4 @@ const ModelGrid: React.FC<ModelGridProps> = ({ models, environmentId, theme }) =
 };
 
 export default ModelGrid;
+

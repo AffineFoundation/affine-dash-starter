@@ -27,11 +27,11 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 
   return (
     <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${className}`}>
-      <div className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+      <div className={`text-xs font-sans ${'text-gray-600 dark:text-gray-300'}`}>
         Showing {startIndex}–{endIndex} of {total}
       </div>
       <div className="flex items-center gap-2">
-        <label className={`text-xs font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Rows per page:</label>
+        <label className={`text-xs font-sans ${'text-gray-600 dark:text-gray-300'}`}>Rows per page:</label>
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
@@ -62,7 +62,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           >
             ‹
           </button>
-          <span className={`text-xs font-sans px-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <span className={`text-xs font-sans px-2 ${'text-gray-600 dark:text-gray-300'}`}>
             Page {page} of {totalPages}
           </span>
           <button
@@ -90,3 +90,4 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 };
 
 export default PaginationControls;
+

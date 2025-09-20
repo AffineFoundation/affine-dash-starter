@@ -74,7 +74,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
     <div className={`mb-6 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
       {/* Header */}
       <div className={`p-4 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
-        <h3 className={`text-lg font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+        <h3 className={`text-lg font-sans font-bold ${'text-gray-900 dark:text-white'}`}>
           LEADERBOARD (Live)
         </h3>
         <p className={`mt-1 text-xs font-sans uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -97,7 +97,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
       {/* Table Shell */}
       <div className="p-4">
         {loading && (
-          <div className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm font-sans ${'text-gray-600 dark:text-gray-300'}`}>
             Loading leaderboard…
           </div>
         )}
@@ -109,7 +109,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
         )}
 
         {!loading && !error && rows.length === 0 && (
-          <div className={`text-sm font-sans ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm font-sans ${'text-gray-600 dark:text-gray-300'}`}>
             No leaderboard data available.
           </div>
         )}
@@ -119,15 +119,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
             {/* Header Row */}
             <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
               <div className={`${gridCols} text-center`}>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>#</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Hotkey</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Model</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rollouts</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Avg Score</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Success %</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Avg Latency (s)</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Last UID</div>
-                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actions</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>#</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${'text-gray-900 dark:text-white'}`}>Hotkey</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${'text-gray-900 dark:text-white'}`}>Model</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Rollouts</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Avg Score</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Success %</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Avg Latency (s)</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Last UID</div>
+                <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Actions</div>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
                 <div key={`${r.hotkey}-${r.last_seen_uid}-${startIndex + idx}`}>
                   <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-slate-50'}`}>
                     <div className={`${gridCols} text-center`}>
-                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                         {startIndex + idx + 1}
                       </div>
                       <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} title={r.hotkey}>
@@ -149,10 +149,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
                       <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         {r.total_rollouts.toLocaleString()}
                       </div>
-                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                         {fmt(r.average_score)}
                       </div>
-                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${'text-gray-900 dark:text-white'}`}>
                         {r.success_rate_percent.toFixed(1)}%
                       </div>
                       <div className={`text-sm font-sans tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -216,3 +216,4 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
 };
 
 export default Leaderboard;
+

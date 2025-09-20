@@ -108,7 +108,7 @@ const GpuMarketShareDonut: React.FC<Props> = ({ theme }) => {
     >
       <h3
         className={`text-lg font-sans font-bold mb-3 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
+          'text-gray-900 dark:text-white'
         }`}
       >
         GPU Market Share (Last 7 Days)
@@ -171,3 +171,4 @@ const GpuMarketShareDonut: React.FC<Props> = ({ theme }) => {
 }
 
 export default GpuMarketShareDonut
+

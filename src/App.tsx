@@ -158,13 +158,9 @@ function App() {
 
 
   return (
-    <div
-      className={`min-h-screen flex transition-colors duration-300 ${
-        theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-gray-800'
-      }`}
-    >
+    <div className="min-h-screen flex transition-colors duration-300 bg-slate-50 text-gray-800 dark:bg-dark-50 dark:text-gray-100">
       <Header theme={theme} toggleTheme={toggleTheme} />
-      <Sidebar theme={theme} />
+      <Sidebar />
 
       {/* Main Content */}
       <main className="flex-1 ml-64 mt-20 px-6 py-8">
@@ -228,3 +224,4 @@ function App() {
 }
 
 export default App
+

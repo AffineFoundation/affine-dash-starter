@@ -44,7 +44,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
           <div>
             <h3
               className={`text-lg font-sans font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                'text-gray-900 dark:text-white'
               }`}
             >
               ACTIVITY FEED (Live)
@@ -138,7 +138,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
         {!isLoading && !queryError && rows.length === 0 && (
           <div
             className={`text-sm font-sans ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              'text-gray-600 dark:text-gray-300'
             }`}
           >
             No recent activity available.
@@ -221,3 +221,4 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
 }
 
 export default ActivityFeed
+
