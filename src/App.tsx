@@ -167,14 +167,14 @@ function App() {
     return `${base} ${
       theme === 'dark'
         ? 'bg-black text-gray-300 border-white hover:bg-gray-800 hover:text-white'
-        : 'bg-cream-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800'
+        : 'bg-slate-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800'
     }`
   }
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        theme === 'dark' ? 'bg-black text-white' : 'bg-cream-50 text-gray-800'
+        theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-gray-800'
       }`}
     >
       <Header theme={theme} toggleTheme={toggleTheme} />
@@ -279,7 +279,7 @@ function App() {
                                       isActive
                                         ? theme === 'dark'
                                           ? 'bg-gray-800'
-                                          : 'bg-cream-100'
+                                          : 'bg-slate-100'
                                         : ''
                                     }`
                                   }

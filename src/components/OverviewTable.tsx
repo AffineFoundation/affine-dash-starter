@@ -190,7 +190,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   return (
     <div className={`space-y-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
       {/* Overview Stats */}
-      <div className={`p-4 border-2 rounded-none ${ theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-cream-100' }`}>
+      <div className={`p-4 border-2 rounded-none ${ theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-slate-100' }`}>
         <div className="flex items-center justify-between mb-3">
           <h3 className={`text-lg font-sans font-bold ${ theme === 'dark' ? 'text-white' : 'text-gray-900' }`}>
             SUBNET OVERVIEW
@@ -244,7 +244,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       {/* Models Table */}
       <div className={`border-2 rounded-none overflow-x-auto ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
         {/* Table Header */}
-        <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
+        <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
           <div className={`${gridCols} text-center`}>
             {/* Headers with sort functionality */}
             <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}><button disabled={viewMode !== 'live'} onClick={() => toggleSort('uid')} className={`inline-flex items-center gap-1 ${viewMode === 'live' ? 'cursor-pointer underline-offset-2 hover:underline' : 'opacity-60 cursor-default'}`}><span>UID</span><span>{sortIndicator('uid')}</span></button></div>
@@ -264,7 +264,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           
           {/* Skeleton Loader */}
           {loading && !errorMsg && Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
-            <div key={i} className={`p-3 ${theme === 'dark' ? 'hover:bg-gray-800/40' : 'hover:bg-cream-50/60'}`}>
+            <div key={i} className={`p-3 ${theme === 'dark' ? 'hover:bg-gray-800/40' : 'hover:bg-slate-50/60'}`}>
               <div className={`${gridCols} text-center`}>
                 <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                 <div className="text-left"><SkeletonText theme={theme} className="h-4 w-48" /></div>
@@ -287,7 +287,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             return (
               <div key={model.uniqueId} onMouseEnter={() => setHoveredRowId(model.uniqueId)} onMouseLeave={() => setHoveredRowId(null)}>
                 {/* Main Row */}
-                <div className={`p-3 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-cream-50'}`}>
+                <div className={`p-3 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-slate-50'}`}>
                   <div className={`${gridCols} text-center`}>
                     <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap`}>{model.uid}</div>
                     <div className={`text-sm font-sans truncate whitespace-nowrap text-left ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} title={model.model}>{midTrunc(model.model, 48)}</div>
@@ -321,7 +321,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
                 {/* Expanded Details Panel */}
                 {expandedModel === model.uniqueId && (
-                  <div className={`px-3 pb-3 text-left ${theme === 'dark' ? 'bg-gray-900/50' : 'bg-cream-50'}`}>
+                  <div className={`px-3 pb-3 text-left ${theme === 'dark' ? 'bg-gray-900/50' : 'bg-slate-50'}`}>
                     <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                       {/* Common fields */}
                       <div><span className="font-bold">UID:</span> {model.uid}</div>

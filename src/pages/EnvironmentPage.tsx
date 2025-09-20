@@ -204,7 +204,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       <div className={`p-4 border-2 rounded-none ${
         theme === 'dark'
           ? 'border-white bg-black'
-          : 'border-gray-300 bg-cream-100'
+          : 'border-gray-300 bg-slate-100'
       }`}>
         <h3 className={`text-lg font-sans font-bold mb-3 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -259,7 +259,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           : 'border-gray-300 bg-white'
       }`}>
         <div className={`p-3 border-b-2 ${
-          theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'
+          theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'
         }`}>
           <div className="flex items-center justify-between">
             <div className={`text-lg font-sans font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -340,7 +340,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           {!tableLoading && !tableError && tableTotal > 0 && (
             <div className={`border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
               {/* Header Row */}
-              <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-cream-50'}`}>
+              <div className={`p-3 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
                 <div className={`${gridCols} text-center`}>
                   <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>#</div>
                   <div className={`text-xs font-sans uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>UID</div>
@@ -358,7 +358,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               <div className="divide-y-2 divide-gray-300">
                 {viewMode === 'historical' && pagedHistorical.map(({ row, value }, idx) => (
                   <div key={`${row.uid}-${row.model}-${row.rev}`}>
-                    <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
+                    <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-slate-50'}`}>
                       <div className={`${gridCols} text-center`}>
                         <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {startIndex + idx + 1}
@@ -393,7 +393,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                 ))}
                 {viewMode === 'live' && pagedLive.map((lr, idx) => (
                   <div key={`${lr.hotkey}-${lr.model}-${lr.revision ?? ''}`}>
-                    <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-cream-50'}`}>
+                    <div className={`p-3 hover:bg-opacity-50 transition-colors ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-slate-50'}`}>
                       <div className={`${gridCols} text-center`}>
                         <div className={`text-sm font-sans font-bold tabular-nums whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {startIndex + idx + 1}

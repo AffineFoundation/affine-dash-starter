@@ -4,11 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: {
-          50: '#FFFEF7',
-          100: '#F5F5DC',
-          200: '#F0F0C8',
-          300: '#EAEAB4',
+        slate: {
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          200: '#E2E8F0',
+          300: '#CBD5E1',
         }
       },
       fontFamily: {

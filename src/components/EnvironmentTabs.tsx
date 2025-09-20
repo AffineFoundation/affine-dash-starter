@@ -35,7 +35,7 @@ const EnvironmentTabs: React.FC<EnvironmentTabsProps> = ({
                   : 'bg-white text-gray-900 border-gray-300'
                 : theme === 'dark'
                   ? 'bg-black text-gray-300 border-white hover:bg-gray-800 hover:text-white'
-                  : 'bg-cream-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800'
+                  : 'bg-slate-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800'
             }`}
           >
             {env.name}

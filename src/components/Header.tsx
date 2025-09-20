@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
       className={`fixed top-0 left-0 right-0 h-20 border-b-2 ${
         theme === 'dark'
           ? 'border-white bg-black'
-          : 'border-gray-300 bg-cream-100'
+          : 'border-gray-300 bg-slate-100'
       }`}
     >
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
