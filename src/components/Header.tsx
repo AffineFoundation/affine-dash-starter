@@ -1,32 +1,39 @@
-import React from 'react';
-import { Code2, Moon, Sun, ExternalLink } from 'lucide-react';
+import React from 'react'
+import { Code2, Moon, Sun, ExternalLink } from 'lucide-react'
 
 interface HeaderProps {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
+  theme: 'light' | 'dark'
+  toggleTheme: () => void
 }
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
-    <header className={`border-b-2 ${
-      theme === 'dark' 
-        ? 'border-white bg-black' 
-        : 'border-gray-300 bg-cream-100'
-    }`}>
+    <header
+      className={`fixed top-0 left-0 right-0 h-20 border-b-2 ${
+        theme === 'dark'
+          ? 'border-white bg-black'
+          : 'border-gray-300 bg-cream-100'
+      }`}
+    >
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className={`text-2xl font-sans font-bold mb-1 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
+          <h1
+            className={`text-2xl font-sans font-bold mb-1 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}
+          >
             AFFINE DASHBOARD
           </h1>
-          <p className={`text-sm font-sans ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Real-time monitoring and performance metrics for Affine RL environments
+          <p
+            className={`text-sm font-sans ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            }`}
+          >
+            Real-time monitoring and performance metrics for Affine RL
+            environments
           </p>
         </div>
-        
+
         <nav className="flex items-center gap-6">
           <div className="flex items-center gap-4">
             <a
@@ -56,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               CODE
             </a>
           </div>
-          
+
           <button
             onClick={toggleTheme}
             className={`p-2 border-2 transition-colors ${
@@ -70,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
         </nav>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
