@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 
@@ -11,16 +10,16 @@ export default function Sidebar() {
 
   const sidebarItemClass = (active: boolean) => {
     const base =
-      'rounded-md w-full px-4 py-3 font-sans text-sm transition-colors text-left'
+      'rounded-md w-full px-4 py-3 font-sans text-sm transition-colors duration-500 text-left'
     if (active) {
-      return `${base} bg-white text-gray-900 border-gray-200 dark:bg-dark-100 dark:text-white dark:border-dark-300`
+      return `${base} bg-white text-gray-900 border-gray-200 dark:bg-dark-100 dark:text-dark-highlight dark:border-dark-300`
     }
-    return `${base} text-gray-600 border-gray-200 hover:bg-slate-100 hover:text-gray-800 dark:text-gray-300 dark:border-dark-300 dark:hover:bg-dark-100 dark:hover:text-white`
+    return `${base} text-gray-600 border-gray-200 hover:bg-slate-100 hover:text-gray-800 dark:text-dark-500 dark:border-dark-300 dark:hover:bg-dark-75`
   }
 
   return (
     <aside className="pl-5 fixed left-0 top-20 w-64 h-[calc(100vh-5rem)] overflow-y-auto">
-      <nav className="mt-8 flex flex-col">
+      <nav className="mt-8 flex flex-col gap-[1px]">
         <NavLink
           to="/"
           end
