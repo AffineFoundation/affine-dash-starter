@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchLeaderboard, type LeaderboardRow } from '../services/api';
-import PaginationControls from './PaginationControls';
+import TablePaginationControls from './TablePaginationControls';
 import Card from './Card';
 
 type Theme = 'light' | 'dark';
@@ -80,7 +80,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
     >
       {/* Pagination summary + controls */}
       <div className="mb-4">
-        <PaginationControls
+        <TablePaginationControls
           theme={theme}
           total={rows.length}
           page={page}
