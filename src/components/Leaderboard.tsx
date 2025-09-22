@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchLeaderboard, type LeaderboardRow } from '../services/api';
 import PaginationControls from './PaginationControls';
+import Card from './Card';
 
 type Theme = 'light' | 'dark';
 
@@ -71,19 +72,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
   const pagedRows = rows.slice(startIndex, startIndex + pageSize);
 
   return (
-    <div className={`mb-6 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      {/* Header */}
-      <div className={`p-4 border-b-2 ${theme === 'dark' ? 'border-white bg-gray-900' : 'border-gray-300 bg-slate-50'}`}>
-        <h3 className={`text-lg font-sans font-bold ${'text-gray-900 dark:text-white'}`}>
-          LEADERBOARD (Live)
-        </h3>
-        <p className={`mt-1 text-xs font-sans uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-          Top miners by average score
-        </p>
-      </div>
-
+    <Card
+      title="LEADERBOARD (Live)"
+      subtitle="Top miners by average score"
+      theme={theme}
+      className="mb-6 rounded-none"
+    >
       {/* Pagination summary + controls */}
-      <div className="px-4 pt-4">
+      <div className="mb-4">
         <PaginationControls
           theme={theme}
           total={rows.length}
@@ -93,9 +89,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
           setPageSize={setPageSize}
         />
       </div>
-
-      {/* Table Shell */}
-      <div className="p-4">
         {loading && (
           <div className={`text-sm font-sans ${'text-gray-600 dark:text-gray-300'}`}>
             Loading leaderboard…
@@ -210,8 +203,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
             </div>
           </div>
         )}
-      </div>
-    </div>
+    </Card>
   );
 };
 

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts'
+import Card from './Card'
 
 interface Props {
   theme: 'light' | 'dark'
@@ -101,18 +102,10 @@ const GpuMarketShareDonut: React.FC<Props> = ({ theme }) => {
   const total = slices.reduce((sum, s) => sum + s.value, 0)
 
   return (
-    <div
-      className={`rounded-md p-4 border-2 ${
-        theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'
-      }`}
+    <Card
+      title="GPU Market Share (Last 7 Days)"
+      theme={theme}
     >
-      <h3
-        className={`text-lg font-sans font-bold mb-3 ${
-          'text-gray-900 dark:text-white'
-        }`}
-      >
-        GPU Market Share (Last 7 Days)
-      </h3>
 
       {error && (
         <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
@@ -166,7 +159,7 @@ const GpuMarketShareDonut: React.FC<Props> = ({ theme }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 

@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import Card from './Card';
 
 interface Props {
   env: string; // e.g., 'SAT'
@@ -77,10 +78,11 @@ const TopMinersTrendChart: React.FC<Props> = ({ env, theme }) => {
   }, [data]);
 
   return (
-    <div className={`p-4 border-2 rounded-none overflow-hidden ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
-        Top 5 Miners Performance Over Time — {env}
-      </h3>
+    <Card
+      title={`Top 5 Miners Performance Over Time — ${env}`}
+      theme={theme}
+      className="rounded-none overflow-hidden"
+    >
 
       {error && (
         <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
@@ -137,7 +139,7 @@ const TopMinersTrendChart: React.FC<Props> = ({ env, theme }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 

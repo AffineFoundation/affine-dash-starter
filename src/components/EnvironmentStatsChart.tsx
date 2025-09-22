@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts'
+import Card from './Card'
 
 interface Props {
   theme: 'light' | 'dark'
@@ -32,18 +33,10 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
   })
 
   return (
-    <div
-      className={`rounded-md p-4 border-2 ${
-        theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'
-      }`}
+    <Card
+      title="Environment Popularity & Difficulty"
+      theme={theme}
     >
-      <h3
-        className={`text-lg font-sans font-bold mb-3 ${
-          'text-gray-900 dark:text-white'
-        }`}
-      >
-        Environment Popularity & Difficulty
-      </h3>
 
       {error && (
         <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
@@ -137,7 +130,7 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 

@@ -3,6 +3,7 @@ import { fetchActivity, type ActivityRow } from '../services/api'
 import { useQuery } from '@tanstack/react-query'
 import { RefreshCw } from 'lucide-react'
 import { Skeleton, SkeletonText } from './Skeleton'
+import Card from './Card'
 
 type Theme = 'light' | 'dark'
 
@@ -27,64 +28,41 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
   const rows: ActivityRow[] = Array.isArray(data) ? data.slice(0, limit) : []
   const [manualRefreshing, setManualRefreshing] = useState(false)
 
-  return (
-    <div
-      className={`rounded-md mb-6 border-2 ${
-        theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'
+  const refreshButton = (
+    <button
+      onClick={async () => {
+        setManualRefreshing(true)
+        try {
+          await refetch()
+        } finally {
+          setManualRefreshing(false)
+        }
+      }}
+      disabled={manualRefreshing}
+      className={`rounded-md flex items-center gap-2 px-3 h-9 border-2 font-sans text-xs uppercase tracking-wider transition-colors disabled:opacity-60 ${
+        theme === 'dark'
+          ? 'border-white text-white hover:bg-gray-800'
+          : 'border-gray-400 text-gray-700 hover:bg-gray-100'
       }`}
+      aria-label="Refresh activity feed"
+      title="Refresh activity feed"
     >
-      <div
-        className={`p-4 border-b-2 ${
-          theme === 'dark'
-            ? 'border-white bg-gray-900'
-            : 'border-gray-300 bg-slate-50'
-        }`}
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <h3
-              className={`text-lg font-sans font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
-            >
-              ACTIVITY FEED (Live)
-            </h3>
-            <p
-              className={`mt-1 text-xs font-sans uppercase tracking-wider ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}
-            >
-              Latest rollouts across environments
-            </p>
-          </div>
-          <button
-            onClick={async () => {
-              setManualRefreshing(true)
-              try {
-                await refetch()
-              } finally {
-                setManualRefreshing(false)
-              }
-            }}
-            disabled={manualRefreshing}
-            className={`rounded-md flex items-center gap-2 px-3 h-9 border-2 font-sans text-xs uppercase tracking-wider transition-colors disabled:opacity-60 ${
-              theme === 'dark'
-                ? 'border-white text-white hover:bg-gray-800'
-                : 'border-gray-400 text-gray-700 hover:bg-gray-100'
-            }`}
-            aria-label="Refresh activity feed"
-            title="Refresh activity feed"
-          >
-            <RefreshCw
-              size={14}
-              className={manualRefreshing ? 'animate-spin' : ''}
-            />
-            {manualRefreshing ? 'Refreshing' : 'Refresh'}
-          </button>
-        </div>
-      </div>
+      <RefreshCw
+        size={14}
+        className={manualRefreshing ? 'animate-spin' : ''}
+      />
+      {manualRefreshing ? 'Refreshing' : 'Refresh'}
+    </button>
+  )
 
-      <div className="p-4">
+  return (
+    <Card
+      title="ACTIVITY FEED (Live)"
+      subtitle="Latest rollouts across environments"
+      theme={theme}
+      headerActions={refreshButton}
+      className="mb-6"
+    >
         {isLoading && (
           <div className="divide-y divide-gray-300">
             {Array.from({ length: Math.min(limit, 8) }).map((_, i) => (
@@ -215,8 +193,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
             })}
           </div>
         )}
-      </div>
-    </div>
+    </Card>
   )
 }
 

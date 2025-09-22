@@ -12,6 +12,7 @@ import {
   Scatter,
 } from 'recharts'
 import { Skeleton, SkeletonText } from './Skeleton'
+import Card from './Card'
 
 interface Props {
   theme: 'light' | 'dark'
@@ -135,18 +136,10 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
   const [hovered, setHovered] = React.useState<MinerEfficiencyRow | null>(null)
 
   return (
-    <div
-      className={`rounded-md p-4 border-2 ${
-        theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'
-      }`}
+    <Card
+      title="Performance vs. Latency (7d Active Miners)"
+      theme={theme}
     >
-      <h3
-        className={`text-lg font-sans font-bold mb-3 ${
-          'text-gray-900 dark:text-white'
-        }`}
-      >
-        Performance vs. Latency (7d Active Miners)
-      </h3>
 
       <div
         className={`mb-3 p-2 ${
@@ -210,7 +203,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
           setHovered={setHovered}
         />
       )}
-    </div>
+    </Card>
   )
 }
 

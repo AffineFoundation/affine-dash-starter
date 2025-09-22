@@ -10,6 +10,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
 import { useValidatorSummary } from '../hooks/useValidatorSummary'
+import Card from './Card'
+import ToggleButton from './ToggleButton'
 
 interface OverviewTableProps {
   environments?: any[] // Kept for compatibility, not actively used
@@ -301,89 +303,53 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     return () => document.removeEventListener('keydown', onKey)
   }, [openMenuId, hoveredRowId, rows])
 
+  const viewModeToggle = (
+    <div className="inline-flex items-center gap-0">
+      <ToggleButton
+        active={viewMode === 'live'}
+        onClick={() => setViewMode('live')}
+        theme={theme}
+        position="left"
+      >
+        Live
+      </ToggleButton>
+      <ToggleButton
+        active={viewMode === 'historical'}
+        onClick={() => setViewMode('historical')}
+        theme={theme}
+        position="right"
+      >
+        Historical
+      </ToggleButton>
+    </div>
+  )
+
   // RENDER METHOD STARTS HERE
   return (
-    <div
-      className={`space-y-4 ${
-        'text-gray-900 dark:text-white'
-      }`}
-    >
+    <div className="space-y-4 text-gray-900 dark:text-dark-500">
       {/* Overview Stats */}
-      <div
-        className={`rounded-md p-4 border-2 ${
-          theme === 'dark'
-            ? 'border-white bg-black'
-            : 'border-gray-300 bg-slate-100'
-        }`}
+      <Card
+        title="SUBNET OVERVIEW"
+        theme={theme}
+        headerActions={viewModeToggle}
       >
-        <div className="flex items-center justify-between mb-3">
-          <h3
-            className={`text-lg font-sans font-bold ${
-              'text-gray-900 dark:text-white'
-            }`}
-          >
-            SUBNET OVERVIEW
-          </h3>
-          <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-0">
-              <button
-                onClick={() => setViewMode('live')}
-                className={`h-8 px-3 text-xs font-sans border rounded-l-sm ${
-                  viewMode === 'live'
-                    ? theme === 'dark'
-                      ? 'bg-white text-black border-white'
-                      : 'bg-gray-900 text-white border-gray-900'
-                    : theme === 'dark'
-                    ? 'border-white text-white hover:bg-gray-800'
-                    : 'border-gray-400 text-gray-700 hover:bg-gray-100'
-                }`}
-                aria-pressed={viewMode === 'live'}
-              >
-                Live
-              </button>
-              <button
-                onClick={() => setViewMode('historical')}
-                className={`h-8 px-3 text-xs font-sans border rounded-r-sm -ml-px ${
-                  viewMode === 'historical'
-                    ? theme === 'dark'
-                      ? 'bg-white text-black border-white'
-                      : 'bg-gray-900 text-white border-gray-900'
-                    : theme === 'dark'
-                    ? 'border-white text-white hover:bg-gray-800'
-                    : 'border-gray-400 text-gray-700 hover:bg-gray-100'
-                }`}
-                aria-pressed={viewMode === 'historical'}
-              >
-                Historical
-              </button>
-            </div>
-          </div>
-        </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div
-              className={`text-2xl font-sans font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
-            >
+            <div className="text-2xl font-sans font-bold">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (
                 rows.length
               )}
             </div>
-            <div
-              className={`text-xs font-sans uppercase tracking-wider ${
-                'text-gray-600 dark:text-gray-300'
-              }`}
-            >
+            <div className="text-xs font-sans uppercase tracking-wider ">
               Total Models
             </div>
           </div>
           <div className="text-center">
             <div
               className={`text-2xl font-sans font-bold ${
-                theme === 'dark' ? 'text-green-400' : 'text-green-600'
+                theme === 'dark' ? 'text-dark-highlight' : 'text-green-600'
               }`}
             >
               {loading ? (
@@ -392,52 +358,36 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                 rows.filter((r) => r.eligible).length
               )}
             </div>
-            <div
-              className={`text-xs font-sans uppercase tracking-wider ${
-                'text-gray-600 dark:text-gray-300'
-              }`}
-            >
+            <div className="text-xs font-sans uppercase tracking-wider ">
               Eligible
             </div>
           </div>
           <div className="text-center">
-            <div
-              className={`text-2xl font-sans font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
-            >
+            <div className="text-2xl font-sans font-bold ">
               {envLoading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (
                 envs.length
               )}
             </div>
-            <div
-              className={`text-xs font-sans uppercase tracking-wider ${
-                'text-gray-600 dark:text-gray-300'
-              }`}
-            >
+            <div className="text-xs font-sans uppercase tracking-wider ">
               Environments
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div
-          className={`text-xs font-sans ${
-            'text-gray-600 dark:text-gray-300'
-          }`}
+          className={`text-xs font-sans ${'text-gray-600 dark:text-gray-300'}`}
         >
           Showing {rows.length === 0 ? 0 : startIndex + 1}–{endIndex} of{' '}
           {rows.length}
         </div>
         <div className="flex items-center gap-2">
           <label
-            className={`text-xs font-sans ${
-              'text-gray-600 dark:text-gray-300'
-            }`}
+            className={`text-xs font-sans ${'text-gray-600 dark:text-gray-300'}`}
           >
             Rows per page:
           </label>
@@ -481,9 +431,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               ‹
             </button>
             <span
-              className={`text-xs font-sans px-2 ${
-                'text-gray-600 dark:text-gray-300'
-              }`}
+              className={`text-xs font-sans px-2 ${'text-gray-600 dark:text-gray-300'}`}
             >
               Page {page} of {totalPages}
             </span>
@@ -534,9 +482,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           <div className={`${gridCols} text-center`}>
             {/* Headers with sort functionality */}
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               <button
                 disabled={viewMode !== 'live'}
@@ -552,9 +498,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               </button>
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${'text-gray-900 dark:text-white'}`}
             >
               <button
                 disabled={viewMode !== 'live'}
@@ -570,16 +514,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               </button>
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               Rev
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               <button
                 disabled={viewMode !== 'live'}
@@ -595,9 +535,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               </button>
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               <button
                 disabled={viewMode !== 'live'}
@@ -613,9 +551,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               </button>
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               {viewMode === 'live' ? (
                 <button
@@ -630,16 +566,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               )}
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               Eligible
             </div>
             <div
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
-                'text-gray-900 dark:text-white'
-              }`}
+              className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}
             >
               Actions
             </div>
@@ -721,17 +653,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                         {model.uid}
                       </div>
                       <div
-                        className={`text-sm font-sans truncate whitespace-nowrap text-left ${
-                          'text-gray-600 dark:text-gray-300'
-                        }`}
+                        className={`text-sm font-sans truncate whitespace-nowrap text-left ${'text-gray-600 dark:text-gray-300'}`}
                         title={model.model}
                       >
                         {midTrunc(model.model, 48)}
                       </div>
                       <div
-                        className={`text-xs font-sans whitespace-nowrap ${
-                          'text-gray-600 dark:text-gray-300'
-                        }`}
+                        className={`text-xs font-sans whitespace-nowrap ${'text-gray-600 dark:text-gray-300'}`}
                         title={model.rev}
                       >
                         {midTrunc(model.rev, 10)}
@@ -753,9 +681,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
                           : dash}
                       </div>
                       <div
-                        className={`text-sm font-sans tabular-nums whitespace-nowrap ${
-                          'text-gray-600 dark:text-gray-300'
-                        }`}
+                        className={`text-sm font-sans tabular-nums whitespace-nowrap ${'text-gray-600 dark:text-gray-300'}`}
                       >
                         {isLive
                           ? fmt(model.weight, 4)
@@ -1034,4 +960,3 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 }
 
 export default OverviewTable
-

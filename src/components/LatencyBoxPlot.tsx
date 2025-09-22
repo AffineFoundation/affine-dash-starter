@@ -12,6 +12,7 @@ import {
   Scatter,
   ErrorBar,
 } from 'recharts';
+import Card from './Card';
 
 interface Props {
   env: string; // e.g., 'SAT'
@@ -90,10 +91,11 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
   }, [data]);
 
   return (
-    <div className={`p-4 border-2 rounded-none overflow-hidden ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
-        Latency Distribution (Top Miners) — {env}
-      </h3>
+    <Card
+      title={`Latency Distribution (Top Miners) — ${env}`}
+      theme={theme}
+      className="rounded-none overflow-hidden"
+    >
 
       {error && (
         <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
@@ -155,7 +157,7 @@ min=${p.min.toFixed(3)}s  q1=${p.q1.toFixed(3)}s  median=${p.median.toFixed(3)}s
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 

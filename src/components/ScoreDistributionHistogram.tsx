@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import Card from './Card';
 
 interface Props {
   env: string; // e.g., 'SAT'
@@ -49,10 +50,11 @@ const ScoreDistributionHistogram: React.FC<Props> = ({ env, theme }) => {
   }, [data]);
 
   return (
-    <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
-        Score Distribution — {env}
-      </h3>
+    <Card
+      title={`Score Distribution — ${env}`}
+      theme={theme}
+      className="rounded-none"
+    >
 
       {error && (
         <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
@@ -91,7 +93,7 @@ const ScoreDistributionHistogram: React.FC<Props> = ({ env, theme }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 
