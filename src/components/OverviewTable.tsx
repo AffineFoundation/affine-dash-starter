@@ -349,7 +349,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           <div className="text-center">
             <div
               className={`text-2xl font-sans font-bold ${
-                theme === 'dark' ? 'text-dark-highlight' : 'text-green-600'
+                theme === 'dark' ? 'text-green-400' : 'text-green-600'
               }`}
             >
               {loading ? (
