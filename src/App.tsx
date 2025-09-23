@@ -4,6 +4,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import OverviewTable from './components/OverviewTable'
 import ActivityFeed from './components/ActivityFeed'
+import { ParallaxLightBeams } from './components/ParallaxLightBeams'
 import { useTheme } from './hooks/useTheme'
 import { useEnvironments } from './contexts/EnvironmentsContext'
 import EnvironmentPage from './pages/EnvironmentPage'
@@ -158,7 +159,9 @@ function App() {
 
 
   return (
-    <div className="min-h-screen flex transition-colors duration-300 bg-slate-50 text-gray-800 dark:bg-dark-50 dark:text-gray-100">
+    <div className="min-h-screen flex transition-colors duration-300 bg-slate-50 text-gray-800 dark:bg-dark-50 dark:text-gray-100 relative overflow-hidden">
+      <ParallaxLightBeams />
+      
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Sidebar />
 
