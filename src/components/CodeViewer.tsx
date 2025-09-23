@@ -1,50 +1,56 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { X, ExternalLink, Code } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react'
+import { X, ExternalLink, Code } from 'lucide-react'
 
 interface Environment {
-  id: string;
-  name: string;
-  description: string;
-  repoUrl: string;
-  models: any[];
+  id: string
+  name: string
+  description: string
+  repoUrl: string
+  models: any[]
 }
 
 interface CodeViewerProps {
-  environment: Environment;
-  theme: 'light' | 'dark';
-  onClose: () => void;
+  environment: Environment
+  theme: 'light' | 'dark'
+  onClose: () => void
 }
 
-const CodeViewer: React.FC<CodeViewerProps> = ({ environment, theme, onClose }) => {
+const CodeViewer: React.FC<CodeViewerProps> = ({
+  environment,
+  theme,
+  onClose,
+}) => {
   // Fetch code directly from the affine repo (raw) for this environment file
-  const [code, setCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
   const rawUrl = useMemo(
-    () => `https://raw.githubusercontent.com/AffineFoundation/affine/main/affine/envs/${environment.id}.py`,
-    [environment.id]
-  );
+    () =>
+      `https://raw.githubusercontent.com/AffineFoundation/affine/main/affine/envs/${environment.id}.py`,
+    [environment.id],
+  )
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    setCode(null);
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    setCode(null)
     fetch(rawUrl, { method: 'GET' })
       .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const text = await res.text();
-        if (!cancelled) setCode(text);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const text = await res.text()
+        if (!cancelled) setCode(text)
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : String(err))
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+        if (!cancelled) setLoading(false)
+      })
     return () => {
-      cancelled = true;
-    };
-  }, [rawUrl]);
+      cancelled = true
+    }
+  }, [rawUrl])
   // Mock code content - will be replaced with actual repo fetching
   const mockCode = `# ${environment.name} Environment
 # Bittensor Affine Subnet Implementation
@@ -103,28 +109,18 @@ class ${environment.name.replace('-', '')}Environment:
         pass
 
 # Export for subnet integration
-__all__ = ['${environment.name.replace('-', '')}Environment']`;
+__all__ = ['${environment.name.replace('-', '')}Environment']`
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`w-full max-w-4xl max-h-[90vh] border-2 ${
-        theme === 'dark'
-          ? 'border-white bg-black'
-          : 'border-gray-300 bg-white'
-      }`}>
+      <div className="w-full max-w-4xl max-h-[90vh] border-2 border-gray-300 bg-white dark:border-white dark:bg-black">
         {/* Header */}
-        <div className={`p-4 border-b-2 flex items-center justify-between ${
-          'border-gray-300 dark:border-dark-400'
-        }`}>
+        <div className="p-4 border-b-2 flex items-center justify-between border-gray-300 dark:border-dark-400">
           <div>
-            <h3 className={`font-sans text-lg font-bold ${
-              'text-gray-900 dark:text-white'
-            }`}>
+            <h3 className="font-sans text-lg font-bold text-gray-900 dark:text-white">
               {environment.name} - CODE VIEW
             </h3>
-            <p className={`font-sans text-sm mt-1 ${
-              'text-gray-600 dark:text-gray-300'
-            }`}>
+            <p className="font-sans text-sm mt-1 text-gray-600 dark:text-gray-300">
               {environment.description}
             </p>
           </div>
@@ -133,22 +129,14 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
               href={environment.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors ${
-                theme === 'dark'
-                  ? 'border-white text-white hover:bg-gray-800'
-                  : 'border-gray-400 text-gray-700 hover:bg-gray-100'
-              }`}
+              className="flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
             >
               <ExternalLink size={12} />
               REPO
             </a>
             <button
               onClick={onClose}
-              className={`p-2 border-2 transition-colors ${
-                theme === 'dark'
-                  ? 'border-white text-white hover:bg-gray-800'
-                  : 'border-gray-400 text-gray-700 hover:bg-gray-100'
-              }`}
+              className="p-2 border-2 transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
             >
               <X size={16} />
             </button>
@@ -158,39 +146,36 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
         {/* Code Content */}
         <div className="p-4 overflow-auto max-h-[70vh]">
           {loading ? (
-            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div className="font-sans text-sm text-gray-700 dark:text-gray-300">
               Loading code…
             </div>
           ) : error ? (
-            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+            <div className="font-sans text-sm text-red-600 dark:text-red-400">
               Failed to load code from {rawUrl}: {error}
             </div>
           ) : code ? (
-            <pre className={`font-sans text-sm leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+            <pre className="font-sans text-sm leading-relaxed text-gray-800 dark:text-white">
               <code>{code}</code>
             </pre>
           ) : (
-            <div className={`font-sans text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div className="font-sans text-sm text-gray-700 dark:text-gray-300">
               No code available.
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className={`p-4 border-t-2 ${
-          'border-gray-300 dark:border-dark-400'
-        }`}>
+        <div
+          className="p-4 border-t-2
+          border-gray-300 dark:border-dark-400"
+        >
           <div className="flex items-center justify-between">
-            <div className={`font-sans text-xs uppercase tracking-wider ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-            }`}>
+            <div className="font-sans text-xs uppercase tracking-wider text-gray-500 dark:text-gray-300">
               Environment loaded • {environment.models.length} active models
             </div>
             <div className="flex items-center gap-2">
-              <Code size={12} className={theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} />
-              <span className={`font-sans text-xs ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-              }`}>
+              <Code size={12} className="text-gray-500 dark:text-gray-300" />
+              <span className="font-sans text-xs text-gray-500 dark:text-gray-300">
                 Python 3.9+ • Affine Gym
               </span>
             </div>
@@ -198,8 +183,7 @@ __all__ = ['${environment.name.replace('-', '')}Environment']`;
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CodeViewer;
-
+export default CodeViewer

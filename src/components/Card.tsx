@@ -18,11 +18,7 @@ const Card: React.FC<CardProps> = ({
   className = '',
 }) => {
   return (
-    <div
-      className={`rounded-md ${
-        theme === 'dark' ? 'bg-dark-100' : ' bg-white'
-      } ${className}`}
-    >
+    <div className={`rounded-md bg-white dark:bg-dark-100 ${className}`}>
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div>
@@ -30,11 +26,7 @@ const Card: React.FC<CardProps> = ({
               {title}
             </h3>
             {subtitle && (
-              <p
-                className={`mt-1 text-xs font-sans uppercase tracking-wider ${
-                  theme === 'dark' ? 'text-dark-400' : 'text-gray-600'
-                }`}
-              >
+              <p className="mt-1 text-xs font-sans uppercase tracking-wider text-gray-600 dark:text-dark-400">
                 {subtitle}
               </p>
             )}

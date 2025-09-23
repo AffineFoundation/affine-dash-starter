@@ -14,7 +14,7 @@ type SkeletonProps = {
 export const Skeleton: React.FC<SkeletonProps> = ({ theme, className = '' }) => {
   return (
     <div
-      className={`animate-pulse rounded-sm ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} ${className}`}
+      className={`animate-pulse rounded-sm bg-gray-100 dark:bg-gray-900 ${className}`}
     />
   );
 };
@@ -26,7 +26,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ theme, className = '' }) => 
 export const SkeletonText: React.FC<SkeletonProps> = ({ theme, className = '' }) => {
   return (
     <div
-      className={`animate-pulse rounded-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'} ${className}`}
+      className={`animate-pulse rounded-sm bg-gray-200 dark:bg-gray-800 ${className}`}
     />
   );
 };

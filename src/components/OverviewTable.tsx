@@ -250,11 +250,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
           </div>
           <div className="text-center">
-            <div
-              className={`text-2xl font-sans font-bold ${
-                theme === 'dark' ? 'text-green-400' : 'text-green-600'
-              }`}
-            >
+            <div className="text-2xl font-sans font-bold text-green-600 dark:text-green-400">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (

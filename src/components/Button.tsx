@@ -23,11 +23,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md flex items-center gap-2 px-3 h-9 font-sans text-xs uppercase tracking-wider transition-colors duration-500 disabled:opacity-60 ${
-        theme === 'dark'
-          ? 'bg-dark-200 text-dark-500 hover:bg-dark-300'
-          : 'bg-gray-400 text-gray-700 hover:bg-gray-100'
-      } ${className}`}
+      className={`rounded-md flex items-center gap-2 px-3 h-9 font-sans text-xs uppercase tracking-wider transition-colors duration-500 disabled:opacity-60 bg-gray-400 text-gray-700 hover:bg-gray-100 dark:bg-dark-200 dark:text-dark-500 dark:hover:bg-dark-300 ${className}`}
       aria-label={ariaLabel}
       title={title}
     >

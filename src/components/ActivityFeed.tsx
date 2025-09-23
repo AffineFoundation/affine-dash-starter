@@ -62,9 +62,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
           {Array.from({ length: Math.min(limit, 8) }).map((_, i) => (
             <div
               key={i}
-              className={`py-3 grid grid-cols-12 gap-2 items-center ${
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
-              }`}
+              className="py-3 grid grid-cols-12 gap-2 items-center text-gray-800 dark:text-gray-200"
             >
               <div className="col-span-3">
                 <SkeletonText theme={theme} className="h-3 w-24 mb-1" />
@@ -93,11 +91,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       )}
 
       {queryError && (
-        <div
-          className={`text-sm font-sans ${
-            theme === 'dark' ? 'text-red-400' : 'text-red-600'
-          }`}
-        >
+        <div className="text-sm font-sans text-red-600 dark:text-red-400">
           {queryError instanceof Error
             ? queryError.message
             : String(queryError)}
@@ -105,45 +99,29 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       )}
 
       {!isLoading && !queryError && rows.length === 0 && (
-        <div
-          className={`text-sm font-sans ${'text-gray-600 dark:text-gray-300'}`}
-        >
+        <div className="text-sm font-sans text-gray-600 dark:text-gray-300">
           No recent activity available.
         </div>
       )}
 
       {!isLoading && !queryError && rows.length > 0 && (
-        <div
-          className={`divide-y ${
-            theme === 'dark' ? 'divide-dark-200' : 'divide-gray-300'
-          }`}
-        >
+        <div className="divide-y divide-gray-300 dark:divide-dark-200">
           {rows.map((r, idx) => {
             const ts = new Date(r.ingested_at)
             return (
               <div
                 key={`${r.uid}-${r.hotkey}-${idx}`}
-                className={`py-3 grid grid-cols-12 gap-2 items-center ${
-                  theme === 'dark' ? 'text-dark-500' : 'text-gray-800'
-                }`}
+                className="py-3 grid grid-cols-12 gap-2 items-center text-gray-800 dark:text-dark-500"
               >
                 <div className="col-span-3">
                   <div className="text-xs font-sans">{ts.toLocaleString()}</div>
-                  <div
-                    className={`text-[10px] font-sans ${
-                      theme === 'dark' ? 'text-dark-400' : 'text-gray-500'
-                    }`}
-                  >
+                  <div className="text-[10px] font-sans text-gray-500 dark:text-dark-400">
                     UID: {r.uid}
                   </div>
                 </div>
                 <div className="col-span-4 break-all">
                   <div className="text-xs font-sans">{r.hotkey}</div>
-                  <div
-                    className={`text-[10px] font-sans ${
-                      theme === 'dark' ? 'text-dark-400' : 'text-gray-500'
-                    }`}
-                  >
+                  <div className="text-[10px] font-sans text-gray-500 dark:text-dark-400">
                     {r.model}
                   </div>
                 </div>
@@ -157,12 +135,8 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
                   <div
                     className={`text-[10px] font-sans ${
                       r.success
-                        ? theme === 'dark'
-                          ? 'text-green-400'
-                          : 'text-green-600'
-                        : theme === 'dark'
-                        ? 'text-red-400'
-                        : 'text-red-600'
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400'
                     }`}
                   >
                     {r.success ? 'success' : 'fail'}

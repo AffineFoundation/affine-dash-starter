@@ -98,13 +98,13 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
     >
 
       {error && (
-        <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
+        <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
         </div>
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 400 }}>
-          <div className={`h-full w-full animate-pulse ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`} />
+          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
         </div>
       )}
 

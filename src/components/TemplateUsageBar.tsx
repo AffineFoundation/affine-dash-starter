@@ -53,19 +53,19 @@ const TemplateUsageBar: React.FC<Props> = ({ theme }) => {
   const rows = React.useMemo(() => buildTemplateCounts(data ?? []), [data]);
 
   return (
-    <div className={`p-4 border-2 rounded-none ${theme === 'dark' ? 'border-white bg-black' : 'border-gray-300 bg-white'}`}>
-      <h3 className={`text-lg font-sans font-bold mb-3 ${'text-gray-900 dark:text-white'}`}>
+    <div className="p-4 border-2 rounded-none border-gray-300 bg-white dark:border-white dark:bg-black">
+      <h3 className="text-lg font-sans font-bold mb-3 text-gray-900 dark:text-white">
         Inference Template Usage (Last 7 Days)
       </h3>
 
       {error && (
-        <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
+        <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
         </div>
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 300 }}>
-          <div className={`h-full w-full animate-pulse ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`} />
+          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
         </div>
       )}
 

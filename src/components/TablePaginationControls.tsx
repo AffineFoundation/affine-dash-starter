@@ -24,19 +24,15 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
 
   return (
     <div className="text-gray-600 dark:text-dark-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div className="text-xs font-sans ">
+      <div className="text-xs font-sans">
         Showing {startIndex}–{endIndex} of {total}
       </div>
       <div className="flex items-center gap-2">
-        <label className="text-xs font-sans ">Rows per page:</label>
+        <label className="text-xs font-sans">Rows per page:</label>
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className={`h-8 px-2  text-xs font-sans rounded-md transition-colors duration-300 ${
-            theme === 'dark'
-              ? 'text-dark-500 bg-dark-200 hover:bg-dark-300 '
-              : ' bg-white '
-          }`}
+          className="h-8 px-2 text-xs font-sans rounded-md transition-colors duration-300 bg-white dark:text-dark-500 dark:bg-dark-200 dark:hover:bg-dark-300"
         >
           <option value={20}>20</option>
           <option value={50}>50</option>

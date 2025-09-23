@@ -142,11 +142,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
     >
 
       <div
-        className={`mb-3 p-2 ${
-          theme === 'dark'
-            ? 'bg-black/40 border border-white/20 text-white'
-            : 'bg-gray-50 border border-gray-200 text-gray-900'
-        } font-sans text-xs`}
+        className="mb-3 p-2 bg-gray-50 border border-gray-200 text-gray-900 dark:bg-black/40 dark:border-white/20 dark:text-white font-sans text-xs"
         style={{ minHeight: 80 }}
       >
         <div className="flex flex-wrap gap-x-6 gap-y-1">
@@ -182,17 +178,13 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
       </div>
 
       {error && (
-        <div className={theme === 'dark' ? 'text-red-400' : 'text-red-600'}>
+        <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
         </div>
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 340 }}>
-          <div
-            className={`h-full w-full animate-pulse ${
-              theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
-            }`}
-          />
+          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
         </div>
       )}
 
