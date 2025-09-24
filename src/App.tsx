@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar'
 import OverviewTable from './components/OverviewTable'
 import ActivityFeed from './components/ActivityFeed'
 import { ParallaxLightBeams } from './components/ParallaxLightBeams'
+import { ParallaxNoise } from './components/ParallaxNoise'
 import { useTheme } from './hooks/useTheme'
 import { useEnvironments } from './contexts/EnvironmentsContext'
 import EnvironmentPage from './pages/EnvironmentPage'
@@ -158,7 +159,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
-      <ParallaxLightBeams />
+      {theme === 'dark' ? <ParallaxLightBeams /> : <ParallaxNoise />}
 
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Sidebar />
