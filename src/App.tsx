@@ -159,7 +159,20 @@ function App() {
 
   return (
     <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
-      {theme === 'dark' ? <ParallaxLightBeams /> : <ParallaxNoise />}
+      {theme === 'dark' ? (
+        <>
+          <div
+            className="fixed inset-0 pointer-events-none z-50 opacity-40"
+            style={{
+              background:
+                'radial-gradient(circle at 70% 0%, rgb(230, 102, 105) 0%, rgba(230, 102, 105, 0.3) 40%, rgba(8, 10, 5, 0) 70%)',
+            }}
+          />
+          <ParallaxLightBeams />
+        </>
+      ) : (
+        <ParallaxNoise />
+      )}
 
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Sidebar />

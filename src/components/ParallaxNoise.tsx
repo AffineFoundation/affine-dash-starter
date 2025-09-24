@@ -15,7 +15,7 @@ export function ParallaxNoise() {
   }, [])
 
   return (
-    <div className="fixed inset-0 pointer-events-none opacity-10 z-40">
+    <div className="fixed inset-0 pointer-events-none opacity-10 z-50">
       {/* Layer 1 - Dense texture */}
       <div
         className="absolute inset-0 transition-transform duration-300 ease-out"

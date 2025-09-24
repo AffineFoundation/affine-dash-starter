@@ -15,7 +15,7 @@ export function ParallaxLightBeams() {
   }, [])
 
   return (
-    <div className="fixed inset-0 pointer-events-none opacity-10 z-40">
+    <div className="fixed inset-0 pointer-events-none opacity-10 z-50">
       {/* Large beams - fastest parallax */}
       <div
         className="absolute top-20 left-[28%] w-8 h-full bg-gradient-to-b from-transparent via-[#6E61C9] to-transparent transform rotate-45 blur-lg transition-transform duration-300 ease-out"
