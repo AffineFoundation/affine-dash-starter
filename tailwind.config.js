@@ -5,11 +5,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        slate: {
-          50: '#F8FAFC',
-          100: '#F1F5F9',
-          200: '#E2E8F0',
-          300: '#CBD5E1',
+        light: {
+          50: '#F7F9FC',
+          75: '#EDF2F7',
+          100: '#E2E8F0',
+          200: '#CBD5E1',
+          300: '#94A3B8',
+          350: '#64748B',
+          400: '#475569',
+          500: '#334155',
+          highlight: '#6366F1',
         },
         dark: {
           50: '#080A05',

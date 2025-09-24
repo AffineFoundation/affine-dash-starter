@@ -125,7 +125,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       {/* Models Table */}
       <div className="border rounded-md border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
         {/* Table Header */}
-        <div className="p-3 text-gray-900 bg-slate-50 dark:text-dark-500 dark:bg-dark-200">
+        <div className="p-3 text-gray-900 bg-light-50 dark:text-dark-500 dark:bg-dark-200">
           <div className={`${gridCols} text-center`}>
             <div className="text-xs font-sans uppercase tracking-wider font-bold">
               <button
@@ -220,7 +220,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
               <div
                 key={i}
-                className="p-3 hover:bg-slate-50/60 dark:hover:bg-gray-800/40"
+                className="p-3 hover:bg-light-50/60 dark:hover:bg-gray-800/40"
               >
                 <div className={`${gridCols} text-center`}>
                   <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
@@ -259,7 +259,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   onMouseLeave={() => setHoveredRowId(null)}
                 >
                   {/* Main Row */}
-                  <div className="p-3 transition-colors duration-300 hover:bg-slate-50 dark:hover:bg-dark-300">
+                  <div className="p-3 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300">
                     <div className={`${gridCols} text-center`}>
                       <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap">
                         {model.uid}
@@ -383,7 +383,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
                   {/* Expanded Details Panel */}
                   {expandedModel === model.uniqueId && (
-                    <div className="p-14 text-left bg-slate-50 dark:bg-dark-75">
+                    <div className="p-14 text-left bg-light-50 dark:bg-dark-75">
                       <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                         {/* Common fields */}
                         <div>

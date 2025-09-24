@@ -179,7 +179,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       )}
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
-      <Card title={`${envName} OVERVIEW`} theme={theme} className="bg-slate-100 dark:bg-black">
+      <Card title={`${envName} OVERVIEW`} theme={theme} className="bg-light-100 dark:bg-black">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-2xl font-sans font-bold text-gray-900 dark:text-white">

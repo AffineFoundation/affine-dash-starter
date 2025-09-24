@@ -111,7 +111,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
       {!loading && !error && rows.length > 0 && (
         <div className="border-2 rounded-none overflow-x-auto border-gray-300 bg-white dark:border-white dark:bg-black">
           {/* Header Row */}
-          <div className="p-3 border-b-2 border-gray-300 bg-slate-50 dark:border-white dark:bg-gray-900">
+          <div className="p-3 border-b-2 border-gray-300 bg-light-50 dark:border-white dark:bg-gray-900">
             <div className={`${gridCols} text-center`}>
               <div className="text-xs font-sans uppercase tracking-wider font-bold text-gray-900 dark:text-white">
                 #
@@ -147,7 +147,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ theme, limit = 0 }) => {
           <div className="divide-y-2 divide-gray-300">
             {pagedRows.map((r, idx) => (
               <div key={`${r.hotkey}-${r.last_seen_uid}-${startIndex + idx}`}>
-                <div className="p-3 hover:bg-opacity-50 transition-colors hover:bg-slate-50 dark:hover:bg-gray-800">
+                <div className="p-3 hover:bg-opacity-50 transition-colors hover:bg-light-50 dark:hover:bg-gray-800">
                   <div className={`${gridCols} text-center`}>
                     <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
                       {startIndex + idx + 1}

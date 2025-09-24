@@ -40,7 +40,7 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <div className="border rounded-md border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
       {/* Table Header */}
-      <div className="p-3 text-gray-900 bg-slate-50 dark:text-dark-500 dark:bg-dark-200">
+      <div className="p-3 text-gray-900 bg-light-50 dark:text-dark-500 dark:bg-dark-200">
         <div className={`${gridCols} text-center`}>
           {columns.map((column) => (
             <div
@@ -77,7 +77,7 @@ const DataTable: React.FC<DataTableProps> = ({
           Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
             <div
               key={i}
-              className="p-3 hover:bg-slate-50/60 dark:hover:bg-gray-800/40"
+              className="p-3 hover:bg-light-50/60 dark:hover:bg-gray-800/40"
             >
               <div className={`${gridCols} text-center`}>
                 {columns.map((column, idx) => (
@@ -95,7 +95,7 @@ const DataTable: React.FC<DataTableProps> = ({
           data.map((row, index) => (
             <div
               key={index}
-              className="p-3 transition-colors duration-300 hover:bg-slate-50 dark:hover:bg-dark-300"
+              className="p-3 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300"
             >
               <div className={`${gridCols} text-center`}>
                 {columns.map((column) => (

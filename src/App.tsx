@@ -156,18 +156,15 @@ function App() {
     }
   }, [environments, navigate])
 
-
-
   return (
-    <div className="min-h-screen flex transition-colors duration-300 bg-slate-50 text-gray-800 dark:bg-dark-50 dark:text-gray-100 relative overflow-hidden">
+    <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
       <ParallaxLightBeams />
-      
+
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Sidebar />
 
       {/* Main Content */}
       <main className="flex-1 ml-64 mt-20 px-6 py-8">
-
         {/* Content */}
         <Routes>
           <Route
@@ -227,4 +224,3 @@ function App() {
 }
 
 export default App
-

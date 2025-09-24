@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
-    <header className="z-50 fixed top-0 left-0 right-0 h-20 bg-slate-100 dark:bg-dark-100 shadow-lg">
+    <header className="z-50 fixed top-0 left-0 right-0 h-20 bg-light-100 dark:bg-dark-100 shadow-lg">
       <div className="mx-auto px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-sans font-bold mb-1 text-gray-900 dark:text-dark-500">

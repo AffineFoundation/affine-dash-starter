@@ -14,7 +14,7 @@ export default function Sidebar() {
     if (active) {
       return `${base} bg-white text-gray-900 border-gray-200 dark:bg-dark-100 dark:text-dark-highlight dark:border-dark-300`
     }
-    return `${base} text-gray-600 border-gray-200 hover:bg-slate-100 hover:text-gray-800 dark:text-dark-500 dark:border-dark-300 dark:hover:bg-dark-75`
+    return `${base} text-gray-600 border-gray-200 hover:bg-light-100 hover:text-gray-800 dark:text-dark-500 dark:border-dark-300 dark:hover:bg-dark-75`
   }
 
   return (
