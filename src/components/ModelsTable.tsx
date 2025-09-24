@@ -123,7 +123,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       />
 
       {/* Models Table */}
-      <div className="border rounded-md overflow-x-auto border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
+      <div className="border rounded-md border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
         {/* Table Header */}
         <div className="p-3 text-gray-900 bg-slate-50 dark:text-dark-500 dark:bg-dark-200">
           <div className={`${gridCols} text-center`}>
