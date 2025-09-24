@@ -99,7 +99,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       )}
 
       {!isLoading && !queryError && rows.length === 0 && (
-        <div className="text-sm font-sans text-gray-600 dark:text-gray-300">
+        <div className="text-sm font-sans text-light-400 dark:text-dark-400">
           No recent activity available.
         </div>
       )}

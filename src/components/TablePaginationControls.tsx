@@ -23,7 +23,7 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
   const endIndex = Math.min(total, page * pageSize)
 
   return (
-    <div className="text-gray-600 dark:text-dark-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <div className="text-light-400 dark:text-dark-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div className="text-xs font-sans">
         Showing {startIndex}–{endIndex} of {total}
       </div>
@@ -32,7 +32,7 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className="h-8 px-2 text-xs font-sans rounded-md transition-colors duration-300 bg-white dark:text-dark-500 dark:bg-dark-200 dark:hover:bg-dark-300"
+          className="h-8 px-2 text-xs font-sans rounded-md transition-colors duration-300 text-light-500 bg-light-75 hover:bg-light-50 dark:text-dark-500 dark:bg-dark-200 dark:hover:bg-dark-300"
         >
           <option value={20}>20</option>
           <option value={50}>50</option>

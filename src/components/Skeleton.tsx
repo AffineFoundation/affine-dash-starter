@@ -17,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 }) => {
   return (
     <div
-      className={`animate-pulse rounded-sm bg-gray-100 dark:bg-dark-400 ${className}`}
+      className={`animate-pulse rounded-sm bg-light-300 dark:bg-dark-400 ${className}`}
     />
   )
 }
@@ -32,7 +32,7 @@ export const SkeletonText: React.FC<SkeletonProps> = ({
 }) => {
   return (
     <div
-      className={`animate-pulse rounded-sm bg-gray-200 dark:bg-dark-500 ${className}`}
+      className={`animate-pulse rounded-sm bg-light-350 dark:bg-dark-500 ${className}`}
     />
   )
 }

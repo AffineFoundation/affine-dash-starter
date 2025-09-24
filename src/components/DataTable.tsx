@@ -38,9 +38,9 @@ const DataTable: React.FC<DataTableProps> = ({
     sortField !== field ? '' : sortDir === 'asc' ? '▲' : '▼'
 
   return (
-    <div className="border rounded-md border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
+    <div className="border rounded-md border-light-200 bg-light-100 dark:border-dark-200 dark:bg-dark-100">
       {/* Table Header */}
-      <div className="p-3 text-gray-900 bg-light-50 dark:text-dark-500 dark:bg-dark-200">
+      <div className="p-3 text-light-500 bg-light-75 dark:text-dark-500 dark:bg-dark-200">
         <div className={`${gridCols} text-center`}>
           {columns.map((column) => (
             <div
@@ -66,7 +66,7 @@ const DataTable: React.FC<DataTableProps> = ({
       </div>
 
       {/* Table Body */}
-      <div className="text-gray-600 dark:text-dark-400 divide-y divide-gray-900 dark:divide-dark-200">
+      <div className="text-light-400 dark:text-dark-400 divide-y divide-light-200 dark:divide-dark-200">
         {error && (
           <div className="p-4 text-red-600 dark:text-red-400">{error}</div>
         )}
@@ -81,7 +81,10 @@ const DataTable: React.FC<DataTableProps> = ({
             >
               <div className={`${gridCols} text-center`}>
                 {columns.map((column, idx) => (
-                  <div key={idx} className={column.align === 'left' ? 'text-left' : ''}>
+                  <div
+                    key={idx}
+                    className={column.align === 'left' ? 'text-left' : ''}
+                  >
                     <SkeletonText theme={theme} className="h-4 w-16 mx-auto" />
                   </div>
                 ))}
@@ -104,7 +107,9 @@ const DataTable: React.FC<DataTableProps> = ({
                     className={`text-sm font-sans ${
                       column.align === 'left' ? 'text-left' : ''
                     } ${
-                      column.key === '#' || column.key === 'uid' || column.key.includes('score')
+                      column.key === '#' ||
+                      column.key === 'uid' ||
+                      column.key.includes('score')
                         ? 'font-bold tabular-nums'
                         : ''
                     } whitespace-nowrap`}
@@ -120,7 +125,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
         {/* No Data */}
         {!loading && !error && data.length === 0 && (
-          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+          <div className="p-4 text-center text-light-400 dark:text-dark-400">
             No data available
           </div>
         )}

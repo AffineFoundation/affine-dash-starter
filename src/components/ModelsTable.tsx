@@ -333,13 +333,13 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             <MoreVertical size={16} />
                           </Button>
                           {openMenuId === model.uniqueId && (
-                            <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-white  text-gray-900 dark:bg-dark-200  dark:text-dark-500">
+                            <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75  text-light-500 dark:bg-dark-200  dark:text-dark-500">
                               <button
                                 onClick={() => {
                                   toggleExpanded(model.uniqueId)
                                   setOpenMenuId(null)
                                 }}
-                                className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-dark-350"
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                               >
                                 <span>Toggle details</span>
                                 <span className="text-xs opacity-70">T</span>
@@ -349,7 +349,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => setOpenMenuId(null)}
-                                className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-dark-350"
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                               >
                                 <span>View on Hugging Face</span>
                                 <span className="text-xs opacity-70">H</span>
@@ -360,7 +360,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-dark-350"
+                                  className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                 >
                                   <span>Open Chutes</span>
                                   <span className="text-xs opacity-70">C</span>
@@ -371,7 +371,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                   <span className="text-xs opacity-70">C</span>
                                 </div>
                               )}
-                              <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-gray-300 dark:border-dark-350">
+                              <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
                                 Shortcuts: T, H, C, Esc
                               </div>
                             </div>
@@ -383,7 +383,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
                   {/* Expanded Details Panel */}
                   {expandedModel === model.uniqueId && (
-                    <div className="p-14 text-left bg-light-50 dark:bg-dark-75">
+                    <div className="p-14 text-left bg-light-300 dark:bg-dark-75">
                       <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                         {/* Common fields */}
                         <div>
