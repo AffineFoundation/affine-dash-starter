@@ -62,7 +62,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
           {Array.from({ length: Math.min(limit, 8) }).map((_, i) => (
             <div
               key={i}
-              className="py-3 grid grid-cols-12 gap-2 items-center text-gray-800 dark:text-gray-200"
+              className="py-3 grid grid-cols-12 gap-2 items-center text-light-500 dark:text-gray-200"
             >
               <div className="col-span-3">
                 <SkeletonText theme={theme} className="h-3 w-24 mb-1" />
@@ -105,23 +105,23 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       )}
 
       {!isLoading && !queryError && rows.length > 0 && (
-        <div className="divide-y divide-gray-300 dark:divide-dark-200">
+        <div className="divide-y divide-light-200 dark:divide-dark-200">
           {rows.map((r, idx) => {
             const ts = new Date(r.ingested_at)
             return (
               <div
                 key={`${r.uid}-${r.hotkey}-${idx}`}
-                className="py-3 grid grid-cols-12 gap-2 items-center text-gray-800 dark:text-dark-500"
+                className="py-3 grid grid-cols-12 gap-2 items-center text-light-500 dark:text-dark-500"
               >
                 <div className="col-span-3">
                   <div className="text-xs font-sans">{ts.toLocaleString()}</div>
-                  <div className="text-[10px] font-sans text-gray-500 dark:text-dark-400">
+                  <div className="text-[10px] font-sans text-light-400 dark:text-dark-400">
                     UID: {r.uid}
                   </div>
                 </div>
                 <div className="col-span-4 break-all">
                   <div className="text-xs font-sans">{r.hotkey}</div>
-                  <div className="text-[10px] font-sans text-gray-500 dark:text-dark-400">
+                  <div className="text-[10px] font-sans text-light-400 dark:text-dark-400">
                     {r.model}
                   </div>
                 </div>

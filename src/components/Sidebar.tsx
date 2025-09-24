@@ -12,9 +12,9 @@ export default function Sidebar() {
     const base =
       'rounded-md w-full px-4 py-3 font-sans text-sm transition-colors duration-500 text-left'
     if (active) {
-      return `${base} bg-white text-gray-900 border-gray-200 dark:bg-dark-100 dark:text-dark-highlight dark:border-dark-300`
+      return `${base} bg-light-100 text-light-highlight border-light-300 dark:bg-dark-100 dark:text-dark-highlight dark:border-dark-300`
     }
-    return `${base} text-gray-600 border-gray-200 hover:bg-light-100 hover:text-gray-800 dark:text-dark-500 dark:border-dark-300 dark:hover:bg-dark-75`
+    return `${base} text-light-500 border-light-300 hover:bg-light-75  dark:text-dark-500 dark:border-dark-300 dark:hover:bg-dark-75`
   }
 
   return (

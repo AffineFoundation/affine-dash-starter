@@ -123,9 +123,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       />
 
       {/* Models Table */}
-      <div className="border rounded-md border-gray-300 bg-white dark:border-dark-200 dark:bg-dark-100">
+      <div className="border rounded-md border-light-200 bg-light-100 dark:border-dark-200 dark:bg-dark-100">
         {/* Table Header */}
-        <div className="p-3 text-gray-900 bg-light-50 dark:text-dark-500 dark:bg-dark-200">
+        <div className="p-3 text-light-500 bg-light-75 dark:text-dark-500 dark:bg-dark-200">
           <div className={`${gridCols} text-center`}>
             <div className="text-xs font-sans uppercase tracking-wider font-bold">
               <button
@@ -209,7 +209,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         </div>
 
         {/* Table Body */}
-        <div className="text-gray-600 dark:text-dark-400 divide-y divide-gray-900 dark:divide-dark-200">
+        <div className="text-light-400 dark:text-dark-400 divide-y divide-light-200 dark:divide-dark-200">
           {errorMsg && (
             <div className="p-4 text-red-600 dark:text-red-400">{errorMsg}</div>
           )}
@@ -311,7 +311,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           theme={theme}
                           aria-label="Toggle details"
                           title="Toggle details (T)"
-                          className="h-8 w-8 p-0 hover:text-white hover:bg-gray-600 dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
+                          className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
                         >
                           {expandedModel === model.uniqueId ? (
                             <ChevronDown size={16} />
@@ -328,7 +328,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             }
                             theme={theme}
                             title="Actions (open menu)"
-                            className="h-8 w-8 p-0 hover:text-white hover:bg-gray-600 dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
+                            className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
                           >
                             <MoreVertical size={16} />
                           </Button>
