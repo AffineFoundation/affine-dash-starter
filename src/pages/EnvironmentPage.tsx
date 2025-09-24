@@ -3,12 +3,15 @@ import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSubnetOverview, type SubnetOverviewRow, fetchLiveEnvLeaderboard, type LiveEnvLeaderboardRow } from '../services/api';
 import { useEnvironments } from '../contexts/EnvironmentsContext';
-import PaginationControls from '../components/PaginationControls';
+import TablePaginationControls from '../components/TablePaginationControls';
 import CodeViewer from '../components/CodeViewer';
 import { ExternalLink, Code } from 'lucide-react';
-import { Skeleton } from '../components/Skeleton';
 import ScoreDistributionHistogram from '../components/ScoreDistributionHistogram';
 import LatencyBoxPlot from '../components/LatencyBoxPlot';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import ToggleButton from '../components/ToggleButton';
+import DataTable from '../components/DataTable';
 
 const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const { envName: rawEnv } = useParams();
@@ -147,36 +150,25 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   return (
     <div className="space-y-6 text-gray-900 dark:text-white">
       {/* Header / Summary */}
-      <div className="p-4 border-2 rounded-none border-gray-300 bg-white dark:border-white dark:bg-black">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-sans font-bold text-gray-900 dark:text-white">
-              {envName} Environment
-            </h2>
-            <p className="text-xs font-sans uppercase tracking-wider mt-1 text-gray-600 dark:text-gray-300">
-              Dynamic view powered by live environments registry
-            </p>
-          </div>
+      <Card
+        title={`${envName} Environment`}
+        subtitle="Dynamic view powered by live environments registry"
+        theme={theme}
+        headerActions={
           <div className="flex items-center gap-3">
-            <a
-              href={activeEnvMeta.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
-            >
+            <Button onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')} theme={theme}>
               <ExternalLink size={12} />
               REPO
-            </a>
-            <button
-              onClick={() => setShowCode(true)}
-              className="flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
-            >
+            </Button>
+            <Button onClick={() => setShowCode(true)} theme={theme}>
               <Code size={12} />
               VIEW CODE
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
+        }
+      >
+        <div></div>
+      </Card>
 
       {showCode && (
         <CodeViewer
@@ -187,10 +179,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       )}
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
-      <div className="p-4 border-2 rounded-none border-gray-300 bg-slate-100 dark:border-white dark:bg-black">
-        <h3 className="text-lg font-sans font-bold mb-3 text-gray-900 dark:text-white">
-          {envName} OVERVIEW
-        </h3>
+      <Card title={`${envName} OVERVIEW`} theme={theme} className="bg-slate-100 dark:bg-black">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-2xl font-sans font-bold text-gray-900 dark:text-white">
@@ -217,45 +206,39 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
 
       {/* Top Models Table for this Environment */}
-      <div className="border-2 rounded-none overflow-x-auto border-gray-300 bg-white dark:border-white dark:bg-black">
-        <div className="p-3 border-b-2 border-gray-300 bg-slate-50 dark:border-white dark:bg-gray-900">
-          <div className="flex items-center justify-between">
-            <div className="text-lg font-sans font-bold text-gray-900 dark:text-white">
-              Top Models in {envName}
-            </div>
-            {/* Live / Historical toggle (match OverviewTable styling) */}
-            <div className="inline-flex items-center gap-0">
-              <button
-                onClick={() => setViewMode('live')}
-                className={`h-8 px-3 text-xs font-sans border rounded-l-sm ${viewMode === 'live'
-                    ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-black dark:border-white'
-                    : 'border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800'
-                  }`}
-                aria-pressed={viewMode === 'live'}
-              >
-                Live
-              </button>
-              <button
-                onClick={() => setViewMode('historical')}
-                className={`h-8 px-3 text-xs font-sans border rounded-r-sm -ml-px ${viewMode === 'historical'
-                    ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-black dark:border-white'
-                    : 'border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800'
-                  }`}
-                aria-pressed={viewMode === 'historical'}
-              >
-                Historical
-              </button>
-            </div>
+      <Card
+        title={`Top Models in ${envName}`}
+        theme={theme}
+        className="overflow-x-auto"
+        headerActions={
+          <div className="inline-flex items-center gap-0">
+            <ToggleButton
+              active={viewMode === 'live'}
+              onClick={() => setViewMode('live')}
+              theme={theme}
+              position="left"
+            >
+              Live
+            </ToggleButton>
+            <ToggleButton
+              active={viewMode === 'historical'}
+              onClick={() => setViewMode('historical')}
+              theme={theme}
+              position="right"
+            >
+              Historical
+            </ToggleButton>
           </div>
-        </div>
+        }
+      >
 
         {/* Pagination Controls (consistent with Overview/Leaderboard) */}
         <div className="px-3 pt-3">
-          <PaginationControls
+          <TablePaginationControls
             theme={theme}
             total={tableTotal}
             page={page}
@@ -266,133 +249,55 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         </div>
 
         <div className="p-3">
-          {tableLoading && (
-            <div className="space-y-2">
-              {Array.from({ length: Math.min(pageSize, 10) }).map((_, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 border-2 rounded-none border-gray-300 bg-white dark:border-white dark:bg-black"
-                >
-                  <div className={`${gridCols} items-center`}>
-                    <Skeleton theme={theme} className="h-4 w-6 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-16 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-3/5" />
-                    <Skeleton theme={theme} className="h-4 w-10 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-16 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-16 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-16 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-20 mx-auto" />
-                    <Skeleton theme={theme} className="h-4 w-16 mx-auto" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {tableError != null && (
-            <div className="text-sm font-sans text-red-600 dark:text-red-400">
-              {tableError instanceof Error ? tableError.message : String(tableError)}
-            </div>
-          )}
-          {!tableLoading && !tableError && tableTotal === 0 && (
-            <div className="text-sm font-sans text-gray-600 dark:text-gray-300">
-              No data available for {envName}.
-            </div>
-          )}
-
-          {!tableLoading && !tableError && tableTotal > 0 && (
-            <div className="border-2 rounded-none border-gray-300 bg-white dark:border-white dark:bg-black">
-              {/* Header Row */}
-              <div className="p-3 border-b-2 border-gray-300 bg-slate-50 dark:border-white dark:bg-gray-900">
-                <div className={`${gridCols} text-center`}>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>#</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>UID</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold text-left ${'text-gray-900 dark:text-white'}`}>Model</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>Rev</div>
-                  <div className={`text-xs font-sans uppercase tracking-wider font-bold ${'text-gray-900 dark:text-white'}`}>{envName} Score</div>
-                  <div className="text-xs font-sans uppercase tracking-wider font-bold text-gray-900 dark:text-white">Overall Avg</div>
-                  <div className="text-xs font-sans uppercase tracking-wider font-bold text-gray-900 dark:text-white">Success %</div>
-                  <div className="text-xs font-sans uppercase tracking-wider font-bold text-gray-900 dark:text-white">Avg Latency (s)</div>
-                  <div className="text-xs font-sans uppercase tracking-wider font-bold text-gray-900 dark:text-white">Rollouts</div>
-                </div>
-              </div>
-
-              {/* Body */}
-              <div className="divide-y-2 divide-gray-300">
-                {viewMode === 'historical' && pagedHistorical.map(({ row, value }, idx) => (
-                  <div key={`${row.uid}-${row.model}-${row.rev}`}>
-                    <div className="p-3 hover:bg-opacity-50 transition-colors hover:bg-slate-50 dark:hover:bg-gray-800">
-                      <div className={`${gridCols} text-center`}>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {startIndex + idx + 1}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {row.uid}
-                        </div>
-                        <div className="text-sm font-sans truncate whitespace-nowrap text-left text-gray-700 dark:text-gray-300" title={row.model}>
-                          {midTrunc(row.model, 48)}
-                        </div>
-                        <div className="text-xs font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300" title={String(row.rev)}>
-                          {midTrunc(String(row.rev), 10)}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {fmt(value, 1)}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {fmt(row.overall_avg_score, 1)}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {row.success_rate_percent.toFixed(1)}%
-                        </div>
-                        <div className="text-sm font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300">
-                          {row.avg_latency == null ? dash : row.avg_latency.toFixed(2)}
-                        </div>
-                        <div className="text-sm font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300">
-                          {row.total_rollouts.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {viewMode === 'live' && pagedLive.map((lr, idx) => (
-                  <div key={`${lr.hotkey}-${lr.model}-${lr.revision ?? ''}`}>
-                    <div className="p-3 hover:bg-opacity-50 transition-colors hover:bg-slate-50 dark:hover:bg-gray-800">
-                      <div className={`${gridCols} text-center`}>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {startIndex + idx + 1}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {lr.last_seen_uid}
-                        </div>
-                        <div className="text-sm font-sans truncate whitespace-nowrap text-left text-gray-700 dark:text-gray-300" title={lr.model}>
-                          {midTrunc(lr.model, 48)}
-                        </div>
-                        <div className="text-xs font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300" title={String(lr.revision ?? '')}>
-                          {midTrunc(String(lr.revision ?? ''), 10)}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {fmt(lr.average_score, 1)}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {dash}
-                        </div>
-                        <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap text-gray-900 dark:text-white">
-                          {lr.success_rate_percent == null ? '—' : `${lr.success_rate_percent.toFixed(1)}%`}
-                        </div>
-                        <div className="text-sm font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300">
-                          {lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2)}
-                        </div>
-                        <div className="text-sm font-sans tabular-nums whitespace-nowrap text-gray-700 dark:text-gray-300">
-                          {lr.total_rollouts.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <DataTable
+            theme={theme}
+            columns={[
+              { key: '#', label: '#' },
+              { key: 'uid', label: 'UID' },
+              { key: 'model', label: 'Model', align: 'left', render: (value) => (
+                <span title={value}>{midTrunc(value, 32)}</span>
+              )},
+              { key: 'rev', label: 'Rev', render: (value) => (
+                <span title={String(value)}>{midTrunc(String(value), 10)}</span>
+              )},
+              { key: 'envScore', label: `${envName} Score` },
+              { key: 'overallAvg', label: 'Overall Avg' },
+              { key: 'successRate', label: 'Success %' },
+              { key: 'avgLatency', label: 'Avg Latency (s)' },
+              { key: 'rollouts', label: 'Rollouts' },
+            ]}
+            data={
+              viewMode === 'historical'
+                ? pagedHistorical.map(({ row, value }, idx) => ({
+                    '#': startIndex + idx + 1,
+                    uid: row.uid,
+                    model: row.model,
+                    rev: row.rev,
+                    envScore: fmt(value, 1),
+                    overallAvg: fmt(row.overall_avg_score, 1),
+                    successRate: `${row.success_rate_percent.toFixed(1)}%`,
+                    avgLatency: row.avg_latency == null ? dash : row.avg_latency.toFixed(2),
+                    rollouts: row.total_rollouts.toLocaleString(),
+                  }))
+                : pagedLive.map((lr, idx) => ({
+                    '#': startIndex + idx + 1,
+                    uid: lr.last_seen_uid,
+                    model: lr.model,
+                    rev: lr.revision ?? '',
+                    envScore: fmt(lr.average_score, 1),
+                    overallAvg: dash,
+                    successRate: lr.success_rate_percent == null ? '—' : `${lr.success_rate_percent.toFixed(1)}%`,
+                    avgLatency: lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2),
+                    rollouts: lr.total_rollouts.toLocaleString(),
+                  }))
+            }
+            loading={tableLoading}
+            error={tableError ? (tableError instanceof Error ? tableError.message : String(tableError)) : null}
+            gridCols={gridCols}
+            pageSize={pageSize}
+          />
         </div>
-      </div>
+      </Card>
       {!tableLoading && (
         <>
           <ScoreDistributionHistogram env={envName} theme={theme} />
