@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { fetchSubnetOverview, type SubnetOverviewRow, fetchLiveEnvLeaderboard, type LiveEnvLeaderboardRow } from '../services/api';
-import { useEnvironments } from '../contexts/EnvironmentsContext';
-import TablePaginationControls from '../components/TablePaginationControls';
-import CodeViewer from '../components/CodeViewer';
-import { ExternalLink, Code } from 'lucide-react';
-import ScoreDistributionHistogram from '../components/ScoreDistributionHistogram';
-import LatencyBoxPlot from '../components/LatencyBoxPlot';
-import Card from '../components/Card';
-import Button from '../components/Button';
-import ToggleButton from '../components/ToggleButton';
-import DataTable from '../components/DataTable';
+import React, { useEffect, useState } from 'react'
+import { useParams, Navigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import {
+  fetchSubnetOverview,
+  type SubnetOverviewRow,
+  fetchLiveEnvLeaderboard,
+  type LiveEnvLeaderboardRow,
+} from '../services/api'
+import { useEnvironments } from '../contexts/EnvironmentsContext'
+import TablePaginationControls from '../components/TablePaginationControls'
+import CodeViewer from '../components/CodeViewer'
+import { ExternalLink, Code } from 'lucide-react'
+import ScoreDistributionHistogram from '../components/ScoreDistributionHistogram'
+import LatencyBoxPlot from '../components/LatencyBoxPlot'
+import Card from '../components/Card'
+import Button from '../components/Button'
+import ToggleButton from '../components/ToggleButton'
+import DataTable from '../components/DataTable'
 
 const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
-  const { envName: rawEnv } = useParams();
-  const { environments, loading: envLoading } = useEnvironments();
+  const { envName: rawEnv } = useParams()
+  const { environments, loading: envLoading } = useEnvironments()
 
-  const envName = (rawEnv || '').toUpperCase();
-  const envKey = envName.toLowerCase();
+  const envName = (rawEnv || '').toUpperCase()
+  const envKey = envName.toLowerCase()
 
   // Table view mode for this environment (Live default for consistency with overview)
-  const [viewMode, setViewMode] = useState<'live' | 'historical'>('live');
+  const [viewMode, setViewMode] = useState<'live' | 'historical'>('live')
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['subnet-overview'],
@@ -29,82 +34,97 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     enabled: viewMode === 'historical',
     staleTime: 60000,
     refetchOnMount: false,
-  });
+  })
 
   // Live environment leaderboard for this specific env
-  const { data: liveData, error: liveError, isLoading: isLiveLoading } = useQuery({
+  const {
+    data: liveData,
+    error: liveError,
+    isLoading: isLiveLoading,
+  } = useQuery({
     queryKey: ['live-env-leaderboard', envName],
     queryFn: () => fetchLiveEnvLeaderboard(envName),
     enabled: viewMode === 'live',
     staleTime: 5000,
     refetchInterval: viewMode === 'live' ? 6000 : false,
     refetchOnMount: false,
-  });
+  })
 
   if (!envLoading) {
     // Validate the env from URL against the dynamic list
     if (!environments.includes(envName)) {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/" replace />
     }
   }
 
-  const rows = Array.isArray(data) ? data : [];
+  const rows = Array.isArray(data) ? data : []
 
   // Build a per-environment ranking from subnet overview by looking up the dynamic property
   const ranked = rows
     .map((r) => {
-      const value = (r as any)[envKey] as number | null | undefined;
-      return { row: r, value: value == null ? null : value };
+      const value = (r as any)[envKey] as number | null | undefined
+      return { row: r, value: value == null ? null : value }
     })
     .filter((x) => x.value != null)
-    .sort((a, b) => (b.value! - a.value!));
+    .sort((a, b) => b.value! - a.value!)
 
   // Live dataset from API
-  const liveRows: LiveEnvLeaderboardRow[] = Array.isArray(liveData) ? (liveData as LiveEnvLeaderboardRow[]) : [];
+  const liveRows: LiveEnvLeaderboardRow[] = Array.isArray(liveData)
+    ? (liveData as LiveEnvLeaderboardRow[])
+    : []
 
   // Unified table state derived from current mode
-  const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length;
-  const tableLoading = viewMode === 'historical' ? isLoading : isLiveLoading;
-  const tableError = viewMode === 'historical' ? (error as unknown) : (liveError as unknown);
+  const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length
+  const tableLoading = viewMode === 'historical' ? isLoading : isLiveLoading
+  const tableError =
+    viewMode === 'historical' ? (error as unknown) : (liveError as unknown)
 
   // Pagination state
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [page, setPage] = useState<number>(1);
-  const [showCode, setShowCode] = useState(false);
+  const [pageSize, setPageSize] = useState<number>(20)
+  const [page, setPage] = useState<number>(1)
+  const [showCode, setShowCode] = useState(false)
 
   // Reset to first page when table count or page size changes
   useEffect(() => {
-    setPage(1);
-  }, [pageSize, tableTotal]);
+    setPage(1)
+  }, [pageSize, tableTotal])
 
-  const totalPages = Math.max(1, Math.ceil(tableTotal / pageSize));
+  const totalPages = Math.max(1, Math.ceil(tableTotal / pageSize))
   // Clamp page if it exceeds totalPages
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
 
-  const startIndex = tableTotal === 0 ? 0 : (page - 1) * pageSize;
-  const endIndex = Math.min(tableTotal, startIndex + pageSize);
-  const pagedHistorical = ranked.slice(startIndex, Math.min(ranked.length, startIndex + pageSize));
-  const pagedLive = liveRows.slice(startIndex, Math.min(liveRows.length, startIndex + pageSize));
+  const startIndex = tableTotal === 0 ? 0 : (page - 1) * pageSize
+  const endIndex = Math.min(tableTotal, startIndex + pageSize)
+  const pagedHistorical = ranked.slice(
+    startIndex,
+    Math.min(ranked.length, startIndex + pageSize),
+  )
+  const pagedLive = liveRows.slice(
+    startIndex,
+    Math.min(liveRows.length, startIndex + pageSize),
+  )
 
   // Environment-specific overview stats
-  const envTotals = ranked.length;
-  const envEligible = ranked.filter(({ row }) => row.eligible).length;
-  const envHighest = ranked.length > 0 ? ranked[0].value : null;
-  const overviewLoading = viewMode === 'historical' ? isLoading : isLiveLoading;
-  const envTotalsDisplay = viewMode === 'historical' ? envTotals : liveRows.length;
-  const envEligibleDisplay = viewMode === 'historical' ? envEligible : liveRows.length;
+  const envTotals = ranked.length
+  const envEligible = ranked.filter(({ row }) => row.eligible).length
+  const envHighest = ranked.length > 0 ? ranked[0].value : null
+  const overviewLoading = viewMode === 'historical' ? isLoading : isLiveLoading
+  const envTotalsDisplay =
+    viewMode === 'historical' ? envTotals : liveRows.length
+  const envEligibleDisplay =
+    viewMode === 'historical' ? envEligible : liveRows.length
   const envHighestDisplay =
     viewMode === 'historical'
       ? envHighest
-      : (liveRows.length > 0
-          ? liveRows.reduce<number | null>((max, r) => {
-              const val = r.average_score ?? null;
-              if (val == null) return max;
-              return max == null ? val : Math.max(max, val);
-            }, null)
-          : null);
+      : liveRows.length > 0
+      ? liveRows.reduce<number | null>((max, r) => {
+          const val = r.average_score ?? null
+          if (val == null) return max
+          return max == null ? val : Math.max(max, val)
+        }, null)
+      : null
 
   // Environment metadata and repo mapping (fallbacks; replace with real mappings when available)
   const repoMap: Record<string, string> = {
@@ -114,7 +134,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     hvm: 'https://github.com/cisterciansis/afffine-dash-starter',
     mth: 'https://github.com/cisterciansis/afffine-dash-starter',
     sat: 'https://github.com/cisterciansis/afffine-dash-starter',
-  };
+  }
 
   const descriptionMap: Record<string, string> = {
     abd: 'ABD environment code and evaluation hooks.',
@@ -123,7 +143,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     hvm: 'HVM environment code and evaluation hooks.',
     mth: 'MTH environment code and evaluation hooks.',
     sat: 'SAT environment code and evaluation hooks.',
-  };
+  }
 
   const activeEnvMeta = {
     id: envKey,
@@ -131,24 +151,25 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     description: descriptionMap[envKey] || `${envName} environment`,
     repoUrl: `https://github.com/AffineFoundation/affine/blob/main/affine/envs/${envKey}.py`,
     models: Array.from({ length: envTotals }),
-  };
+  }
 
   // Formatting helpers aligned with OverviewTable
-  const fmt = (n: number | null | undefined, digits = 1) => (n == null ? '—' : n.toFixed(digits));
-  const dash = '—';
+  const fmt = (n: number | null | undefined, digits = 1) =>
+    n == null ? '—' : n.toFixed(digits)
+  const dash = '—'
   const midTrunc = (s: string, max = 48) => {
-    if (!s) return s as unknown as string;
-    if (s.length <= max) return s;
-    const half = Math.floor((max - 1) / 2);
-    return s.slice(0, half) + '…' + s.slice(s.length - half);
-  };
+    if (!s) return s as unknown as string
+    if (s.length <= max) return s
+    const half = Math.floor((max - 1) / 2)
+    return s.slice(0, half) + '…' + s.slice(s.length - half)
+  }
 
   // Grid columns: Rank | UID | Model | Rev | Env Score | Overall Avg | Success % | Avg Latency | Rollouts
   const gridCols =
-    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_112px_96px_96px_128px_104px] gap-2 items-center';
+    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_112px_96px_96px_128px_104px] gap-2 items-center'
 
   return (
-    <div className="space-y-6 text-gray-900 dark:text-white">
+    <div className="space-y-6 text-light-500 dark:text-dark-500">
       {/* Header / Summary */}
       <Card
         title={`${envName} Environment`}
@@ -156,7 +177,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         theme={theme}
         headerActions={
           <div className="flex items-center gap-3">
-            <Button onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')} theme={theme}>
+            <Button
+              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
+              theme={theme}
+            >
               <ExternalLink size={12} />
               REPO
             </Button>
@@ -179,13 +203,17 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       )}
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
-      <Card title={`${envName} OVERVIEW`} theme={theme} className="bg-light-100 dark:bg-black">
+      <Card
+        title={`${envName} OVERVIEW`}
+        theme={theme}
+        className="bg-light-100 dark:bg-dark-100"
+      >
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-sans font-bold text-gray-900 dark:text-white">
+            <div className="text-2xl font-sans font-bold text-light-500 dark:text-dark-500">
               {overviewLoading ? '—' : envTotalsDisplay}
             </div>
-            <div className="text-xs font-sans uppercase tracking-wider text-gray-600 dark:text-gray-300">
+            <div className="text-xs font-sans uppercase tracking-wider text-light-400 dark:text-dark-400">
               Total Models
             </div>
           </div>
@@ -193,21 +221,20 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             <div className="text-2xl font-sans font-bold text-green-600 dark:text-green-400">
               {overviewLoading ? '—' : envEligibleDisplay}
             </div>
-            <div className="text-xs font-sans uppercase tracking-wider text-gray-600 dark:text-gray-300">
+            <div className="text-xs font-sans uppercase tracking-wider text-light-400 dark:text-dark-400">
               Eligible
             </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-sans font-bold text-gray-900 dark:text-white">
+            <div className="text-2xl font-sans font-bold text-light-500 dark:text-dark-500">
               {overviewLoading ? '—' : fmt(envHighestDisplay, 1)}
             </div>
-            <div className="text-xs font-sans uppercase tracking-wider text-gray-600 dark:text-gray-300">
+            <div className="text-xs font-sans uppercase tracking-wider text-light-400 dark:text-dark-400">
               Highest Score
             </div>
           </div>
         </div>
       </Card>
-
 
       {/* Top Models Table for this Environment */}
       <Card
@@ -235,7 +262,6 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           </div>
         }
       >
-
         {/* Pagination Controls (consistent with Overview/Leaderboard) */}
         <div className="px-3 pt-3">
           <TablePaginationControls
@@ -254,12 +280,23 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             columns={[
               { key: '#', label: '#' },
               { key: 'uid', label: 'UID' },
-              { key: 'model', label: 'Model', align: 'left', render: (value) => (
-                <span title={value}>{midTrunc(value, 32)}</span>
-              )},
-              { key: 'rev', label: 'Rev', render: (value) => (
-                <span title={String(value)}>{midTrunc(String(value), 10)}</span>
-              )},
+              {
+                key: 'model',
+                label: 'Model',
+                align: 'left',
+                render: (value) => (
+                  <span title={value}>{midTrunc(value, 32)}</span>
+                ),
+              },
+              {
+                key: 'rev',
+                label: 'Rev',
+                render: (value) => (
+                  <span title={String(value)}>
+                    {midTrunc(String(value), 10)}
+                  </span>
+                ),
+              },
               { key: 'envScore', label: `${envName} Score` },
               { key: 'overallAvg', label: 'Overall Avg' },
               { key: 'successRate', label: 'Success %' },
@@ -276,7 +313,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                     envScore: fmt(value, 1),
                     overallAvg: fmt(row.overall_avg_score, 1),
                     successRate: `${row.success_rate_percent.toFixed(1)}%`,
-                    avgLatency: row.avg_latency == null ? dash : row.avg_latency.toFixed(2),
+                    avgLatency:
+                      row.avg_latency == null
+                        ? dash
+                        : row.avg_latency.toFixed(2),
                     rollouts: row.total_rollouts.toLocaleString(),
                   }))
                 : pagedLive.map((lr, idx) => ({
@@ -286,13 +326,23 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                     rev: lr.revision ?? '',
                     envScore: fmt(lr.average_score, 1),
                     overallAvg: dash,
-                    successRate: lr.success_rate_percent == null ? '—' : `${lr.success_rate_percent.toFixed(1)}%`,
-                    avgLatency: lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2),
+                    successRate:
+                      lr.success_rate_percent == null
+                        ? '—'
+                        : `${lr.success_rate_percent.toFixed(1)}%`,
+                    avgLatency:
+                      lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2),
                     rollouts: lr.total_rollouts.toLocaleString(),
                   }))
             }
             loading={tableLoading}
-            error={tableError ? (tableError instanceof Error ? tableError.message : String(tableError)) : null}
+            error={
+              tableError
+                ? tableError instanceof Error
+                  ? tableError.message
+                  : String(tableError)
+                : null
+            }
             gridCols={gridCols}
             pageSize={pageSize}
           />
@@ -305,8 +355,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default EnvironmentPage;
-
+export default EnvironmentPage

@@ -13,13 +13,13 @@ const PaginationButton: React.FC<PaginationButtonProps> = ({
   disabled = false,
   theme,
   title,
-  children
+  children,
 }) => {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className="transition-colors duration-300 inline-flex items-center justify-center h-8 w-8 text-xs font-sans rounded-md disabled:opacity-50 border-gray-400 hover:bg-gray-100 dark:text-dark-500 dark:hover:text-dark-highlight dark:hover:bg-dark-200"
+      className="transition-colors duration-300 inline-flex items-center justify-center h-8 w-8 text-xs font-sans rounded-md disabled:opacity-50 text-light-500 hover:text-light-highlight   hover:bg-light-100 dark:text-dark-500 dark:hover:text-dark-highlight dark:hover:bg-dark-200"
       title={title}
     >
       {children}
