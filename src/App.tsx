@@ -173,10 +173,10 @@ function App() {
       ) : (
         <>
           <div
-            className="fixed inset-0 pointer-events-none z-50 opacity-20"
+            className="fixed inset-0 pointer-events-none z-50 opacity-40"
             style={{
               background:
-                'radial-gradient(circle at 70% 0%, rgb(99, 102, 241) 0%, rgba(99, 102, 241, 0.3) 40%, rgba(215, 252, 249) 70%)',
+                'radial-gradient(circle at 70% 0%, rgb(215, 252, 249) 0%, rgba(215, 252, 249) 40%, rgba(99, 102, 241, 0.3) 70%)',
             }}
           />
           <ParallaxNoise />
