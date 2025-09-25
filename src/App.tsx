@@ -224,12 +224,22 @@ function App() {
                     </div>
                   }
                 >
-                  <div className="space-y-6">
-                    <NetworkActivityChart theme={theme} />
-                    <EnvironmentStatsChart theme={theme} />
-                    <MinerEfficiencyChart theme={theme} />
-                    <GpuMarketShareDonut theme={theme} />
-                    <CostPerformanceScatter theme={theme} />
+                  <div className="columns-2 gap-4 space-y-4">
+                    <div className="break-inside-avoid">
+                      <NetworkActivityChart theme={theme} />
+                    </div>
+                    <div className="break-inside-avoid">
+                      <EnvironmentStatsChart theme={theme} />
+                    </div>
+                    <div className="break-inside-avoid">
+                      <MinerEfficiencyChart theme={theme} />
+                    </div>
+                    <div className="break-inside-avoid">
+                      <GpuMarketShareDonut theme={theme} />
+                    </div>
+                    <div className="break-inside-avoid">
+                      <CostPerformanceScatter theme={theme} />
+                    </div>
                   </div>
                 </React.Suspense>
               </div>

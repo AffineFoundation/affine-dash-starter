@@ -349,10 +349,14 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         </div>
       </Card>
       {!tableLoading && (
-        <>
-          <ScoreDistributionHistogram env={envName} theme={theme} />
-          <LatencyBoxPlot env={envName} theme={theme} />
-        </>
+        <div className="columns-2 gap-4 space-y-4">
+          <div className="break-inside-avoid">
+            <ScoreDistributionHistogram env={envName} theme={theme} />
+          </div>
+          <div className="break-inside-avoid">
+            <LatencyBoxPlot env={envName} theme={theme} />
+          </div>
+        </div>
       )}
     </div>
   )
