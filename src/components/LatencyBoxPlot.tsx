@@ -16,6 +16,7 @@ import {
   ErrorBar,
 } from 'recharts'
 import Card from './Card'
+import { useTailwindColors } from '../hooks/useTailwindColors'
 
 interface Props {
   env: string // e.g., 'SAT'
@@ -48,6 +49,7 @@ const truncHotkey = (s: string, max = 14) =>
   s.length <= max ? s : `${s.slice(0, 6)}…${s.slice(-7)}`
 
 const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
+  const colors = useTailwindColors(theme)
   const { data, isLoading, error } = useQuery<LatencyDistributionByEnvRow[]>({
     queryKey: ['latency-distribution-by-env', env],
     queryFn: () => fetchLatencyDistributionByEnv(env),
@@ -106,7 +108,7 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 400 }}>
-          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
+          <div className="h-full w-full animate-pulse bg-light-200 dark:bg-dark-200" />
         </div>
       )}
 
@@ -117,13 +119,10 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
               data={stats}
               margin={{ top: 12, right: 56, left: 56, bottom: 56 }}
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={theme === 'dark' ? '#333' : '#ddd'}
-              />
+              <CartesianGrid strokeDasharray="none" stroke={colors.lines} />
               <XAxis
                 dataKey="hotkey"
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 tickMargin={8}
                 interval={0}
                 height={80}
@@ -132,20 +131,24 @@ const LatencyBoxPlot: React.FC<Props> = ({ env, theme }) => {
                 tickFormatter={truncHotkey}
               />
               <YAxis
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 tickMargin={8}
                 label={{
                   value: 'Latency (s)',
                   angle: -90,
                   position: 'left',
                   offset: 0,
-                  fill: theme === 'dark' ? '#ddd' : '#333',
+                  fill: colors.primary,
                 }}
               />
               <Tooltip
                 contentStyle={{
-                  background: theme === 'dark' ? '#111' : '#fff',
-                  border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                  background: colors.bg,
+                  border: 'none',
+                  borderRadius: 8,
+                  boxShadow: '0 0 20px rgba(0, 0, 0, 0.7)',
+                  padding: '20px',
+                  color: colors.secondary,
                 }}
                 formatter={(value: any, name: any, props: any) => {
                   if (name === 'Median')
@@ -165,9 +168,11 @@ min=${p.min.toFixed(3)}s  q1=${p.q1.toFixed(3)}s  median=${p.median.toFixed(
                 }}
               />
               <Legend
-                verticalAlign="bottom"
-                align="left"
-                wrapperStyle={{ paddingTop: 8 }}
+                iconSize={12}
+                wrapperStyle={{ bottom: 0 }}
+                formatter={(value) => (
+                  <span style={{ fontSize: 12 }}>{value}</span>
+                )}
               />
               {/* Scatter anchored at median; two ErrorBars for IQR and range to emulate box+whiskers */}
               <Scatter
