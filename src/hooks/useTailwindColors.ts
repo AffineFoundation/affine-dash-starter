@@ -16,28 +16,30 @@ export const useTailwindColors = (theme: 'light' | 'dark') => {
 
     const resolvedColors = {
       // Chart colors
+      red: getComputedColor('text-dark-highlight'),
+      blue: getComputedColor('text-light-highlight'),
       purple: getComputedColor('text-chart-purple'),
-      red: getComputedColor('text-chart-red'),
       teal: getComputedColor('text-chart-teal'),
       orange: getComputedColor('text-chart-orange'),
       green: getComputedColor('text-chart-green'),
-      blue: getComputedColor('text-chart-blue'),
 
-      // Text colors
+      // Theme colors
       primary:
         theme === 'dark'
-          ? getComputedColor('text-dark-500')
-          : getComputedColor('text-light-500'),
+          ? getComputedColor('text-dark-400')
+          : getComputedColor('text-light-400'),
       secondary:
         theme === 'dark'
           ? getComputedColor('text-dark-400')
           : getComputedColor('text-light-400'),
-
-      // Background colors
       bg:
         theme === 'dark'
           ? getComputedColor('text-dark-75')
           : getComputedColor('text-light-75'),
+      lines:
+        theme === 'dark'
+          ? getComputedColor('text-dark-300')
+          : getComputedColor('text-light-300'),
     }
 
     setColors(resolvedColors)

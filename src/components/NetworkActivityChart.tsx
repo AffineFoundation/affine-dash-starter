@@ -75,12 +75,12 @@ const NetworkActivityChart: React.FC<Props> = ({ theme }) => {
               margin={{ top: 12, right: 56, left: 56, bottom: 20 }}
             >
               <defs>
-                <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={colors.blue} stopOpacity={0.3} />
-                  <stop offset="100%" stopColor={colors.blue} stopOpacity={0} />
+                <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={colors.red} stopOpacity={0.3} />
+                  <stop offset="100%" stopColor={colors.red} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={colors.primary} />
+              <CartesianGrid strokeDasharray="none" stroke={colors.lines} />
               <XAxis
                 dataKey="period"
                 tickFormatter={formatDate}
@@ -127,13 +127,19 @@ const NetworkActivityChart: React.FC<Props> = ({ theme }) => {
                 }}
                 labelFormatter={(label) => `Date: ${formatDate(String(label))}`}
               />
-              <Legend />
+              <Legend
+                iconSize={12}
+                wrapperStyle={{ bottom: 0 }}
+                formatter={(value) => (
+                  <span style={{ fontSize: 12 }}>{value}</span>
+                )}
+              />
               <Bar
                 yAxisId="left"
                 dataKey="total_rollouts"
                 name="Total Rollouts"
-                fill="url(#blueGradient)"
-                stroke={colors.blue}
+                fill="url(#redGradient)"
+                stroke={colors.red}
                 radius={[4, 4, 0, 0]}
               />
               <Line
@@ -141,19 +147,19 @@ const NetworkActivityChart: React.FC<Props> = ({ theme }) => {
                 type="monotone"
                 dataKey="avg_all_plot"
                 name="Average Score (All Models)"
-                stroke={colors.green}
+                stroke={colors.purple}
                 dot={false}
-                strokeWidth={2}
+                strokeWidth={1}
               />
               <Line
                 yAxisId="right"
                 type="monotone"
                 dataKey="avg_top50_daily_plot"
                 name="Average Score (Top 50 Daily)"
-                stroke={colors.orange}
+                stroke={colors.blue}
                 strokeDasharray="5 3"
                 dot={false}
-                strokeWidth={2}
+                strokeWidth={1}
               />
             </ComposedChart>
           </ResponsiveContainer>

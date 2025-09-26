@@ -12,6 +12,7 @@ import {
   Legend,
 } from 'recharts'
 import Card from './Card'
+import { useTailwindColors } from '../hooks/useTailwindColors'
 
 interface Props {
   theme: 'light' | 'dark'
@@ -24,6 +25,7 @@ const compactNumber = (n: number) =>
   }).format(n)
 
 const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
+  const colors = useTailwindColors(theme)
   const { data, isLoading, error } = useQuery<EnvironmentStatsRow[]>({
     queryKey: ['environment-stats'],
     queryFn: fetchEnvironmentStats,
@@ -33,11 +35,7 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
   })
 
   return (
-    <Card
-      title="Environment Popularity & Difficulty"
-      theme={theme}
-    >
-
+    <Card title="Environment Popularity & Difficulty" theme={theme}>
       {error && (
         <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
@@ -45,7 +43,7 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 300 }}>
-          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
+          <div className="h-full w-full animate-pulse bg-light-200 dark:bg-dark-200" />
         </div>
       )}
 
@@ -56,41 +54,38 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
               data={data ?? []}
               margin={{ top: 12, right: 56, left: 56, bottom: 20 }}
               barGap={4}
-              barCategoryGap="20%"
+              barCategoryGap="25%"
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={theme === 'dark' ? '#333' : '#ddd'}
-              />
+              <CartesianGrid strokeDasharray="none" stroke={colors.lines} />
               <XAxis
                 dataKey="env_name"
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 tickMargin={8}
               />
               <YAxis
                 yAxisId="left"
                 orientation="left"
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 tickFormatter={(v: number) => compactNumber(v)}
                 tickMargin={8}
                 label={{
                   value: 'Total Rollouts',
                   angle: -90,
                   position: 'left',
-                  offset: 0,
-                  fill: theme === 'dark' ? '#ddd' : '#333',
+                  offset: 15,
+                  fill: colors.primary,
                 }}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 label={{
                   value: 'Success %',
                   angle: 90,
                   position: 'right',
-                  offset: 0,
-                  fill: theme === 'dark' ? '#ddd' : '#333',
+                  offset: 15,
+                  fill: colors.primary,
                 }}
                 domain={[0, 100]}
                 ticks={[0, 20, 40, 60, 80, 100]}
@@ -100,8 +95,12 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
               />
               <Tooltip
                 contentStyle={{
-                  background: theme === 'dark' ? '#111' : '#fff',
-                  border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                  background: colors.bg,
+                  border: 'none',
+                  borderRadius: 8,
+                  boxShadow: '0 0 20px rgba(0, 0, 0, 0.7)',
+                  padding: '20px',
+                  color: colors.secondary,
                 }}
                 formatter={(value: any, name: string) => {
                   if (name === 'Success %')
@@ -109,18 +108,26 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
                   return [value, name]
                 }}
               />
-              <Legend />
+              <Legend
+                iconSize={12}
+                wrapperStyle={{ bottom: 0 }}
+                formatter={(value) => (
+                  <span style={{ fontSize: 12 }}>{value}</span>
+                )}
+              />
               <Bar
                 yAxisId="left"
                 dataKey="total_rollouts"
                 name="Total Rollouts"
-                fill={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
+                fill={colors.red}
+                radius={[4, 4, 0, 0]}
               />
               <Bar
                 yAxisId="right"
                 dataKey="success_rate"
                 name="Success %"
-                fill={theme === 'dark' ? '#f59e0b' : '#d97706'}
+                fill={colors.blue}
+                radius={[4, 4, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -131,4 +138,3 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
 }
 
 export default EnvironmentStatsChart
-

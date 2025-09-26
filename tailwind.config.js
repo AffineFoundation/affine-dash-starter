@@ -29,11 +29,9 @@ export default {
         },
         chart: {
           purple: '#92439E',
-          red: '#BF3232',
           teal: '#1B9AAA',
           orange: '#C87924',
           green: '#336D57',
-          blue: '#0867C2',
         },
       },
       fontFamily: {

@@ -15,6 +15,7 @@ import {
   Legend,
 } from 'recharts'
 import Card from './Card'
+import { useTailwindColors } from '../hooks/useTailwindColors'
 
 interface Props {
   env: string // e.g., 'SAT'
@@ -28,6 +29,7 @@ const bucketLabel = (bucket: number) => {
 }
 
 const ScoreDistributionHistogram: React.FC<Props> = ({ env, theme }) => {
+  const colors = useTailwindColors(theme)
   const { data, isLoading, error } = useQuery<ScoreDistributionByEnvRow[]>({
     queryKey: ['score-distribution-by-env', env],
     queryFn: () => fetchScoreDistributionByEnv(env),
@@ -61,7 +63,7 @@ const ScoreDistributionHistogram: React.FC<Props> = ({ env, theme }) => {
       )}
       {isLoading && !error && (
         <div style={{ width: '100%', height: 300 }}>
-          <div className="h-full w-full animate-pulse bg-gray-100 dark:bg-gray-900" />
+          <div className="h-full w-full animate-pulse bg-light-200 dark:bg-dark-200" />
         </div>
       )}
 
@@ -72,39 +74,50 @@ const ScoreDistributionHistogram: React.FC<Props> = ({ env, theme }) => {
               data={chartData}
               margin={{ top: 12, right: 24, left: 24, bottom: 20 }}
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={theme === 'dark' ? '#333' : '#ddd'}
-              />
-              <XAxis
-                dataKey="label"
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
-                tickMargin={8}
-              />
+              <defs>
+                <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={colors.blue} stopOpacity={0.3} />
+                  <stop offset="100%" stopColor={colors.blue} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="none" stroke={colors.lines} />
+              <XAxis dataKey="label" stroke={colors.primary} tickMargin={8} />
               <YAxis
-                stroke={theme === 'dark' ? '#ddd' : '#333'}
+                stroke={colors.primary}
                 tickMargin={8}
                 label={{
                   value: 'Number of Miners',
                   angle: -90,
                   position: 'left',
                   offset: 0,
-                  fill: theme === 'dark' ? '#ddd' : '#333',
+                  fill: colors.primary,
                 }}
               />
               <Tooltip
                 contentStyle={{
-                  background: theme === 'dark' ? '#111' : '#fff',
-                  border: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                  background: colors.bg,
+                  border: 'none',
+                  borderRadius: 8,
+                  boxShadow: '0 0 20px rgba(0, 0, 0, 0.7)',
+                  padding: '20px',
+                  color: colors.secondary,
                 }}
                 formatter={(value: any) => [value, 'Miners']}
                 labelFormatter={(label) => `Bucket: ${label}`}
               />
-              <Legend />
+              <Legend
+                iconSize={12}
+                wrapperStyle={{ bottom: 0 }}
+                formatter={(value) => (
+                  <span style={{ fontSize: 12 }}>{value}</span>
+                )}
+              />
               <Bar
                 dataKey="number_of_miners"
                 name="Miners"
-                fill={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
+                fill="url(#blueGradient)"
+                stroke={colors.blue}
+                radius={[4, 4, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
