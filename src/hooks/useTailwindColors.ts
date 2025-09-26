@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const useTailwindColors = () => {
+export const useTailwindColors = (theme: 'light' | 'dark') => {
   const [colors, setColors] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -24,15 +24,24 @@ export const useTailwindColors = () => {
       blue: getComputedColor('text-chart-blue'),
 
       // Text colors
-      primary: getComputedColor('text-light-500 dark:text-dark-500'),
-      secondary: getComputedColor('text-light-400 dark:text-dark-400'),
+      primary:
+        theme === 'dark'
+          ? getComputedColor('text-dark-500')
+          : getComputedColor('text-light-500'),
+      secondary:
+        theme === 'dark'
+          ? getComputedColor('text-dark-400')
+          : getComputedColor('text-light-400'),
 
       // Background colors
-      bg: getComputedColor('bg-light-75 dark:bg-dark-75'),
+      bg:
+        theme === 'dark'
+          ? getComputedColor('text-dark-75')
+          : getComputedColor('text-light-75'),
     }
 
     setColors(resolvedColors)
-  }, [])
+  }, [theme])
 
   return colors
 }

@@ -35,7 +35,7 @@ const compactNumber = (n: number) =>
   }).format(n)
 
 const NetworkActivityChart: React.FC<Props> = ({ theme }) => {
-  const colors = useTailwindColors()
+  const colors = useTailwindColors(theme)
   const { data, isLoading, error } = useQuery<NetworkActivityRow[]>({
     queryKey: ['network-activity'],
     queryFn: fetchNetworkActivity,
