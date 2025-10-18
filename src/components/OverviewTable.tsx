@@ -196,8 +196,6 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   const { environments: envs, loading: envLoading } = useEnvironments()
 
-
-
   const toggleSort = (field: typeof sortField) => {
     if (viewMode !== 'live') return
     setSortDir((prev) =>
@@ -237,7 +235,20 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         headerActions={viewModeToggle}
       >
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center">
+          <div className="text-black">
+            <div className="text-xs font-sans uppercase tracking-wider">
+              Total Models
+            </div>
+
+            <div className="text-7xl font-sans">
+              {loading ? (
+                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+              ) : (
+                rows.length
+              )}
+            </div>
+          </div>
+          {/* <div className="text-center">
             <div className="text-2xl font-sans font-bold">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
@@ -248,8 +259,22 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             <div className="text-xs font-sans uppercase tracking-wider ">
               Total Models
             </div>
+          </div> */}
+
+          <div className="text-black">
+            <div className="text-xs font-sans uppercase tracking-wider ">
+              Eligible
+            </div>
+
+            <div className="text-7xl font-sans">
+              {loading ? (
+                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+              ) : (
+                rows.filter((r) => r.eligible).length
+              )}
+            </div>
           </div>
-          <div className="text-center">
+          {/* <div className="text-center">
             <div className="text-2xl font-sans font-bold text-green-600 dark:text-green-400">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
@@ -260,8 +285,22 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             <div className="text-xs font-sans uppercase tracking-wider ">
               Eligible
             </div>
+          </div> */}
+
+          <div className="text-black">
+            <div className="text-xs font-sans uppercase tracking-wider ">
+              Environments
+            </div>
+
+            <div className="text-7xl font-sans">
+              {envLoading ? (
+                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+              ) : (
+                envs.length
+              )}
+            </div>
           </div>
-          <div className="text-center">
+          {/* <div className="text-center">
             <div className="text-2xl font-sans font-bold ">
               {envLoading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
@@ -272,7 +311,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             <div className="text-xs font-sans uppercase tracking-wider ">
               Environments
             </div>
-          </div>
+          </div> */}
         </div>
       </Card>
 

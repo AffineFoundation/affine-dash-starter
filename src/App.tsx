@@ -158,8 +158,10 @@ function App() {
   }, [environments, navigate])
 
   return (
-    <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
-      {theme === 'dark' ? (
+    <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
+      {/* <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden"> */}
+
+      {/* {theme === 'dark' ? (
         <>
           <div
             className="fixed inset-0 pointer-events-none z-50 opacity-40"
@@ -195,13 +197,15 @@ function App() {
           />
           <ParallaxNoise />
         </>
-      )}
+      )} */}
 
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 mt-20 px-6 py-8">
+      <main className="mt-16 px-6 py-8 w-full">
+        {/* <main className="flex-1 ml-64 mt-20 px-6 py-8"> */}
+
         {/* Content */}
         <Routes>
           <Route
