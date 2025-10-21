@@ -232,12 +232,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       <div className="lg:col-span-full order-1">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wide">
+            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Total Models
             </div>
 
             <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl font-sans">
+              <div className="text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : (
@@ -250,12 +250,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           </div>
 
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wide">
+            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Eligible
             </div>
 
             <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl font-sans">
+              <div className="text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : (
@@ -268,12 +268,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           </div>
 
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wide">
+            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Environments
             </div>
 
             <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl font-sans">
+              <div className="text-7xl leading-[80%]">
                 {envLoading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : (

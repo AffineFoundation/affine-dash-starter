@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
         </h1>
       </div>
 
-      <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide">
+      <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
         <a href="">Chat</a>
 
         <a href="">Research</a>

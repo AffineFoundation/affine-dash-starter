@@ -164,13 +164,13 @@ function App() {
       <Hero />
 
       {/* Main Content */}
-      <main className="mt-16 px-6 py-8 w-full">
+      <main className="mt-16 px-5 pb-20 w-full">
         {/* Content */}
         <Routes>
           <Route
             path="/"
             element={
-              <div className="space-y-6">
+              <div className="space-y-32">
                 <OverviewTable theme={theme} />
 
                 <React.Suspense

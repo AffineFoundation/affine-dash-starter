@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
+import RedIndicator from './RedIndicator'
 
 export default function Hero() {
   const {
@@ -10,7 +11,7 @@ export default function Hero() {
 
   const sidebarItemClass = (active: boolean) => {
     const base =
-      'rounded-full px-6 py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide'
+      'rounded-full px-6 py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide leading-[80%]'
     if (active) {
       return `${base} bg-black text-white`
     }
@@ -20,16 +21,12 @@ export default function Hero() {
   return (
     <div className="px-5 flex justify-between items-center">
       <div className="flex items-start gap-3">
-        <h1 className="uppercase text-7xl leading-none">Dashboard</h1>
+        <h1 className="uppercase text-7xl leading-[80%]">Dashboard</h1>
 
-        <div className="flex items-center gap-1 border border-red-500 text-red-500 py-[2px] px-1 rounded-[4px] font-mono uppercase tracking-wide text-xs">
-          <div className="rounded-full bg-red-500 size-1" />
-
-          <span className="leading-none">Live</span>
-        </div>
+        <RedIndicator text="Live" live />
       </div>
 
-      <nav className="flex gap-2 bg-white p-[10px] rounded-full border border-black/6">
+      <nav className="flex items-center gap-2 bg-white p-[10px] rounded-full border border-black/6">
         <NavLink
           to="/"
           end
@@ -60,7 +57,7 @@ export default function Hero() {
 
         <NavLink
           to=""
-          className="rounded-full px-6 py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide text-light-smoke bg-light-sand"
+          className="rounded-full px-6 py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide leading-[80%] text-light-smoke bg-light-sand"
           title=""
         >
           See more (4)
