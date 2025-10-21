@@ -42,6 +42,8 @@ type LiveDisplayRow = {
   l4?: number | null
 }
 
+const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
+
 const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   const [viewMode, setViewMode] = useState<'historical' | 'live'>('live')
   const [enrichedMap, setEnrichedMap] = useState<
@@ -228,10 +230,10 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   // RENDER METHOD STARTS HERE
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 space-y-4 text-gray-900 dark:text-white">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12 text-gray-900 dark:text-white">
       <div className="lg:col-span-full order-1">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-black bg-white rounded-md p-4">
+        <div className="grid grid-cols-3 gap-[10px]">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Total Models
             </div>
@@ -240,6 +242,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               <div className="text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : rows.length === 0 ? (
+                  <StyledNA />
                 ) : (
                   rows.length
                 )}
@@ -249,7 +253,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
           </div>
 
-          <div className="text-black bg-white rounded-md p-4">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Eligible
             </div>
@@ -258,6 +262,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               <div className="text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : rows.filter((r) => r.eligible).length === 0 ? (
+                  <StyledNA />
                 ) : (
                   rows.filter((r) => r.eligible).length
                 )}
@@ -267,7 +273,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
           </div>
 
-          <div className="text-black bg-white rounded-md p-4">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Environments
             </div>
@@ -276,6 +282,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               <div className="text-7xl leading-[80%]">
                 {envLoading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : envs.length === 0 ? (
+                  <StyledNA />
                 ) : (
                   envs.length
                 )}
