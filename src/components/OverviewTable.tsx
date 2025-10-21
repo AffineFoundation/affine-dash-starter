@@ -236,7 +236,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       >
         <div className="grid grid-cols-3 gap-4">
           <div className="text-black">
-            <div className="text-xs font-sans uppercase tracking-wider">
+            <div className="text-xs font-mono uppercase tracking-wider">
               Total Models
             </div>
 
@@ -262,7 +262,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           </div> */}
 
           <div className="text-black">
-            <div className="text-xs font-sans uppercase tracking-wider ">
+            <div className="text-xs font-mono uppercase tracking-wider ">
               Eligible
             </div>
 
@@ -288,7 +288,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           </div> */}
 
           <div className="text-black">
-            <div className="text-xs font-sans uppercase tracking-wider ">
+            <div className="text-xs font-mono uppercase tracking-wider ">
               Environments
             </div>
 

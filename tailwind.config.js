@@ -16,6 +16,7 @@ export default {
           500: '#334155',
           highlight: '#6366F1',
           sand: '#F5F5F5',
+          smoke: '#0D0C10',
         },
         // dark: {
         //   50: '#080A05',
@@ -36,7 +37,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['PP Neue Montreal', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['Space Mono', 'monospace'],
       },
       animation: {
         pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
