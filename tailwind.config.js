@@ -15,8 +15,11 @@ export default {
           400: '#475569',
           500: '#334155',
           highlight: '#6366F1',
+          // NEW DESIGN COLORS:
           sand: '#F5F5F5',
           smoke: '#0D0C10',
+          iron: '#DEE2E4',
+          slate: '#77858E',
         },
         // dark: {
         //   50: '#080A05',

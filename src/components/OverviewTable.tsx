@@ -232,44 +232,56 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       <div className="lg:col-span-full order-1">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wider">
+            <div className="text-xs font-mono uppercase tracking-wide">
               Total Models
             </div>
 
-            <div className="text-7xl font-sans mt-14">
-              {loading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                rows.length
-              )}
+            <div className="mt-14 flex justify-between items-end">
+              <div className="text-7xl font-sans">
+                {loading ? (
+                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : (
+                  rows.length
+                )}
+              </div>
+
+              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
             </div>
           </div>
 
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wider ">
+            <div className="text-xs font-mono uppercase tracking-wide">
               Eligible
             </div>
 
-            <div className="text-7xl font-sans mt-14">
-              {loading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                rows.filter((r) => r.eligible).length
-              )}
+            <div className="mt-14 flex justify-between items-end">
+              <div className="text-7xl font-sans">
+                {loading ? (
+                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : (
+                  rows.filter((r) => r.eligible).length
+                )}
+              </div>
+
+              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
             </div>
           </div>
 
           <div className="text-black bg-white rounded-md p-4">
-            <div className="text-xs font-mono uppercase tracking-wider ">
+            <div className="text-xs font-mono uppercase tracking-wide">
               Environments
             </div>
 
-            <div className="text-7xl font-sans mt-14">
-              {envLoading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                envs.length
-              )}
+            <div className="mt-14 flex justify-between items-end">
+              <div className="text-7xl font-sans">
+                {envLoading ? (
+                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
+                ) : (
+                  envs.length
+                )}
+              </div>
+
+              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
             </div>
           </div>
         </div>
