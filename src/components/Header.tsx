@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
-    <header className="h-20 mx-auto p-5 flex items-center justify-between">
+    <header className="h-20 mx-auto p-5 mb-11 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <img src="/logo.svg" alt="Logo" />
 
@@ -31,6 +31,8 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
           <div className="size-2 absolute -bottom-4 left-1/2 -translate-x-1/2 bg-black rounded-full" />
         </a>
 
+        {/* DO WE STILL NEED THIS BELOW? */}
+
         {/* <div className="flex items-center gap-4">
             <HeaderLink
               href="https://taostats.io/subnets/120/metagraph"
@@ -45,6 +47,10 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               CODE
             </HeaderLink>
           </div> */}
+
+        {/* -------------------------------- */}
+
+        {/* WILL WE IMPLEMENT THIS CHANGE THEME BUTTON? */}
 
         {/* <button
             onClick={toggleTheme}

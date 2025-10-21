@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
-import Sidebar from './components/Sidebar'
+import Hero from './components/Hero'
 import OverviewTable from './components/OverviewTable'
 import ActivityFeed from './components/ActivityFeed'
 import { ParallaxLightBeams } from './components/ParallaxLightBeams'
@@ -159,54 +159,12 @@ function App() {
   }, [environments, navigate])
 
   return (
-    <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden">
-      {/* <div className="min-h-screen flex transition-colors duration-300 bg-light-200 text-light-500 dark:bg-dark-50 dark:text-dark-500 relative overflow-hidden"> */}
-
-      {/* {theme === 'dark' ? (
-        <>
-          <div
-            className="fixed inset-0 pointer-events-none z-50 opacity-40"
-            style={{
-              background:
-                'radial-gradient(circle at 70% 0%, rgb(230, 102, 105) 0%, rgba(230, 102, 105, 0.3) 40%, rgba(8, 10, 5, 0) 70%)',
-            }}
-          />
-          <div
-            className="fixed inset-0 pointer-events-none z-50 opacity-20"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 100%, rgb(99, 102, 241) 0%, rgba(99, 102, 241, 0.3) 40%, rgba(8, 10, 5, 0) 70%)',
-            }}
-          />
-          <ParallaxLightBeams />
-        </>
-      ) : (
-        <>
-          <div
-            className="fixed inset-0 pointer-events-none z-50 opacity-10"
-            style={{
-              background:
-                'radial-gradient(circle at 70% 0%, rgb(120, 253, 255) 0%, rgba(120, 253, 255) 40%, rgba(247, 249, 252, 0.3) 70%)',
-            }}
-          />
-          <div
-            className="fixed inset-0 pointer-events-none z-50 opacity-30"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 100%, rgb(99, 102, 241) 0%, rgba(99, 102, 241, 0.3) 40%, rgba(247, 249, 252) 70%)',
-            }}
-          />
-          <ParallaxNoise />
-        </>
-      )} */}
-
+    <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-smoke relative overflow-hidden">
       <Header theme={theme} toggleTheme={toggleTheme} />
-      <Sidebar />
+      <Hero />
 
       {/* Main Content */}
       <main className="mt-16 px-6 py-8 w-full">
-        {/* <main className="flex-1 ml-64 mt-20 px-6 py-8"> */}
-
         {/* Content */}
         <Routes>
           <Route
