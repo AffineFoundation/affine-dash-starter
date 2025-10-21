@@ -55,7 +55,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ theme, limit = 10 }) => {
       subtitle="Latest rollouts across environments"
       theme={theme}
       headerActions={refreshButton}
-      className="mb-6"
+      className="mb-6 bg-transparent"
     >
       {isLoading && (
         <div className="divide-y divide-gray-300">

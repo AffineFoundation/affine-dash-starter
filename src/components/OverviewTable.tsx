@@ -12,6 +12,7 @@ import { useValidatorSummary } from '../hooks/useValidatorSummary'
 import Card from './Card'
 import ToggleButton from './ToggleButton'
 import ModelsTable from './ModelsTable'
+import ActivityFeed from './ActivityFeed'
 
 interface OverviewTableProps {
   environments?: any[] // Kept for compatibility, not actively used
@@ -227,20 +228,15 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   // RENDER METHOD STARTS HERE
   return (
-    <div className="space-y-4 text-gray-900 dark:text-white">
-      {/* Overview Stats */}
-      <Card
-        title="SUBNET OVERVIEW"
-        theme={theme}
-        headerActions={viewModeToggle}
-      >
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 space-y-4 text-gray-900 dark:text-white">
+      <div className="lg:col-span-full order-1">
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-black">
+          <div className="text-black bg-white rounded-md p-4">
             <div className="text-xs font-mono uppercase tracking-wider">
               Total Models
             </div>
 
-            <div className="text-7xl font-sans">
+            <div className="text-7xl font-sans mt-14">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (
@@ -248,25 +244,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               )}
             </div>
           </div>
-          {/* <div className="text-center">
-            <div className="text-2xl font-sans font-bold">
-              {loading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                rows.length
-              )}
-            </div>
-            <div className="text-xs font-sans uppercase tracking-wider ">
-              Total Models
-            </div>
-          </div> */}
 
-          <div className="text-black">
+          <div className="text-black bg-white rounded-md p-4">
             <div className="text-xs font-mono uppercase tracking-wider ">
               Eligible
             </div>
 
-            <div className="text-7xl font-sans">
+            <div className="text-7xl font-sans mt-14">
               {loading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (
@@ -274,25 +258,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               )}
             </div>
           </div>
-          {/* <div className="text-center">
-            <div className="text-2xl font-sans font-bold text-green-600 dark:text-green-400">
-              {loading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                rows.filter((r) => r.eligible).length
-              )}
-            </div>
-            <div className="text-xs font-sans uppercase tracking-wider ">
-              Eligible
-            </div>
-          </div> */}
 
-          <div className="text-black">
+          <div className="text-black bg-white rounded-md p-4">
             <div className="text-xs font-mono uppercase tracking-wider ">
               Environments
             </div>
 
-            <div className="text-7xl font-sans">
+            <div className="text-7xl font-sans mt-14">
               {envLoading ? (
                 <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
               ) : (
@@ -300,33 +272,27 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
               )}
             </div>
           </div>
-          {/* <div className="text-center">
-            <div className="text-2xl font-sans font-bold ">
-              {envLoading ? (
-                <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-              ) : (
-                envs.length
-              )}
-            </div>
-            <div className="text-xs font-sans uppercase tracking-wider ">
-              Environments
-            </div>
-          </div> */}
         </div>
-      </Card>
+      </div>
 
-      <ModelsTable
-        theme={theme}
-        rows={rows}
-        loading={loading}
-        errorMsg={errorMsg}
-        viewMode={viewMode}
-        enrichedMap={enrichedMap}
-        sortField={sortField}
-        sortDir={sortDir}
-        toggleSort={toggleSort}
-        liveKey={liveKey}
-      />
+      <div className="lg:col-span-2 order-2">
+        <ModelsTable
+          theme={theme}
+          rows={rows}
+          loading={loading}
+          errorMsg={errorMsg}
+          viewMode={viewMode}
+          enrichedMap={enrichedMap}
+          sortField={sortField}
+          sortDir={sortDir}
+          toggleSort={toggleSort}
+          liveKey={liveKey}
+        />
+      </div>
+
+      <div className="lg:col-span-1 order-3">
+        <ActivityFeed theme={theme} />
+      </div>
     </div>
   )
 }

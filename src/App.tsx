@@ -9,6 +9,7 @@ import { ParallaxNoise } from './components/ParallaxNoise'
 import { useTheme } from './hooks/useTheme'
 import { useEnvironments } from './contexts/EnvironmentsContext'
 import EnvironmentPage from './pages/EnvironmentPage'
+import ModelsTable from './components/ModelsTable'
 
 // Lazy-load heavier components for better initial page load
 const NetworkActivityChart = React.lazy(
@@ -212,14 +213,7 @@ function App() {
             path="/"
             element={
               <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2 order-1">
-                    <OverviewTable theme={theme} />
-                  </div>
-                  <div className="lg:col-span-1 order-2">
-                    <ActivityFeed theme={theme} />
-                  </div>
-                </div>
+                <OverviewTable theme={theme} />
 
                 <React.Suspense
                   fallback={
