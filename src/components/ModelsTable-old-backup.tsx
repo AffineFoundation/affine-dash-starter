@@ -40,11 +40,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [page, setPage] = useState<number>(1)
   const { environments: envs } = useEnvironments()
 
-  // const gridCols = 'grid grid-cols-7'
   const gridCols =
-    'grid grid-cols-[0.4fr_1.6fr_1fr_1fr_1fr_1fr_1fr] items-center'
-  // const gridCols =
-  //   'grid grid-cols-[72px_minmax(0,1fr)_72px_88px_96px_120px_72px_112px] items-center'
+    'grid grid-cols-[72px_minmax(0,1fr)_72px_88px_96px_120px_72px_112px] items-center'
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
   const startIndex = (page - 1) * pageSize
@@ -130,97 +127,87 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         {/* Table Header */}
         <div className="px-2 py-[10px] text-light-smoke border-b border-black/5">
           <div
-            className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
+            className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-red-500`}
           >
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center">
+            <div className="text-xs font-mono uppercase tracking-wide h-full">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('uid')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
+                className={`inline-flex items-center gap-1 ${
+                  viewMode === 'live'
+                    ? 'cursor-pointer underline-offset-2 hover:underline'
+                    : 'opacity-60 cursor-default'
+                }`}
               >
                 <span className="uppercase">Uid</span>
                 <span>{sortIndicator('uid')}</span>
               </button>
             </div>
 
-            <div className="text-xs font-mono tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono tracking-wide h-full">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('model')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
+                className={`inline-flex items-center gap-1 ${
+                  viewMode === 'live'
+                    ? 'cursor-pointer underline-offset-2 hover:underline'
+                    : 'opacity-60 cursor-default'
+                }`}
               >
                 <span className="uppercase">Model</span>
                 <span>{sortIndicator('model')}</span>
               </button>
             </div>
-
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center px-3">
+            <div className="text-xs font-mono uppercase tracking-wide  ">
               Rev
             </div>
-
-            <div className="text-xs font-mono  tracking-wide h-full leading-none flex  items-center px-3">
+            <div className="text-xs font-mono  tracking-wide  ">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('avgScore')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
+                className={`inline-flex items-center gap-1 ${
+                  viewMode === 'live'
+                    ? 'cursor-pointer underline-offset-2 hover:underline'
+                    : 'opacity-60 cursor-default'
+                }`}
               >
                 <span className="uppercase">Avg Score</span>
                 <span>{sortIndicator('avgScore')}</span>
               </button>
             </div>
-
-            <div className="text-xs font-mono tracking-wide h-full leading-none flex  items-center px-3">
+            <div className="text-xs font-mono  tracking-wide  ">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('success')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
+                className={`inline-flex items-center gap-1 ${
+                  viewMode === 'live'
+                    ? 'cursor-pointer underline-offset-2 hover:underline'
+                    : 'opacity-60 cursor-default'
+                }`}
               >
                 <span className="uppercase">Success %</span>
                 <span>{sortIndicator('success')}</span>
               </button>
             </div>
-
-            <div className="text-xs font-mono  tracking-wide h-full leading-none flex  items-center px-3">
+            <div className="text-xs font-mono  tracking-wide  ">
               {viewMode === 'live' ? (
                 <button
                   onClick={() => toggleSort('weight')}
-                  // className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
+                  className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
                 >
                   <span className="uppercase">Weight</span>
-                  {/* <span>{sortIndicator('weight')}</span> */}
+                  <span>{sortIndicator('weight')}</span>
                 </button>
               ) : (
                 'Avg Latency (s)'
               )}
             </div>
-
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono uppercase tracking-wide  ">
               Eligible
             </div>
-
-            {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
-
-            {/* <div className="text-xs font-mono uppercase tracking-wide  ">
+            <div className="text-xs font-mono uppercase tracking-wide  ">
               Actions
-            </div> */}
-
-            {/* -------------------------- */}
+            </div>
           </div>
         </div>
 
@@ -275,7 +262,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   onMouseLeave={() => setHoveredRowId(null)}
                 >
                   {/* Main Row */}
-                  <div className="p-5 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300">
+                  <div className="p-3 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300">
                     <div className={`${gridCols} text-center`}>
                       <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap">
                         {model.uid}
@@ -318,91 +305,80 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         ) : (
                           <span className="text-sm font-sans ">{dash}</span>
                         )}
+                      </div>
 
-                        {/* Actions */}
-                        <div className="flex items-center justify-center gap-2">
-                          {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
-
-                          {/* <Button
-                            onClick={() => toggleExpanded(model.uniqueId)}
+                      {/* Actions */}
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          onClick={() => toggleExpanded(model.uniqueId)}
+                          theme={theme}
+                          aria-label="Toggle details"
+                          title="Toggle details (T)"
+                          className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
+                        >
+                          {expandedModel === model.uniqueId ? (
+                            <ChevronDown size={16} />
+                          ) : (
+                            <ChevronRight size={16} />
+                          )}
+                        </Button>
+                        <div className="relative">
+                          <Button
+                            onClick={() =>
+                              setOpenMenuId((prev) =>
+                                prev === model.uniqueId ? null : model.uniqueId,
+                              )
+                            }
                             theme={theme}
-                            aria-label="Toggle details"
-                            title="Toggle details (T)"
+                            title="Actions (open menu)"
                             className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
                           >
-                            {expandedModel === model.uniqueId ? (
-                              <ChevronDown size={16} />
-                            ) : (
-                              <ChevronRight size={16} />
-                            )}
-                          </Button> */}
-
-                          {/* ------------------------------- */}
-
-                          <div className="relative">
-                            <Button
-                              onClick={() =>
-                                setOpenMenuId((prev) =>
-                                  prev === model.uniqueId
-                                    ? null
-                                    : model.uniqueId,
-                                )
-                              }
-                              theme={theme}
-                              title="Actions (open menu)"
-                              className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
-                            >
-                              <MoreVertical size={16} />
-                            </Button>
-                            {openMenuId === model.uniqueId && (
-                              <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75  text-light-500 dark:bg-dark-200  dark:text-dark-500">
-                                <button
-                                  onClick={() => {
-                                    toggleExpanded(model.uniqueId)
-                                    setOpenMenuId(null)
-                                  }}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                >
-                                  <span>Toggle details</span>
-                                  <span className="text-xs opacity-70">T</span>
-                                </button>
+                            <MoreVertical size={16} />
+                          </Button>
+                          {openMenuId === model.uniqueId && (
+                            <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75  text-light-500 dark:bg-dark-200  dark:text-dark-500">
+                              <button
+                                onClick={() => {
+                                  toggleExpanded(model.uniqueId)
+                                  setOpenMenuId(null)
+                                }}
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                              >
+                                <span>Toggle details</span>
+                                <span className="text-xs opacity-70">T</span>
+                              </button>
+                              <a
+                                href={`https://huggingface.co/${model.model}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => setOpenMenuId(null)}
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                              >
+                                <span>View on Hugging Face</span>
+                                <span className="text-xs opacity-70">H</span>
+                              </a>
+                              {chuteId ? (
                                 <a
-                                  href={`https://huggingface.co/${model.model}`}
+                                  href={`https://chutes.ai/app/chute/${chuteId}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenMenuId(null)}
                                   className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                 >
-                                  <span>View on Hugging Face</span>
-                                  <span className="text-xs opacity-70">H</span>
+                                  <span>Open Chutes</span>
+                                  <span className="text-xs opacity-70">C</span>
                                 </a>
-                                {chuteId ? (
-                                  <a
-                                    href={`https://chutes.ai/app/chute/${chuteId}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={() => setOpenMenuId(null)}
-                                    className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                  >
-                                    <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">
-                                      C
-                                    </span>
-                                  </a>
-                                ) : (
-                                  <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
-                                    <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">
-                                      C
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
-                                  Shortcuts: T, H, C, Esc
+                              ) : (
+                                <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
+                                  <span>Open Chutes</span>
+                                  <span className="text-xs opacity-70">C</span>
                                 </div>
+                              )}
+                              <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
+                                Shortcuts: T, H, C, Esc
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

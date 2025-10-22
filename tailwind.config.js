@@ -20,6 +20,7 @@ export default {
           smoke: '#0D0C10',
           iron: '#DEE2E4',
           slate: '#77858E',
+          haze: '#EAEBEC',
         },
         // dark: {
         //   50: '#080A05',
