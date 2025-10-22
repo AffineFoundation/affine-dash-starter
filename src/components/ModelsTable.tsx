@@ -40,11 +40,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [page, setPage] = useState<number>(1)
   const { environments: envs } = useEnvironments()
 
-  // const gridCols = 'grid grid-cols-7'
   const gridCols =
     'grid grid-cols-[0.4fr_1.6fr_1fr_1fr_1fr_1fr_1fr] items-center'
-  // const gridCols =
-  //   'grid grid-cols-[72px_minmax(0,1fr)_72px_88px_96px_120px_72px_112px] items-center'
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
   const startIndex = (page - 1) * pageSize
@@ -132,7 +129,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
           <div
             className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
           >
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center">
+            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center pr-3">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('uid')}
@@ -203,14 +200,18 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   // className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
                 >
                   <span className="uppercase">Weight</span>
+                  {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
+
                   {/* <span>{sortIndicator('weight')}</span> */}
+
+                  {/* -------------------------- */}
                 </button>
               ) : (
                 'Avg Latency (s)'
               )}
             </div>
 
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pl-3">
               Eligible
             </div>
 
@@ -225,7 +226,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         </div>
 
         {/* Table Body */}
-        <div className="text-light-400 dark:text-dark-400 divide-y divide-light-200 dark:divide-dark-200">
+        <div className="text-light-smoke divide-y divide-black/5">
           {errorMsg && (
             <div className="p-4 text-red-600 dark:text-red-400">{errorMsg}</div>
           )}
@@ -275,27 +276,28 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   onMouseLeave={() => setHoveredRowId(null)}
                 >
                   {/* Main Row */}
-                  <div className="p-5 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300">
-                    <div className={`${gridCols} text-center`}>
-                      <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap">
-                        {model.uid}
-                      </div>
+                  <div className="p-5 transition-colors duration-300 hover:bg-light-sand/50 group">
+                    <div
+                      className={`${gridCols} font-medium text-sm leading-none tracking-wide`}
+                    >
+                      <div className="whitespace-nowrap pr-3">{model.uid}</div>
+
                       <div
-                        className="text-sm font-sans truncate whitespace-nowrap text-left"
+                        className="truncate whitespace-nowrap px-3"
                         title={model.model}
                       >
                         {midTrunc(model.model, 48)}
                       </div>
-                      <div
-                        className="text-xs font-sans whitespace-nowrap "
-                        title={model.rev}
-                      >
+
+                      <div className="whitespace-nowrap px-3" title={model.rev}>
                         {midTrunc(model.rev, 10)}
                       </div>
-                      <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap">
+
+                      <div className="whitespace-nowrap px-3">
                         {fmt(isLive ? model.avgScore : model.overall_avg_score)}
                       </div>
-                      <div className="text-sm font-sans font-bold tabular-nums whitespace-nowrap">
+
+                      <div className="whitespace-nowrap px-3">
                         {isLive
                           ? enriched?.success_rate_percent != null
                             ? `${enriched.success_rate_percent.toFixed(1)}%`
@@ -304,12 +306,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           ? `${model.success_rate_percent.toFixed(1)}%`
                           : dash}
                       </div>
-                      <div className="text-sm font-sans tabular-nums whitespace-nowrap ">
+
+                      <div className="whitespace-nowrap px-3">
                         {isLive
                           ? fmt(model.weight, 4)
                           : fmt(model.avg_latency, 2)}
                       </div>
-                      <div className="flex items-center justify-center">
+
+                      <div className="flex items-center justify-between pl-3">
                         {model.eligible ? (
                           <Check
                             size={16}
@@ -340,7 +344,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           {/* ------------------------------- */}
 
                           <div className="relative">
-                            <Button
+                            <button
                               onClick={() =>
                                 setOpenMenuId((prev) =>
                                   prev === model.uniqueId
@@ -348,12 +352,12 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                     : model.uniqueId,
                                 )
                               }
-                              theme={theme}
                               title="Actions (open menu)"
-                              className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
+                              className="h-6 w-h-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
                             >
-                              <MoreVertical size={16} />
-                            </Button>
+                              <MoreVertical size="full" />
+                            </button>
+
                             {openMenuId === model.uniqueId && (
                               <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75  text-light-500 dark:bg-dark-200  dark:text-dark-500">
                                 <button
