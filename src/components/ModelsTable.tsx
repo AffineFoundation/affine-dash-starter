@@ -112,7 +112,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   }, [openMenuId, hoveredRowId, rows, enrichedMap, liveKey])
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <TablePaginationControls
         theme={theme}
         total={rows.length}

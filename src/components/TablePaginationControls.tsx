@@ -23,30 +23,37 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
   const endIndex = Math.min(total, page * pageSize)
 
   return (
-    <div className="text-light-400 dark:text-dark-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div className="text-xs font-sans">
-        Showing {startIndex}–{endIndex} of {total}
+    <div className="text-light-slate flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">
+      <div className="text-sm uppercase tracking-wide leading-none [word-spacing:15px]">
+        Showing{' '}
+        <span className="text-light-smoke">
+          {startIndex}–{endIndex}
+        </span>{' '}
+        of <span className="text-light-smoke">{total}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <label className="text-xs font-sans">Rows per page:</label>
+
+      <div className="text-sm uppercase tracking-wide leading-none flex items-center gap-3">
+        <label>Rows per page</label>
+
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className="h-8 px-2 text-xs font-sans rounded-md transition-colors duration-300 text-light-500 bg-light-75 hover:bg-light-50 dark:text-dark-500 dark:bg-dark-200 dark:hover:bg-dark-300"
+          className="h-7 px-3 rounded-full transition-colors duration-300 text-light-500 bg-white border border-black/12 "
         >
           <option value={20}>20</option>
           <option value={50}>50</option>
           <option value={100}>100</option>
           <option value={200}>200</option>
         </select>
-        <div className="flex items-center gap-1">
+
+        <div className="flex items-center gap-1 [word-spacing:15px]">
           <PaginationButton
             onClick={() => setPage(1)}
             disabled={page === 1}
             theme={theme}
             title="First page"
           >
-            «
+            <img src="/arrow-left-double.svg" alt="Arrow Left Double" />
           </PaginationButton>
           <PaginationButton
             onClick={() => setPage(Math.max(1, page - 1))}
@@ -54,10 +61,11 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
             theme={theme}
             title="Previous page"
           >
-            ‹
+            <img src="/arrow-left.svg" alt="Arrow Left" />
           </PaginationButton>
-          <span className="text-xs font-sans px-2">
-            Page {page} of {totalPages}
+          <span className="px-2">
+            Page <span className="text-light-smoke">{page}</span> of{' '}
+            <span className="text-light-smoke">{totalPages}</span>
           </span>
           <PaginationButton
             onClick={() => setPage(Math.min(totalPages, page + 1))}
@@ -65,7 +73,7 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
             theme={theme}
             title="Next page"
           >
-            ›
+            <img src="/arrow-right.svg" alt="Arrow Right" />
           </PaginationButton>
           <PaginationButton
             onClick={() => setPage(totalPages)}
@@ -73,7 +81,7 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
             theme={theme}
             title="Last page"
           >
-            »
+            <img src="/arrow-right-double.svg" alt="Arrow Right Double" />
           </PaginationButton>
         </div>
       </div>
