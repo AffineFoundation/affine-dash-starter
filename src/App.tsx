@@ -40,7 +40,61 @@ function App() {
   // State for responsive tab management
   const [maxVisible, setMaxVisible] = React.useState<number>(6)
   const [moreOpen, setMoreOpen] = React.useState(false)
+  const [activeSection, setActiveSection] = React.useState<string>('')
   const moreRef = React.useRef<HTMLDivElement | null>(null)
+
+  // Refs for chart sections
+  const networkActivityRef = React.useRef<HTMLDivElement | null>(null)
+  const environmentStatsRef = React.useRef<HTMLDivElement | null>(null)
+  const minerEfficiencyRef = React.useRef<HTMLDivElement | null>(null)
+  const gpuMarketShareRef = React.useRef<HTMLDivElement | null>(null)
+  const costPerformanceRef = React.useRef<HTMLDivElement | null>(null)
+
+  // Intersection Observer to track active section
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const target = entry.target
+            let newSection = ''
+            if (target === networkActivityRef.current) newSection = 'network'
+            else if (target === environmentStatsRef.current)
+              newSection = 'environment'
+            else if (target === minerEfficiencyRef.current)
+              newSection = 'performance'
+            else if (target === gpuMarketShareRef.current) newSection = 'gpu'
+            else if (target === costPerformanceRef.current) newSection = 'cost'
+
+            if (newSection) {
+              console.log('Setting active section:', newSection)
+              setActiveSection(newSection)
+            }
+          }
+        })
+      },
+      { threshold: 0.3, rootMargin: '-20% 0px -20% 0px' },
+    )
+
+    const refs = [
+      networkActivityRef,
+      environmentStatsRef,
+      minerEfficiencyRef,
+      gpuMarketShareRef,
+      costPerformanceRef,
+    ]
+    refs.forEach((ref) => ref.current && observer.observe(ref.current))
+
+    return () => observer.disconnect()
+  }, [])
+
+  // Scroll to section function
+  const scrollToSection = (
+    ref: React.RefObject<HTMLDivElement>,
+    sectionName: string,
+  ) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   // Effect to adjust visible tabs based on window width
   React.useEffect(() => {
@@ -159,7 +213,7 @@ function App() {
   }, [environments, navigate])
 
   return (
-    <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-smoke relative overflow-hidden">
+    <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-smoke relative">
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Hero />
 
@@ -170,7 +224,7 @@ function App() {
           <Route
             path="/"
             element={
-              <div className="space-y-32">
+              <div className="space-y-28">
                 <OverviewTable theme={theme} />
 
                 <React.Suspense
@@ -194,21 +248,146 @@ function App() {
                     </div>
                   }
                 >
-                  <div className="columns-2 gap-4 space-y-4">
-                    <div className="break-inside-avoid">
-                      <NetworkActivityChart theme={theme} />
-                    </div>
-                    <div className="break-inside-avoid">
-                      <EnvironmentStatsChart theme={theme} />
-                    </div>
-                    <div className="break-inside-avoid">
-                      <MinerEfficiencyChart theme={theme} />
-                    </div>
-                    <div className="break-inside-avoid">
-                      <GpuMarketShareDonut theme={theme} />
-                    </div>
-                    <div className="break-inside-avoid">
-                      <CostPerformanceScatter theme={theme} />
+                  <div className="flex gap-16">
+                    <aside className="w-60 sticky top-5 self-start h-fit">
+                      <h3 className="font-mono uppercase text-xs leading-none tracking-wide">
+                        ENVIRONMENT OVERVIEW
+                      </h3>
+
+                      <ul className="space-y-2 uppercase mt-5 font-medium text-sm leading-none tracking-wide">
+                        <li
+                          className={`flex items-center gap-2 transition-opacity duration-300 ease-out select-none ${
+                            activeSection === 'network'
+                              ? 'opacity-30 cursor-auto '
+                              : 'cursor-pointer hover:opacity-30'
+                          }`}
+                          onClick={() =>
+                            scrollToSection(networkActivityRef, 'network')
+                          }
+                        >
+                          <div
+                            className={`w-2 h-2 shrink-0 rounded-full bg-black transition-transform duration-300 ease-out ${
+                              activeSection === 'network'
+                                ? 'scale-1'
+                                : 'scale-0'
+                            }`}
+                          />
+                          Network Activity & Performance
+                        </li>
+
+                        <li
+                          className={`flex items-center gap-2 transition-opacity duration-300 ease-out select-none ${
+                            activeSection === 'environment'
+                              ? 'opacity-30 cursor-auto '
+                              : 'cursor-pointer hover:opacity-30'
+                          }`}
+                          onClick={() =>
+                            scrollToSection(environmentStatsRef, 'environment')
+                          }
+                        >
+                          <div
+                            className={`w-2 h-2 shrink-0 rounded-full bg-black transition-transform duration-300 ease-out ${
+                              activeSection === 'environment'
+                                ? 'scale-1'
+                                : 'scale-0'
+                            }`}
+                          />
+                          Environment Popularity & Difficulty
+                        </li>
+
+                        <li
+                          className={`flex items-center gap-2 transition-opacity duration-300 ease-out select-none ${
+                            activeSection === 'performance'
+                              ? 'opacity-30 cursor-auto '
+                              : 'cursor-pointer hover:opacity-30'
+                          }`}
+                          onClick={() =>
+                            scrollToSection(minerEfficiencyRef, 'performance')
+                          }
+                        >
+                          <div
+                            className={`w-2 h-2 shrink-0 rounded-full bg-black transition-transform duration-300 ease-out ${
+                              activeSection === 'performance'
+                                ? 'scale-1'
+                                : 'scale-0'
+                            }`}
+                          />
+                          Performance vs. Latency
+                        </li>
+
+                        <li
+                          className={`flex items-center gap-2 transition-opacity duration-300 ease-out select-none ${
+                            activeSection === 'gpu'
+                              ? 'opacity-30 cursor-auto '
+                              : 'cursor-pointer hover:opacity-30'
+                          }`}
+                          onClick={() =>
+                            scrollToSection(gpuMarketShareRef, 'gpu')
+                          }
+                        >
+                          <div
+                            className={`w-2 h-2 shrink-0 rounded-full bg-black transition-transform duration-300 ease-out ${
+                              activeSection === 'gpu' ? 'scale-1' : 'scale-0'
+                            }`}
+                          />
+                          GPU Market Share
+                        </li>
+
+                        <li
+                          className={`flex items-center gap-2 transition-opacity duration-300 ease-out select-none ${
+                            activeSection === 'cost'
+                              ? 'opacity-30 cursor-auto '
+                              : 'cursor-pointer hover:opacity-30'
+                          }`}
+                          onClick={() =>
+                            scrollToSection(costPerformanceRef, 'cost')
+                          }
+                        >
+                          <div
+                            className={`w-2 h-2 shrink-0 rounded-full bg-black transition-transform duration-300 ease-out ${
+                              activeSection === 'cost' ? 'scale-1' : 'scale-0'
+                            }`}
+                          />
+                          Cost vs Performance
+                        </li>
+                      </ul>
+                    </aside>
+
+                    <div className="flex flex-col gap-8 w-full">
+                      <div
+                        ref={networkActivityRef}
+                        className="break-inside-avoid"
+                      >
+                        <NetworkActivityChart theme={theme} />
+                      </div>
+
+                      <div
+                        ref={environmentStatsRef}
+                        className="break-inside-avoid"
+                      >
+                        <EnvironmentStatsChart theme={theme} />
+                      </div>
+
+                      <div
+                        ref={minerEfficiencyRef}
+                        className="break-inside-avoid"
+                      >
+                        <MinerEfficiencyChart theme={theme} />
+                      </div>
+
+                      <div
+                        ref={gpuMarketShareRef}
+                        className="break-inside-avoid"
+                      >
+                        <GpuMarketShareDonut theme={theme} />
+                      </div>
+
+                      <div
+                        ref={costPerformanceRef}
+                        className="break-inside-avoid"
+                      >
+                        <CostPerformanceScatter theme={theme} />
+                      </div>
                     </div>
                   </div>
                 </React.Suspense>

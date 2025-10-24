@@ -55,7 +55,11 @@ const NetworkActivityChart: React.FC<Props> = ({ theme }) => {
   }))
 
   return (
-    <Card title="Network Activity & Performance (Last 60 Days)" theme={theme}>
+    <Card
+      title="Network Activity & Performance (Last 60 Days)"
+      theme={theme}
+      className="min-h-[38rem]"
+    >
       {error && (
         <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}

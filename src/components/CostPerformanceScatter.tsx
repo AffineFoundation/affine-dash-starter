@@ -54,8 +54,8 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
     <Card
       title="Cost vs Performance (Avg by Hotkey, Last 7 Days)"
       theme={theme}
+      className="min-h-[38rem]"
     >
-
       {error && (
         <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
@@ -150,4 +150,3 @@ const CostPerformanceScatter: React.FC<Props> = ({ theme }) => {
 }
 
 export default CostPerformanceScatter
-

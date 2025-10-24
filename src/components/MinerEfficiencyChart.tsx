@@ -65,7 +65,7 @@ const MinerScatterChart = React.memo<ChartProps>(
     const dotColor = theme === 'dark' ? '#60a5fa' : '#3b82f6'
 
     return (
-      <div style={{ width: '100%', height: 340 }}>
+      <div style={{ width: '100%', height: 600 }}>
         <ResponsiveContainer>
           <ScatterChart
             margin={{ top: 32, right: 24, bottom: 56, left: 64 }}
@@ -136,11 +136,7 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
   const [hovered, setHovered] = React.useState<MinerEfficiencyRow | null>(null)
 
   return (
-    <Card
-      title="Performance vs. Latency (7d Active Miners)"
-      theme={theme}
-    >
-
+    <Card title="Performance vs. Latency (7d Active Miners)" theme={theme}>
       <div
         className="mb-3 p-2 bg-gray-50 border border-gray-200 text-gray-900 dark:bg-black/40 dark:border-white/20 dark:text-white font-sans text-xs"
         style={{ minHeight: 80 }}
@@ -200,4 +196,3 @@ const MinerEfficiencyChart: React.FC<Props> = ({ theme }) => {
 }
 
 export default MinerEfficiencyChart
-

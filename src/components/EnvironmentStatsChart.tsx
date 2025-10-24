@@ -35,7 +35,11 @@ const EnvironmentStatsChart: React.FC<Props> = ({ theme }) => {
   })
 
   return (
-    <Card title="Environment Popularity & Difficulty" theme={theme}>
+    <Card
+      title="Environment Popularity & Difficulty"
+      theme={theme}
+      className="min-h-[38rem]"
+    >
       {error && (
         <div className="text-red-600 dark:text-red-400">
           {(error as Error).message}
