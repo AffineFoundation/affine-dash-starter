@@ -355,7 +355,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                               title="Actions (open menu)"
                               className="h-6 w-h-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
                             >
-                              <MoreVertical size="full" />
+                              <MoreVertical size={16} />
                             </button>
 
                             {openMenuId === model.uniqueId && (

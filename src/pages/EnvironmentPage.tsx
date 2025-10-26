@@ -22,8 +22,16 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const { envName: rawEnv } = useParams()
   const { environments, loading: envLoading } = useEnvironments()
 
-  const envName = (rawEnv || '').toUpperCase()
+  const envName = (rawEnv || '').replace(/.*:/, '').toUpperCase()
   const envKey = envName.toLowerCase()
+
+  // Validate the env from URL against the dynamic list
+  if (envLoading) {
+    return null
+  }
+  if (!environments.includes(envName)) {
+    return <Navigate to="/" replace />
+  }
 
   // Table view mode for this environment (Live default for consistency with overview)
   const [viewMode, setViewMode] = useState<'live' | 'historical'>('live')
@@ -49,13 +57,6 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     refetchInterval: viewMode === 'live' ? 6000 : false,
     refetchOnMount: false,
   })
-
-  if (!envLoading) {
-    // Validate the env from URL against the dynamic list
-    if (!environments.includes(envName)) {
-      return <Navigate to="/" replace />
-    }
-  }
 
   const rows = Array.isArray(data) ? data : []
 
