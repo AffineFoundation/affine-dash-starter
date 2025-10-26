@@ -17,17 +17,10 @@ serve(async (req: Request) => {
 
   try {
     // Database connection logic based on your configuration
-    const r2Key = Deno.env.get("R2_WRITE_SECRET_ACCESS_KEY");
-    let username = "app_reader";
-    let password = "ca35a0d8bd31d0d5";
-
-    if (r2Key) {
-      password = r2Key.slice(0, 14);
-      username = "writer_user2";
+    const databaseUrl = Deno.env.get("DATABASE_URL");
+    if (!databaseUrl) {
+      throw new Error("DATABASE_URL environment variable is not set.");
     }
-
-    const databaseUrl = Deno.env.get("DATABASE_URL") || 
-      `postgresql://${username}:${password}@database-1.clo608s4ivev.us-east-1.rds.amazonaws.com:5432/postgres`;
 
     const client = new Client({ 
       connection: databaseUrl, 
