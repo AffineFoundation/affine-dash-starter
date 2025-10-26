@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "middleware": {},
+  "functions": {
+    "/api/live-summary/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/live-summary/route.js"
+      ],
+      "name": "app/api/live-summary/route",
+      "page": "/api/live-summary/route",
+      "matchers": [
+        {
+          "regexp": "^/api/live\\-summary$",
+          "originalSource": "/api/live-summary"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "environments": {}
+    }
+  },
+  "sortedMiddleware": []
+}

@@ -1,0 +1,191 @@
+'use client';
+
+import React, { useEffect, useMemo, useState } from 'react'
+import { X, ExternalLink, Code } from 'lucide-react'
+
+interface Environment {
+  id: string
+  name: string
+  description: string
+  repoUrl: string
+  models: any[]
+}
+
+interface CodeViewerProps {
+  environment: Environment
+  theme: 'light' | 'dark'
+  onClose: () => void
+}
+
+const CodeViewer: React.FC<CodeViewerProps> = ({
+  environment,
+  theme,
+  onClose,
+}) => {
+  // Fetch code directly from the affine repo (raw) for this environment file
+  const [code, setCode] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const rawUrl = useMemo(
+    () =>
+      `https://raw.githubusercontent.com/AffineFoundation/affine/main/affine/envs/${environment.id}.py`,
+    [environment.id],
+  )
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    setCode(null)
+    fetch(rawUrl, { method: 'GET' })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const text = await res.text()
+        if (!cancelled) setCode(text)
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : String(err))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [rawUrl])
+  // Mock code content - will be replaced with actual repo fetching
+  const mockCode = `# ${environment.name} Environment
+# Bittensor Affine Subnet Implementation
+
+import gym
+import numpy as np
+from typing import Dict, Any, Tuple
+
+class ${environment.name.replace('-', '')}Environment:
+    """
+    ${environment.description}
+    
+    This environment is part of the Bittensor Affine subnet
+    for reinforcement learning model evaluation.
+    """
+    
+    def __init__(self, config: Dict[str, Any]):
+        self.env = gym.make('${environment.name}')
+        self.config = config
+        self.episode_count = 0
+        
+    def reset(self) -> np.ndarray:
+        """Reset environment to initial state"""
+        self.episode_count += 1
+        return self.env.reset()
+        
+    def step(self, action: int) -> Tuple[np.ndarray, float, bool, Dict]:
+        """Execute action and return observation, reward, done, info"""
+        observation, reward, done, info = self.env.step(action)
+        
+        # Add subnet-specific metrics
+        info['subnet_metrics'] = {
+            'episode': self.episode_count,
+            'action_taken': action,
+            'reward_normalized': reward / 200.0  # Normalize for subnet
+        }
+        
+        return observation, reward, done, info
+        
+    def get_performance_metrics(self) -> Dict[str, float]:
+        """Return performance metrics for subnet evaluation"""
+        return {
+            'mean_episode_reward': self.calculate_mean_reward(),
+            'episode_count': self.episode_count,
+            'stability_score': self.calculate_stability()
+        }
+        
+    def calculate_mean_reward(self) -> float:
+        """Calculate mean reward over recent episodes"""
+        # Implementation specific to environment
+        pass
+        
+    def calculate_stability(self) -> float:
+        """Calculate model stability metric"""
+        # Implementation specific to environment  
+        pass
+
+# Export for subnet integration
+__all__ = ['${environment.name.replace('-', '')}Environment']`
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-4xl max-h-[90vh] border-2 border-gray-300 bg-white dark:border-white dark:bg-black">
+        {/* Header */}
+        <div className="p-4 border-b-2 flex items-center justify-between border-gray-300 dark:border-dark-400">
+          <div>
+            <h3 className="font-sans text-lg font-bold text-gray-900 dark:text-white">
+              {environment.name} - CODE VIEW
+            </h3>
+            <p className="font-sans text-sm mt-1 text-gray-600 dark:text-gray-300">
+              {environment.description}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <a
+              href={environment.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-2 border-2 font-sans text-xs uppercase tracking-wider transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
+            >
+              <ExternalLink size={12} />
+              REPO
+            </a>
+            <button
+              onClick={onClose}
+              className="p-2 border-2 transition-colors border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Code Content */}
+        <div className="p-4 overflow-auto max-h-[70vh]">
+          {loading ? (
+            <div className="font-sans text-sm text-gray-700 dark:text-gray-300">
+              Loading code…
+            </div>
+          ) : error ? (
+            <div className="font-sans text-sm text-red-600 dark:text-red-400">
+              Failed to load code from {rawUrl}: {error}
+            </div>
+          ) : code ? (
+            <pre className="font-sans text-sm leading-relaxed text-gray-800 dark:text-white">
+              <code>{code}</code>
+            </pre>
+          ) : (
+            <div className="font-sans text-sm text-gray-700 dark:text-gray-300">
+              No code available.
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div
+          className="p-4 border-t-2
+          border-gray-300 dark:border-dark-400"
+        >
+          <div className="flex items-center justify-between">
+            <div className="font-sans text-xs uppercase tracking-wider text-gray-500 dark:text-gray-300">
+              Environment loaded • {environment.models.length} active models
+            </div>
+            <div className="flex items-center gap-2">
+              <Code size={12} className="text-gray-500 dark:text-gray-300" />
+              <span className="font-sans text-xs text-gray-500 dark:text-gray-300">
+                Python 3.9+ • Affine Gym
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CodeViewer

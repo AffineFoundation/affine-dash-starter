@@ -1,0 +1,17 @@
+{
+  "/api/live-summary/route": "app/api/live-summary/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/api/subnet-overview/route": "app/api/subnet-overview/route.js",
+  "/api/network-activity/route": "app/api/network-activity/route.js",
+  "/api/environment-stats/route": "app/api/environment-stats/route.js",
+  "/api/gpu-market-share/route": "app/api/gpu-market-share/route.js",
+  "/api/miner-efficiency/route": "app/api/miner-efficiency/route.js",
+  "/api/activity/route": "app/api/activity/route.js",
+  "/api/environments/route": "app/api/environments/route.js",
+  "/environment/[envName]/page": "app/environment/[envName]/page.js",
+  "/api/score-distribution-by-env/route": "app/api/score-distribution-by-env/route.js",
+  "/api/latency-distribution-by-env/route": "app/api/latency-distribution-by-env/route.js",
+  "/api/live-env-leaderboard/[env]/route": "app/api/live-env-leaderboard/[env]/route.js",
+  "/api/miner-efficiency-cost/route": "app/api/miner-efficiency-cost/route.js"
+}
