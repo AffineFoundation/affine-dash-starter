@@ -8,12 +8,7 @@ interface SummaryResponse {
   raw?: string;
 }
 
-/**
- * Primary new endpoint for live miners view.
- * Fallback to the previous summary endpoint if the new one is unavailable.
- */
-const PRIMARY_URL = 'http://65.109.19.166:9000/api/miners';
-const FALLBACK_URL = 'https://sn120-viewer.onrender.com/api/weights/summary/latest';
+const URL = '/api/validator-summary';
 
 // Types for the new miners endpoint
 type MinerEnvStat = {
@@ -191,33 +186,14 @@ export const useValidatorSummary = () => {
     setLoading(true);
     setError(null);
 
-    // Try primary (new miners endpoint)
     try {
-      const res = await fetch(PRIMARY_URL, { cache: 'no-store' });
+      const res = await fetch(URL, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json: MinersResponse = await res.json();
-      const summary = transformMinersToSummary(json);
-      setData(summary);
+      const json: SummaryResponse = await res.json();
+      setData(json);
       setError(null);
-      return;
-    } catch (primaryErr) {
-      // Fallback to the previous summary endpoint
-      try {
-        const res = await fetch(FALLBACK_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json: SummaryResponse = await res.json();
-        setData(json);
-        setError(null);
-        return;
-      } catch (fallbackErr) {
-        setError(
-          fallbackErr instanceof Error
-            ? fallbackErr.message
-            : primaryErr instanceof Error
-              ? primaryErr.message
-              : 'Unknown error'
-        );
-      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -231,4 +207,3 @@ export const useValidatorSummary = () => {
 
   return { data, loading, error, refetch: fetchData } as const;
 };
-
