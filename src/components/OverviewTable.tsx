@@ -12,7 +12,7 @@ import { useValidatorSummary } from '../hooks/useValidatorSummary'
 import Card from './Card'
 import ToggleButton from './ToggleButton'
 import ModelsTable from './ModelsTable'
-import ActivityFeed from './ActivityFeed'
+// import ActivityFeed from './ActivityFeed'
 
 interface OverviewTableProps {
   environments?: any[] // Kept for compatibility, not actively used
@@ -295,7 +295,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         </div>
       </div>
 
-      <div className="lg:col-span-2 order-2">
+      <div className="lg:col-span-full order-2">
         <ModelsTable
           theme={theme}
           rows={rows}
@@ -310,9 +310,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         />
       </div>
 
-      <div className="lg:col-span-1 order-3">
-        <ActivityFeed theme={theme} />
-      </div>
+{/* <div className="lg:col-span-1 order-3">
+  <ActivityFeed theme={theme} />
+</div> */}
     </div>
   )
 }
