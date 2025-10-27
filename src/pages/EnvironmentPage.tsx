@@ -179,8 +179,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     id: envKey,
     name: envName,
     description: descriptionMap[envKey] || `${envName} environment`,
-    repoUrl: `https://github.com/AffineFoundation/affine/blob/main/affine/envs/${envKey}.py`,
-    models: Array.from({ length: envTotals }),
+    repoUrl: rawEnv.startsWith('agentgym:')
+      ? `https://github.com/AffineFoundation/affine/blob/fe575aa38112e3227ff6503a366328b8bdecae1f/affine/quixand/env_templates/agentgym/agentenv/agentenv/envs/${envKey}.py`
+      : `https://github.com/AffineFoundation/affine/blob/main/affine/envs/${envKey}.py`,
+    models: Array.from({ length: envTotalsDisplay }),
   }
 
   // Formatting helpers aligned with OverviewTable
@@ -200,37 +202,13 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
   return (
     <div className="space-y-6 text-light-500 dark:text-dark-500">
-      {/* Header / Summary */}
-      {/* <Card
-        title={`${envName.toUpperCase()} Environment`}
-        subtitle="Dynamic view powered by live environments registry"
-        theme={theme}
-        headerActions={
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
-              theme={theme}
-            >
-              <ExternalLink size={12} />
-              REPO
-            </Button>
-            <Button onClick={() => setShowCode(true)} theme={theme}>
-              <Code size={12} />
-              VIEW CODE
-            </Button>
-          </div>
-        }
-      >
-        <div></div>
-      </Card> */}
-
-      {/* {showCode && (
+      {showCode && (
         <CodeViewer
           environment={activeEnvMeta}
           theme={theme}
           onClose={() => setShowCode(false)}
         />
-      )} */}
+      )}
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
       {/* <Card
@@ -285,23 +263,18 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         theme={theme}
         className="overflow-x-auto"
         headerActions={
-          <div className="inline-flex items-center gap-0">
-            {/* <ToggleButton
-              active={viewMode === 'live'}
-              onClick={() => setViewMode('live')}
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
               theme={theme}
-              position="left"
             >
-              Live
-            </ToggleButton> */}
-            {/* <ToggleButton
-              active={viewMode === 'historical'}
-              onClick={() => setViewMode('historical')}
-              theme={theme}
-              position="right"
-            >
-              Historical
-            </ToggleButton> */}
+              <ExternalLink size={12} />
+              REPO
+            </Button>
+            <Button onClick={() => setShowCode(true)} theme={theme}>
+              <Code size={12} />
+              VIEW CODE
+            </Button>
           </div>
         }
       >

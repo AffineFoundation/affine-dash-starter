@@ -14,10 +14,12 @@ export function getPool() {
       throw new Error('DATABASE_URL env var is not set. Configure it in Vercel Project Settings.');
     }
 
+    const isSslEnabled = process.env.POSTGRES_SSL_ENABLED === 'true';
+
     pool = new Pool({
       connectionString,
       // RDS requires SSL; rejectUnauthorized false for simplicity in serverless.
-      ssl: { rejectUnauthorized: false },
+      ssl: isSslEnabled ? { rejectUnauthorized: false } : false,
       // Conservative pool settings for serverless
       max: 5,
       idleTimeoutMillis: 30_000,

@@ -24,11 +24,16 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   const [code, setCode] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const rawUrl = useMemo(
-    () =>
-      `https://raw.githubusercontent.com/AffineFoundation/affine/main/affine/envs/${environment.id}.py`,
-    [environment.id],
-  )
+  const rawUrl = useMemo(() => {
+    const isAgentGym = environment.repoUrl.includes('agentgym');
+    if (isAgentGym) {
+      const baseUrl = environment.repoUrl
+        .replace('github.com', 'raw.githubusercontent.com')
+        .replace('/blob/', '/');
+      return baseUrl;
+    }
+    return `https://raw.githubusercontent.com/AffineFoundation/affine/main/affine/envs/${environment.id}.py`;
+  }, [environment.id, environment.repoUrl]);
   useEffect(() => {
     let cancelled = false
     setLoading(true)
