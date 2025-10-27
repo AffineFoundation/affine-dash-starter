@@ -22,16 +22,26 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const { envName: rawEnv } = useParams()
   const { environments, loading: envLoading } = useEnvironments()
 
-  const envName = (rawEnv || '').replace(/.*:/, '').toUpperCase()
-  const envKey = envName.toLowerCase()
-
   // Validate the env from URL against the dynamic list
   if (envLoading) {
     return null
   }
-  if (!environments.includes(envName)) {
+  // Redirect if env is not in the list from context
+  if (!rawEnv || !environments.includes(rawEnv)) {
     return <Navigate to="/" replace />
   }
+
+  // Reverse mapping from new format to legacy format for API calls
+  const legacyEnvNameMapping: { [key: string]: string } = {
+    'affine:abd': 'ABD',
+    'affine:sat': 'SAT',
+    'affine:ded': 'DED',
+  };
+
+  const apiEnvName = legacyEnvNameMapping[rawEnv] || rawEnv;
+
+  const envName = rawEnv.toUpperCase()
+  const envKey = envName.toLowerCase().replace(/.*:/, '')
 
   // Table view mode for this environment (Live default for consistency with overview)
   const [viewMode, setViewMode] = useState<'live' | 'historical'>('live')
@@ -50,8 +60,8 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     error: liveError,
     isLoading: isLiveLoading,
   } = useQuery({
-    queryKey: ['live-env-leaderboard', envName],
-    queryFn: () => fetchLiveEnvLeaderboard(envName),
+    queryKey: ['live-env-leaderboard', apiEnvName],
+    queryFn: () => fetchLiveEnvLeaderboard(apiEnvName),
     enabled: viewMode === 'live',
     staleTime: 5000,
     refetchInterval: viewMode === 'live' ? 6000 : false,
@@ -173,7 +183,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     <div className="space-y-6 text-light-500 dark:text-dark-500">
       {/* Header / Summary */}
       <Card
-        title={`${envName} Environment`}
+        title={`${envName.toUpperCase()} Environment`}
         subtitle="Dynamic view powered by live environments registry"
         theme={theme}
         headerActions={
@@ -205,7 +215,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
       <Card
-        title={`${envName} OVERVIEW`}
+        title={`${envName.toUpperCase()} OVERVIEW`}
         theme={theme}
         className="bg-light-100 dark:bg-dark-100"
       >
@@ -215,7 +225,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
               {overviewLoading ? '—' : envTotalsDisplay}
             </div>
             <div className="text-xs font-sans uppercase tracking-wider text-light-400 dark:text-dark-400">
-              Total Models
+              Models
             </div>
           </div>
           <div className="text-center">
@@ -239,7 +249,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
       {/* Top Models Table for this Environment */}
       <Card
-        title={`Top Models in ${envName}`}
+        title={`Top Models in ${envName.toUpperCase()}`}
         theme={theme}
         className="overflow-x-auto"
         headerActions={
@@ -298,7 +308,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   </span>
                 ),
               },
-              { key: 'envScore', label: `${envName} Score` },
+              { key: 'envScore', label: `${envName.toUpperCase()} Score` },
               { key: 'overallAvg', label: 'Overall Avg' },
               { key: 'successRate', label: 'Success %' },
               { key: 'avgLatency', label: 'Avg Latency (s)' },
@@ -352,10 +362,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       {!tableLoading && (
         <div className="columns-2 gap-4 space-y-4">
           <div className="break-inside-avoid">
-            <ScoreDistributionHistogram env={envName} theme={theme} />
+            <ScoreDistributionHistogram env={apiEnvName} theme={theme} />
           </div>
           <div className="break-inside-avoid">
-            <LatencyBoxPlot env={envName} theme={theme} />
+            <LatencyBoxPlot env={apiEnvName} theme={theme} />
           </div>
         </div>
       )}

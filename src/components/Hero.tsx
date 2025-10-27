@@ -51,7 +51,7 @@ export default function Hero() {
               className={({ isActive }) => sidebarItemClass(isActive)}
               title={`Press N then ${i + 1} to switch to ${env}`}
             >
-              {env}
+              {env.replace(/.*:/, '')}
             </NavLink>
           ))}
 

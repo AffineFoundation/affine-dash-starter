@@ -132,44 +132,46 @@ async function getJSON<T>(path: string): Promise<T> {
     }
     return JSON.parse(text) as T;
   } catch (err) {
-    // Fallback to local mock when running Vite without serverless APIs
-    const mockMap: Record<string, string> = {
-      '/api/subnet-overview': '/mock/subnet-overview.json',
-      '/api/leaderboard': '/mock/leaderboard.json',
-      '/api/activity': '/mock/activity.json',
-      '/api/performance-by-env': '/mock/performance-by-env.json',
-      '/api/results-over-time': '/mock/results-over-time.json',
-      '/api/daily-rollouts-by-model': '/mock/daily-rollouts-by-model.json',
-      '/api/environments': '/mock/environments.json',
-      '/api/network-activity': '/mock/network-activity.json',
-      '/api/environment-stats': '/mock/environment-stats.json',
-      '/api/miner-efficiency': '/mock/miner-efficiency.json',
-      '/api/advanced-insights': '/mock/advanced-insights.json',
-      '/api/gpu-market-share': '/mock/gpu-market-share.json',
-      '/api/miner-efficiency-cost': '/mock/miner-efficiency-cost.json',
-      // New env-specific endpoints (querystring stripped below)
-      '/api/top-miners-by-env': '/mock/top-miners-by-env.json',
-      '/api/score-distribution-by-env': '/mock/score-distribution-by-env.json',
-      '/api/latency-distribution-by-env': '/mock/latency-distribution-by-env.json',
-    };
-    // Support querystring paths by mapping base path to mock file
-    const basePath = path.split('?')[0];
-    let mockPath = mockMap[basePath];
+    if (err instanceof TypeError) {
+      // Fallback to local mock when running Vite without serverless APIs
+      const mockMap: Record<string, string> = {
+        '/api/subnet-overview': '/mock/subnet-overview.json',
+        '/api/leaderboard': '/mock/leaderboard.json',
+        '/api/activity': '/mock/activity.json',
+        '/api/performance-by-env': '/mock/performance-by-env.json',
+        '/api/results-over-time': '/mock/results-over-time.json',
+        '/api/daily-rollouts-by-model': '/mock/daily-rollouts-by-model.json',
+        '/api/environments': '/mock/environments.json',
+        '/api/network-activity': '/mock/network-activity.json',
+        '/api/environment-stats': '/mock/environment-stats.json',
+        '/api/miner-efficiency': '/mock/miner-efficiency.json',
+        '/api/advanced-insights': '/mock/advanced-insights.json',
+        '/api/gpu-market-share': '/mock/gpu-market-share.json',
+        '/api/miner-efficiency-cost': '/mock/miner-efficiency-cost.json',
+        // New env-specific endpoints (querystring stripped below)
+        '/api/top-miners-by-env': '/mock/top-miners-by-env.json',
+        '/api/score-distribution-by-env': '/mock/score-distribution-by-env.json',
+        '/api/latency-distribution-by-env': '/mock/latency-distribution-by-env.json',
+      };
+      // Support querystring paths by mapping base path to mock file
+      const basePath = path.split('?')[0];
+      let mockPath = mockMap[basePath];
 
-    // Dynamic route fallbacks
-    if (!mockPath) {
-      if (basePath.startsWith('/api/live-env-leaderboard/')) {
-        mockPath = '/mock/live-env-leaderboard.json';
+      // Dynamic route fallbacks
+      if (!mockPath) {
+        if (basePath.startsWith('/api/live-env-leaderboard/')) {
+          mockPath = '/mock/live-env-leaderboard.json';
+        }
       }
-    }
 
-    if (mockPath) {
-      const mockRes = await fetch(mockPath, { method: 'GET' });
-      if (!mockRes.ok) {
-        const t = await mockRes.text().catch(() => '');
-        throw new Error(`Mock fallback for ${path} failed: ${mockRes.status} ${mockRes.statusText} ${t}`);
+      if (mockPath) {
+        const mockRes = await fetch(mockPath, { method: 'GET' });
+        if (!mockRes.ok) {
+          const t = await mockRes.text().catch(() => '');
+          throw new Error(`Mock fallback for ${path} failed: ${mockRes.status} ${mockRes.statusText} ${t}`);
+        }
+        return mockRes.json() as Promise<T>;
       }
-      return mockRes.json() as Promise<T>;
     }
     throw err;
   }
@@ -343,4 +345,3 @@ export function fetchGpuMarketShare() {
 export function fetchMinerEfficiencyCost() {
   return getJSON<MinerEfficiencyCostRow[]>('/api/miner-efficiency-cost');
 }
-

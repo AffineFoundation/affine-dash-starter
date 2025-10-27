@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { fetchEnvironments } from '../services/api';
 
 type EnvironmentsContextValue = {
-  environments: string[];
+  environments: string[]; // Full names, e.g. affine:ded
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -18,10 +18,21 @@ export const EnvironmentsProvider: React.FC<React.PropsWithChildren> = ({ childr
   const load = async () => {
     setLoading(true);
     setError(null);
+    setEnvironments([]);
     try {
       const envs = await fetchEnvironments();
+      // Manual mapping for known legacy environment names
+      const envNameMapping: { [key: string]: string } = {
+        ABD: 'affine:abd',
+        SAT: 'affine:sat',
+        DED: 'affine:ded',
+      };
+      const normalizedEnvs = (envs ?? []).map(env => {
+        const envStr = String(env);
+        return envNameMapping[envStr] || envStr;
+      });
       // Ensure strings, dedupe, and sort for stability
-      const uniqueSorted = Array.from(new Set((envs ?? []).map(String))).sort((a, b) => a.localeCompare(b));
+      const uniqueSorted = Array.from(new Set(normalizedEnvs.map(String))).sort((a, b) => a.localeCompare(b));
       setEnvironments(uniqueSorted);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -35,12 +46,15 @@ export const EnvironmentsProvider: React.FC<React.PropsWithChildren> = ({ childr
     load();
   }, []);
 
-  const value = useMemo<EnvironmentsContextValue>(() => ({
-    environments,
-    loading,
-    error,
-    refresh: load,
-  }), [environments, loading, error]);
+  const value = useMemo<EnvironmentsContextValue>(() => {
+    const finalEnvs = Array.from(new Set(environments));
+    return {
+      environments: finalEnvs,
+      loading,
+      error,
+      refresh: load,
+    };
+  }, [environments, loading, error]);
 
   return (
     <EnvironmentsContext.Provider value={value}>
@@ -56,4 +70,3 @@ export function useEnvironments(): EnvironmentsContextValue {
   }
   return ctx;
 }
-

@@ -235,7 +235,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         <div className="grid grid-cols-3 gap-[10px]">
           <div className="text-light-smoke bg-white rounded-[4px] p-4">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
-              Total Models
+              Models
             </div>
 
             <div className="mt-14 flex justify-between items-end">
