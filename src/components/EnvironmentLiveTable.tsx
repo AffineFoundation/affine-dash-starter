@@ -19,7 +19,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
   startIndex,
 }) => {
   const gridCols =
-    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_112px] gap-2 items-center';
+    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_minmax(112px,1fr)] gap-2 items-center';
 
   const fmt = (n: number | null | undefined, digits = 1) =>
     n == null ? '—' : n.toFixed(digits);
@@ -36,19 +36,22 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
           <div
             className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
           >
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pr-3">
+            <div className="text-xs font-mono uppercase tracking-wide h-full flex items-center pr-3">
               Rank
             </div>
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono uppercase tracking-wide h-full flex items-center px-3">
               UID
             </div>
-            <div className="text-xs font-mono tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono tracking-wide h-full flex items-center px-3">
               Model
             </div>
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center px-3">
+            <div className="text-xs font-mono uppercase tracking-wide h-full flex items-center px-3">
               Rev
             </div>
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center px-3">
+            <div
+              className="text-xs font-mono uppercase tracking-wide h-full flex items-center px-3"
+              title={`${envName} Score`}
+            >
               {envName} Score
             </div>
             {/*

@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface CardProps {
-  title?: string
+  title?: React.ReactNode
   subtitle?: string
   theme: 'light' | 'dark'
   children: React.ReactNode

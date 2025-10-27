@@ -40,14 +40,17 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <div className="border rounded-md border-light-200 bg-light-100 dark:border-dark-200 dark:bg-dark-100">
       {/* Table Header */}
-      <div className="p-3 text-light-500 bg-light-75 dark:text-dark-500 dark:bg-dark-200">
-        <div className={`${gridCols} text-center`}>
+      <div className="px-2 py-[10px] text-light-smoke border-b border-black/5">
+        <div
+          className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
+        >
           {columns.map((column) => (
             <div
               key={column.key}
-              className={`text-xs font-sans uppercase tracking-wider font-bold ${
+              className={`text-xs font-mono uppercase tracking-wide h-full flex items-center px-3 ${
                 column.align === 'left' ? 'text-left' : ''
               }`}
+              title={column.label}
             >
               {column.sortable && onSort ? (
                 <button

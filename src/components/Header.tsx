@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
         <img src="/logo.svg" alt="Logo" />
 
         <h1 className="text-xs font-medium w-80 text-black/30 uppercase leading-none tracking-wide">
-          <span className="text-black">AFFINE</span> — a decentralized ML
+          <span className="text-black">AFFINE</span> — a decentralized RL
           network on Bittensor where subnets converge, models are trained, and
           contributors earn TAO.
         </h1>

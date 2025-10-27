@@ -193,7 +193,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
   // Grid columns: Rank | UID | Model | Rev | Env Score | Overall Avg | Success % | Avg Latency | Rollouts
   const gridCols =
-    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_112px_96px_96px_128px_104px] gap-2 items-center'
+    'grid grid-cols-[56px_72px_minmax(0,1.1fr)_88px_minmax(112px,1fr)_96px_96px_128px_104px] gap-2 items-center'
 
   return (
     <div className="space-y-6 text-light-500 dark:text-dark-500">
@@ -265,27 +265,40 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
       {/* Top Models Table for this Environment */}
       <Card
-        title={`Top Models in ${envName.toUpperCase()}`}
+        title={
+          <span
+            className="font-sans"
+            style={{
+              fontWeight: 500,
+              fontSize: '20px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textTransform: 'uppercase',
+            }}
+          >
+            {`Top Models in ${envName.toUpperCase()}`}
+          </span>
+        }
         theme={theme}
         className="overflow-x-auto"
         headerActions={
           <div className="inline-flex items-center gap-0">
-            <ToggleButton
+            {/* <ToggleButton
               active={viewMode === 'live'}
               onClick={() => setViewMode('live')}
               theme={theme}
               position="left"
             >
               Live
-            </ToggleButton>
-            <ToggleButton
+            </ToggleButton> */}
+            {/* <ToggleButton
               active={viewMode === 'historical'}
               onClick={() => setViewMode('historical')}
               theme={theme}
               position="right"
             >
               Historical
-            </ToggleButton>
+            </ToggleButton> */}
           </div>
         }
       >
