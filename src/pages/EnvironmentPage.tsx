@@ -105,7 +105,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
   // Unified table state derived from current mode
   const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length
-  const tableLoading = viewMode === 'historical' ? isLoading : isLiveLoading
+  const tableLoading =
+    viewMode === 'historical'
+      ? isLoading
+      : isLiveLoading && liveRows.length === 0
   const tableError =
     viewMode === 'historical' ? (error as unknown) : (liveError as unknown)
 

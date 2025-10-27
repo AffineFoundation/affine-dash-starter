@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 interface SummaryResponse {
   timestamp: string;
@@ -178,32 +178,26 @@ function transformMinersToSummary(resp: MinersResponse): SummaryResponse {
 }
 
 export const useValidatorSummary = () => {
-  const [data, setData] = useState<SummaryResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
+  const {
+    data,
+    error,
+    isLoading: loading,
+    refetch,
+  } = useQuery<SummaryResponse>({
+    queryKey: ['validator-summary'],
+    queryFn: async () => {
       const res = await fetch(URL, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json: SummaryResponse = await res.json();
-      setData(json);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  };
+      return res.json();
+    },
+    refetchInterval: 180000, // 3 minutes
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    fetchData();
-    const id = setInterval(fetchData, 30000);
-    return () => clearInterval(id);
-  }, []);
-
-  return { data, loading, error, refetch: fetchData } as const;
+  return {
+    data: data ?? null,
+    loading,
+    error: error ? (error as Error).message : null,
+    refetch,
+  } as const;
 };
