@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   fetchSubnetOverview,
   type SubnetOverviewRow,
-  fetchLiveEnvLeaderboard,
-  type LiveEnvLeaderboardRow,
 } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
+import { useValidatorSummary } from '../hooks/useValidatorSummary'
+import EnvironmentLiveTable from '../components/EnvironmentLiveTable'
 import TablePaginationControls from '../components/TablePaginationControls'
 import CodeViewer from '../components/CodeViewer'
 import { ExternalLink, Code } from 'lucide-react'
@@ -54,19 +54,11 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     refetchOnMount: false,
   })
 
-  // Live environment leaderboard for this specific env
   const {
-    data: liveData,
+    data: liveSummary,
+    loading: isLiveLoading,
     error: liveError,
-    isLoading: isLiveLoading,
-  } = useQuery({
-    queryKey: ['live-env-leaderboard', apiEnvName],
-    queryFn: () => fetchLiveEnvLeaderboard(apiEnvName),
-    enabled: viewMode === 'live',
-    staleTime: 5000,
-    refetchInterval: viewMode === 'live' ? 6000 : false,
-    refetchOnMount: false,
-  })
+  } = useValidatorSummary()
 
   const rows = Array.isArray(data) ? data : []
 
@@ -79,10 +71,37 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     .filter((x) => x.value != null)
     .sort((a, b) => b.value! - a.value!)
 
-  // Live dataset from API
-  const liveRows: LiveEnvLeaderboardRow[] = Array.isArray(liveData)
-    ? (liveData as LiveEnvLeaderboardRow[])
-    : []
+  const liveRows = useMemo(() => {
+    if (!liveSummary) return []
+    const cols = liveSummary.columns || []
+    const idx = (name: string) => cols.indexOf(name)
+
+    const iUID = idx('UID'),
+      iModel = idx('Model'),
+      iRev = idx('Rev')
+
+    const envColIndex = cols.findIndex(c => c === rawEnv)
+    if (envColIndex === -1) return []
+
+    const parseScore = (v: unknown): number | null =>
+      v == null
+        ? null
+        : parseFloat(String(v).replace(/\*/g, '').split('/')[0]) || null
+
+    return liveSummary.rows
+      .map(row => {
+        const envScore = parseScore(row[envColIndex])
+        return {
+          uniqueId: `live-${row[iUID]}-${row[iModel]}-${row[iRev]}`,
+          uid: String(row[iUID] ?? ''),
+          model: String(row[iModel] ?? ''),
+          rev: String(row[iRev] ?? ''),
+          envScore,
+        }
+      })
+      .filter(row => row.envScore !== null)
+      .sort((a, b) => b.envScore! - a.envScore!)
+  }, [liveSummary, rawEnv])
 
   // Unified table state derived from current mode
   const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length
@@ -112,6 +131,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     startIndex,
     Math.min(ranked.length, startIndex + pageSize),
   )
+
   const pagedLive = liveRows.slice(
     startIndex,
     Math.min(liveRows.length, startIndex + pageSize),
@@ -130,11 +150,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     viewMode === 'historical'
       ? envHighest
       : liveRows.length > 0
-      ? liveRows.reduce<number | null>((max, r) => {
-          const val = r.average_score ?? null
-          if (val == null) return max
-          return max == null ? val : Math.max(max, val)
-        }, null)
+      ? liveRows[0].envScore
       : null
 
   // Environment metadata and repo mapping (fallbacks; replace with real mappings when available)
@@ -182,7 +198,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   return (
     <div className="space-y-6 text-light-500 dark:text-dark-500">
       {/* Header / Summary */}
-      <Card
+      {/* <Card
         title={`${envName.toUpperCase()} Environment`}
         subtitle="Dynamic view powered by live environments registry"
         theme={theme}
@@ -203,18 +219,18 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         }
       >
         <div></div>
-      </Card>
+      </Card> */}
 
-      {showCode && (
+      {/* {showCode && (
         <CodeViewer
           environment={activeEnvMeta}
           theme={theme}
           onClose={() => setShowCode(false)}
         />
-      )}
+      )} */}
 
       {/* Environment Overview Stats (mirrors subnet overview styling) */}
-      <Card
+      {/* <Card
         title={`${envName.toUpperCase()} OVERVIEW`}
         theme={theme}
         className="bg-light-100 dark:bg-dark-100"
@@ -245,7 +261,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </div>
           </div>
         </div>
-      </Card>
+      </Card> */}
 
       {/* Top Models Table for this Environment */}
       <Card
@@ -273,7 +289,6 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
           </div>
         }
       >
-        {/* Pagination Controls (consistent with Overview/Leaderboard) */}
         <div className="px-3 pt-3">
           <TablePaginationControls
             theme={theme}
@@ -284,82 +299,74 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             setPageSize={setPageSize}
           />
         </div>
-
         <div className="p-3">
-          <DataTable
-            theme={theme}
-            columns={[
-              { key: '#', label: '#' },
-              { key: 'uid', label: 'UID' },
-              {
-                key: 'model',
-                label: 'Model',
-                align: 'left',
-                render: (value) => (
-                  <span title={value}>{midTrunc(value, 32)}</span>
-                ),
-              },
-              {
-                key: 'rev',
-                label: 'Rev',
-                render: (value) => (
-                  <span title={String(value)}>
-                    {midTrunc(String(value), 10)}
-                  </span>
-                ),
-              },
-              { key: 'envScore', label: `${envName.toUpperCase()} Score` },
-              { key: 'overallAvg', label: 'Overall Avg' },
-              { key: 'successRate', label: 'Success %' },
-              { key: 'avgLatency', label: 'Avg Latency (s)' },
-              { key: 'rollouts', label: 'Rollouts' },
-            ]}
-            data={
-              viewMode === 'historical'
-                ? pagedHistorical.map(({ row, value }, idx) => ({
-                    '#': startIndex + idx + 1,
-                    uid: row.uid,
-                    model: row.model,
-                    rev: row.rev,
-                    envScore: fmt(value, 1),
-                    overallAvg: fmt(row.overall_avg_score, 1),
-                    successRate: `${row.success_rate_percent.toFixed(1)}%`,
-                    avgLatency:
-                      row.avg_latency == null
-                        ? dash
-                        : row.avg_latency.toFixed(2),
-                    rollouts: row.total_rollouts.toLocaleString(),
-                  }))
-                : pagedLive.map((lr, idx) => ({
-                    '#': startIndex + idx + 1,
-                    uid: lr.last_seen_uid,
-                    model: lr.model,
-                    rev: lr.revision ?? '',
-                    envScore: fmt(lr.average_score, 1),
-                    overallAvg: dash,
-                    successRate:
-                      lr.success_rate_percent == null
-                        ? '—'
-                        : `${lr.success_rate_percent.toFixed(1)}%`,
-                    avgLatency:
-                      lr.avg_latency == null ? dash : lr.avg_latency.toFixed(2),
-                    rollouts: lr.total_rollouts.toLocaleString(),
-                  }))
-            }
-            loading={tableLoading}
-            error={
-              tableError
-                ? tableError instanceof Error
-                  ? tableError.message
-                  : String(tableError)
-                : null
-            }
-            gridCols={gridCols}
-            pageSize={pageSize}
-          />
+          {viewMode === 'live' ? (
+            <EnvironmentLiveTable
+              theme={theme}
+              rows={pagedLive}
+              loading={isLiveLoading}
+              errorMsg={liveError}
+              envName={envName.toUpperCase()}
+              startIndex={startIndex}
+            />
+          ) : (
+            <DataTable
+              theme={theme}
+              columns={[
+                { key: '#', label: '#' },
+                { key: 'uid', label: 'UID' },
+                {
+                  key: 'model',
+                  label: 'Model',
+                  align: 'left',
+                  render: (value) => (
+                    <span title={value}>{midTrunc(value, 32)}</span>
+                  ),
+                },
+                {
+                  key: 'rev',
+                  label: 'Rev',
+                  render: (value) => (
+                    <span title={String(value)}>
+                      {midTrunc(String(value), 10)}
+                    </span>
+                  ),
+                },
+                { key: 'envScore', label: `${envName.toUpperCase()} Score` },
+                { key: 'overallAvg', label: 'Overall Avg' },
+                { key: 'successRate', label: 'Success %' },
+                { key: 'avgLatency', label: 'Avg Latency (s)' },
+                { key: 'rollouts', label: 'Rollouts' },
+              ]}
+              data={pagedHistorical.map(({ row, value }, idx) => ({
+                '#': startIndex + idx + 1,
+                uid: row.uid,
+                model: row.model,
+                rev: row.rev,
+                envScore: fmt(value, 1),
+                overallAvg: fmt(row.overall_avg_score, 1),
+                successRate: `${row.success_rate_percent.toFixed(1)}%`,
+                avgLatency:
+                  row.avg_latency == null
+                    ? dash
+                    : row.avg_latency.toFixed(2),
+                rollouts: row.total_rollouts.toLocaleString(),
+              }))}
+              loading={tableLoading}
+              error={
+                tableError
+                  ? tableError instanceof Error
+                    ? tableError.message
+                    : String(tableError)
+                  : null
+              }
+              gridCols={gridCols}
+              pageSize={pageSize}
+            />
+          )}
         </div>
       </Card>
-      {!tableLoading && (
+      {/* {!tableLoading && (
         <div className="columns-2 gap-4 space-y-4">
           <div className="break-inside-avoid">
             <ScoreDistributionHistogram env={apiEnvName} theme={theme} />
@@ -368,7 +375,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             <LatencyBoxPlot env={apiEnvName} theme={theme} />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

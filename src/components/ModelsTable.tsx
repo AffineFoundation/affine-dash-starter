@@ -41,7 +41,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const { environments: envs } = useEnvironments()
 
   const gridCols =
-    'grid grid-cols-[0.4fr_1.6fr_1fr_1fr_1fr_1fr_1fr] items-center'
+    'grid grid-cols-[0.4fr_1.6fr_1fr_1fr_1fr_1fr_1.5fr] items-center'
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
   const startIndex = (page - 1) * pageSize
@@ -178,7 +178,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               </button>
             </div>
 
-            <div className="text-xs font-mono tracking-wide h-full leading-none flex  items-center px-3">
+            {/* <div className="text-xs font-mono tracking-wide h-full leading-none flex  items-center px-3">
               <button
                 disabled={viewMode !== 'live'}
                 onClick={() => toggleSort('success')}
@@ -191,7 +191,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 <span className="uppercase">Success %</span>
                 <span>{sortIndicator('success')}</span>
               </button>
-            </div>
+            </div> */}
 
             <div className="text-xs font-mono  tracking-wide h-full leading-none flex  items-center px-3">
               {viewMode === 'live' ? (
@@ -213,6 +213,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
             <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pl-3">
               Eligible
+            </div>
+
+            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pl-3">
+              Hotkey
             </div>
 
             {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
@@ -297,7 +301,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         {fmt(isLive ? model.avgScore : model.overall_avg_score)}
                       </div>
 
-                      <div className="whitespace-nowrap px-3">
+                      {/* <div className="whitespace-nowrap px-3">
                         {isLive
                           ? enriched?.success_rate_percent != null
                             ? `${enriched.success_rate_percent.toFixed(1)}%`
@@ -305,7 +309,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           : model.success_rate_percent != null
                           ? `${model.success_rate_percent.toFixed(1)}%`
                           : dash}
-                      </div>
+                      </div> */}
 
                       <div className="whitespace-nowrap px-3">
                         {isLive
@@ -313,16 +317,39 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           : fmt(model.avg_latency, 2)}
                       </div>
 
-                      <div className="flex items-center justify-between pl-3">
+                      <div className="whitespace-nowrap px-3">
                         {model.eligible ? (
-                          <Check
-                            size={16}
-                            className="text-green-600 dark:text-green-400"
-                          />
+                          <div
+                            style={{
+                              width: '14px',
+                              height: '14px',
+                              backgroundColor: '#D39C37',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderRadius: '2px',
+                            }}
+                          >
+                            <Check
+                              style={{
+                                width: '8.5px',
+                                height: '6px',
+                                color: '#FFFFFF',
+                                strokeWidth: '6',
+                              }}
+                            />
+                          </div>
                         ) : (
                           <span className="text-sm font-sans ">{dash}</span>
                         )}
-
+                      </div>
+                      <div className="flex items-center justify-between pl-3">
+                        <div
+                          className="whitespace-nowrap"
+                          title={isLive ? model.hotkey : model.hotkey}
+                        >
+                          {midTrunc(isLive ? model.hotkey : model.hotkey, 16)}
+                        </div>
                         {/* Actions */}
                         <div className="flex items-center justify-center gap-2">
                           {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
@@ -414,7 +441,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
                   {/* Expanded Details Panel */}
                   {expandedModel === model.uniqueId && (
-                    <div className="p-14 text-left bg-light-300 dark:bg-dark-75">
+                    <div
+                      className="p-14 text-left"
+                      style={{ backgroundColor: '#e9ebed' }}
+                    >
                       <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                         {/* Common fields */}
                         <div>
@@ -448,7 +478,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           <>
                             <div>
                               <span className="font-bold">Hotkey:</span>{' '}
-                              {enriched?.hotkey ?? dash}
+                              {model.hotkey}
                             </div>
                             <div>
                               <span className="font-bold">
@@ -473,22 +503,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                               <span className="font-bold">Weight:</span>{' '}
                               {fmt(model.weight, 4)}
                             </div>
-                            <div>
-                              <span className="font-bold">SAT:</span>{' '}
-                              {fmt(model.sat)}
-                            </div>
-                            <div>
-                              <span className="font-bold">ABD:</span>{' '}
-                              {fmt(model.abd)}
-                            </div>
-                            <div>
-                              <span className="font-bold">DED:</span>{' '}
-                              {fmt(model.ded)}
-                            </div>
-                            <div>
-                              <span className="font-bold">ELR:</span>{' '}
-                              {fmt(model.elr)}
-                            </div>
+                            {Object.entries(model.envScores).map(
+                              ([name, score]) => (
+                                <div key={name}>
+                                  <span className="font-bold">
+                                    {name.split(':')[1]}:
+                                  </span>{' '}
+                                  {fmt(score)}
+                                </div>
+                              ),
+                            )}
                             {model.l1 != null && (
                               <div>
                                 <span className="font-bold">L1:</span>{' '}
@@ -499,6 +523,42 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                               <div>
                                 <span className="font-bold">L2:</span>{' '}
                                 {fmt(model.l2)}
+                              </div>
+                            )}
+                            {model.l3 != null && (
+                              <div>
+                                <span className="font-bold">L3:</span>{' '}
+                                {fmt(model.l3)}
+                              </div>
+                            )}
+                            {model.l4 != null && (
+                              <div>
+                                <span className="font-bold">L4:</span>{' '}
+                                {fmt(model.l4)}
+                              </div>
+                            )}
+                            {model.l5 != null && (
+                              <div>
+                                <span className="font-bold">L5:</span>{' '}
+                                {fmt(model.l5)}
+                              </div>
+                            )}
+                            {model.l6 != null && (
+                              <div>
+                                <span className="font-bold">L6:</span>{' '}
+                                {fmt(model.l6)}
+                              </div>
+                            )}
+                            {model.l7 != null && (
+                              <div>
+                                <span className="font-bold">L7:</span>{' '}
+                                {fmt(model.l7)}
+                              </div>
+                            )}
+                            {model.l8 != null && (
+                              <div>
+                                <span className="font-bold">L8:</span>{' '}
+                                {fmt(model.l8)}
                               </div>
                             )}
                           </>
@@ -529,7 +589,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                               return (
                                 <div key={env}>
                                   <span className="font-bold">{env}:</span>{' '}
-                                  {fmt((model as any)[key])}
+                                  {fmt((model as any)[key] as number | null)}
                                 </div>
                               )
                             })}

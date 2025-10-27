@@ -226,7 +226,7 @@ function App() {
               <div className="space-y-28">
                 <OverviewTable theme={theme} />
 
-                <React.Suspense
+                {/* <React.Suspense
                   fallback={
                     <div className="space-y-6">
                       <div className="h-64 border-2 rounded-none flex items-center justify-center">
@@ -389,7 +389,7 @@ function App() {
                       </div>
                     </div>
                   </div>
-                </React.Suspense>
+                </React.Suspense> */}
               </div>
             }
           />

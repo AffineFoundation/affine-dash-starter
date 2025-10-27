@@ -31,15 +31,17 @@ type LiveDisplayRow = {
   successRatePercent?: number | null
   weight: number | null
   eligible: boolean
-  sat: number | null
-  abd: number | null
-  ded: number | null
-  elr: number | null
   pts: number | null
   l1?: number | null
   l2?: number | null
   l3?: number | null
   l4?: number | null
+  l5?: number | null
+  l6?: number | null
+  l7?: number | null
+  l8?: number | null
+  hotkey: string
+  envScores: Record<string, number | null>
 }
 
 const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
@@ -92,20 +94,30 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     if (!liveSummary) return []
     const cols = liveSummary.columns || []
     const idx = (name: string) => cols.indexOf(name)
+
+    const envCols: { name: string; index: number }[] = []
+    cols.forEach((c, i) => {
+      if (c.includes(':')) {
+        envCols.push({ name: c, index: i })
+      }
+    })
+
     const iUID = idx('UID'),
       iModel = idx('Model'),
       iRev = idx('Rev'),
-      iSAT = idx('SAT'),
-      iABD = idx('ABD'),
-      iDED = idx('DED'),
-      iELR = idx('ELR'),
       iL1 = idx('L1'),
       iL2 = idx('L2'),
       iL3 = idx('L3'),
       iL4 = idx('L4'),
+      iL5 = idx('L5'),
+      iL6 = idx('L6'),
+      iL7 = idx('L7'),
+      iL8 = idx('L8'),
       iPts = idx('Pts'),
       iElig = idx('Elig'),
-      iWgt = idx('Wgt')
+      iWgt = idx('Wgt'),
+      iHotkey = idx('hotkey')
+
     const parseScore = (v: unknown): number | null =>
       v == null
         ? null
@@ -118,32 +130,37 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       v != null && String(v).trim().toUpperCase().startsWith('Y')
 
     return liveSummary.rows.map((row) => {
-      const sat = parseScore(row[iSAT]),
-        abd = parseScore(row[iABD]),
-        ded = parseScore(row[iDED]),
-        elr = parseScore(row[iELR])
-      const envScores = [sat, abd, ded, elr].filter(
-        (n): n is number => n != null,
+      const envScores: Record<string, number | null> = {}
+      envCols.forEach((env) => {
+        envScores[env.name] = parseScore(row[env.index])
+      })
+
+      const validScores = Object.values(envScores).filter(
+        (s): s is number => s != null,
       )
+      const avgScore = validScores.length
+        ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+        : null
+
       return {
         uniqueId: `live-${row[iUID]}-${row[iModel]}-${row[iRev]}`,
         uid: String(row[iUID] ?? ''),
         model: String(row[iModel] ?? ''),
         rev: String(row[iRev] ?? ''),
-        avgScore: envScores.length
-          ? envScores.reduce((a, b) => a + b, 0) / envScores.length
-          : null,
+        avgScore,
         weight: parseNum(row[iWgt]),
         pts: parseNum(row[iPts]),
         eligible: parseBoolY(row[iElig]),
-        sat,
-        abd,
-        ded,
-        elr,
+        hotkey: String(row[iHotkey] ?? ''),
+        envScores,
         l1: parseNum(row[iL1]),
         l2: parseNum(row[iL2]),
         l3: parseNum(row[iL3]),
         l4: parseNum(row[iL4]),
+        l5: parseNum(row[iL5]),
+        l6: parseNum(row[iL6]),
+        l7: parseNum(row[iL7]),
+        l8: parseNum(row[iL8]),
       }
     })
   }, [liveSummary])
