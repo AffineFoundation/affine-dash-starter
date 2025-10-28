@@ -28,7 +28,7 @@ const EnvironmentTabs: React.FC<EnvironmentTabsProps> = ({
           <button
             key={env.id}
             onClick={() => setActiveEnvironment(env.id)}
-            className={`px-6 py-3 font-sans text-xs uppercase tracking-wider border-r-2 last:border-r-0 transition-colors ${
+            className={`px-4 py-2 font-sans text-xs tracking-wider border-r-2 last:border-r-0 transition-colors ${
               activeEnvironment === env.id
                 ? 'bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-white dark:border-white'
                 : 'bg-light-100 text-gray-600 border-gray-300 hover:bg-white hover:text-gray-800 dark:bg-black dark:text-gray-300 dark:border-white dark:hover:bg-gray-800 dark:hover:text-white'
@@ -36,7 +36,7 @@ const EnvironmentTabs: React.FC<EnvironmentTabsProps> = ({
           >
             {env.name}
             <div className="text-xs mt-1 font-sans text-gray-500 dark:text-gray-400">
-              {env.models.length} MODELS
+              {env.models.length} Models
             </div>
           </button>
         ))}
@@ -46,4 +46,3 @@ const EnvironmentTabs: React.FC<EnvironmentTabsProps> = ({
 };
 
 export default EnvironmentTabs;
-

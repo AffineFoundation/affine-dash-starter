@@ -267,11 +267,16 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             <Button
               onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
               theme={theme}
+              variant="secondary"
             >
               <ExternalLink size={12} />
               REPO
             </Button>
-            <Button onClick={() => setShowCode(true)} theme={theme}>
+            <Button
+              onClick={() => setShowCode(true)}
+              theme={theme}
+              variant="secondary"
+            >
               <Code size={12} />
               VIEW CODE
             </Button>
