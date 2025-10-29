@@ -13,11 +13,9 @@ interface ModelsTableProps {
   errorMsg: string | null
   viewMode: 'historical' | 'live'
   enrichedMap: Record<string, LiveEnrichmentRow>
-  sortField: 'weight' | 'uid' | 'avgScore' | 'success' | 'pts' | 'model'
+  sortField: string
   sortDir: 'asc' | 'desc'
-  toggleSort: (
-    field: 'weight' | 'uid' | 'avgScore' | 'success' | 'pts' | 'model',
-  ) => void
+  toggleSort: (field: string) => void
   liveKey: (uid: string | number, model: string) => string
 }
 
@@ -57,6 +55,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
   const fmt = (n: number | null | undefined, digits = 1) =>
     n == null ? '—' : n.toFixed(digits)
+
+  const parseScoreValue = (v: unknown): number | null =>
+    v == null
+      ? null
+      : parseFloat(String(v).replace(/\*/g, '').split('/')[0]) || null
   const fmtTs = (iso: string | null | undefined) =>
     !iso ? '—' : new Date(iso).toLocaleString()
   const dash = '—'
@@ -65,12 +68,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       ? `${s.slice(0, max / 2)}…${s.slice(s.length - max / 2)}`
       : s
 
-  const sortIndicator = (field: typeof sortField) =>
-    viewMode !== 'live' || sortField !== field
-      ? ''
-      : sortDir === 'asc'
-      ? '▲'
-      : '▼'
+  const sortIndicator = (field: string) =>
+    viewMode !== 'live' || sortField !== field ? (
+      ''
+    ) : sortDir === 'asc' ? (
+      <span className="ml-1">▲</span>
+    ) : (
+      <span className="ml-1">▼</span>
+    )
 
   const toggleExpanded = (uniqueId: string) =>
     setExpandedModel((prev) => (prev === uniqueId ? null : uniqueId))
@@ -111,7 +116,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   }, [openMenuId, hoveredRowId, rows, enrichedMap, liveKey])
 
   const thClasses =
-    'px-3 py-2 text-xs font-mono uppercase tracking-wide text-left border-r border-black/5 last:border-r-0'
+    'px-3 py-2 text-xs font-mono uppercase tracking-wide text-left border-r border-black/5 last:border-r-0 whitespace-nowrap font-mono font-normal'
   const tdClasses =
     'p-5 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
 
@@ -126,10 +131,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         setPageSize={setPageSize}
       />
 
-      <div className="overflow-x-auto rounded-[4px] bg-white">
-        <table className="w-full border-collapse">
-          <thead className="bg-light-haze text-light-smoke">
-            <tr className="border-b border-black/5 h-8">
+      <div className="overflow-x-auto rounded-[4px] bg-white border border-light-200 dark:border-dark-200">
+        <table className="min-w-full border-collapse">
+          <thead className="text-light-smoke">
+            <tr className="border-b border-black/5 h-8 bg-light-haze">
               <th className={`${thClasses} pr-3`}>
                 <button
                   disabled={viewMode !== 'live'}
@@ -153,7 +158,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               <th className={thClasses}>Rev</th>
               {envs.map((env) => (
                 <th key={env} className={thClasses}>
-                  {env}
+                  <button
+                    disabled={viewMode !== 'live'}
+                    onClick={() => toggleSort(env)}
+                    className="flex items-center"
+                  >
+                    <span className="uppercase">{env.split(':')[1]}</span>
+                    <span>{sortIndicator(env)}</span>
+                  </button>
                 </th>
               ))}
               <th className={thClasses}>
@@ -168,10 +180,26 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               </th>
               {L_SUBSETS.map((subset) => (
                 <th key={subset} className={thClasses}>
-                  {subset}
+                  <button
+                    disabled={viewMode !== 'live'}
+                    onClick={() => toggleSort(subset)}
+                    className="flex items-center"
+                  >
+                    <span className="uppercase">{subset}</span>
+                    <span>{sortIndicator(subset)}</span>
+                  </button>
                 </th>
               ))}
-              <th className={thClasses}>Points</th>
+              <th className={thClasses}>
+                <button
+                  disabled={viewMode !== 'live'}
+                  onClick={() => toggleSort('pts')}
+                  className="flex items-center"
+                >
+                  <span className="uppercase">Points</span>
+                  <span>{sortIndicator('pts')}</span>
+                </button>
+              </th>
               <th className={thClasses}>FirstBlk</th>
               <th className={thClasses}>Eligible</th>
               <th className={thClasses}>Hotkey</th>
@@ -182,6 +210,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     className="flex items-center"
                   >
                     <span className="uppercase">Weight</span>
+                    <span>{sortIndicator('weight')}</span>
                   </button>
                 ) : (
                   'Avg Latency (s)'
@@ -205,7 +234,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
                 <tr
                   key={i}
-                  className="hover:bg-light-50/60 dark:hover:bg-gray-800/40"
+                  className=""
                 >
                   <td className={tdClasses}>
                     <SkeletonText theme={theme} className="h-4 w-12" />
@@ -283,7 +312,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     <tr
                       onMouseEnter={() => setHoveredRowId(model.uniqueId)}
                       onMouseLeave={() => setHoveredRowId(null)}
-                      className="transition-colors duration-300 hover:bg-light-sand/50 group"
+                      className="transition-colors duration-300 group"
                     >
                       <td className={`${tdClasses} pr-3`}>{model.uid}</td>
                       <td
@@ -536,7 +565,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                       <span className="font-bold">
                                         {name.split(':')[1]}:
                                       </span>{' '}
-                                      {fmt(score as number | null)}
+                                      {fmt(parseScoreValue(score))}
                                     </div>
                                   ),
                                 )}

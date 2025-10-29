@@ -15,7 +15,8 @@ interface DataTableProps {
   data: any[]
   loading: boolean
   error?: string | null
-  gridCols: string
+  gridCols?: string
+  gridTemplateCols?: string
   sortField?: string
   sortDir?: 'asc' | 'desc'
   onSort?: (field: string) => void
@@ -29,6 +30,7 @@ const DataTable: React.FC<DataTableProps> = ({
   loading,
   error,
   gridCols,
+  gridTemplateCols,
   sortField,
   sortDir,
   onSort,
@@ -42,7 +44,10 @@ const DataTable: React.FC<DataTableProps> = ({
       {/* Table Header */}
       <div className="px-2 py-[10px] text-light-smoke border-b border-black/5">
         <div
-          className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
+          className={`${
+            gridCols || 'grid'
+          } text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
+          style={{ gridTemplateColumns: gridTemplateCols }}
         >
           {columns.map((column) => (
             <div
@@ -82,7 +87,10 @@ const DataTable: React.FC<DataTableProps> = ({
               key={i}
               className="p-3 hover:bg-light-50/60 dark:hover:bg-gray-800/40"
             >
-              <div className={`${gridCols} text-center`}>
+              <div
+                className={`${gridCols || 'grid'} text-center`}
+                style={{ gridTemplateColumns: gridTemplateCols }}
+              >
                 {columns.map((column, idx) => (
                   <div
                     key={idx}
@@ -101,9 +109,12 @@ const DataTable: React.FC<DataTableProps> = ({
           data.map((row, index) => (
             <div
               key={index}
-              className="p-3 transition-colors duration-300 hover:bg-light-50 dark:hover:bg-dark-300"
+              className="p-3 transition-colors duration-300"
             >
-              <div className={`${gridCols} text-center`}>
+              <div
+                className={`${gridCols || 'grid'} text-center`}
+                style={{ gridTemplateColumns: gridTemplateCols }}
+              >
                 {columns.map((column) => (
                   <div
                     key={column.key}

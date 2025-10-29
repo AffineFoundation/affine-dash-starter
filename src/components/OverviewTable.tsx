@@ -55,9 +55,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   const [enriching, setEnriching] = useState<boolean>(false)
   const [enrichmentError, setEnrichmentError] = useState<string | null>(null)
 
-  const [sortField, setSortField] = useState<
-    'weight' | 'uid' | 'avgScore' | 'success' | 'pts' | 'model'
-  >('weight')
+  const [sortField, setSortField] = useState<string>('weight')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   const liveKey = (uid: string | number, model: string) =>
@@ -178,6 +176,17 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     if (viewMode !== 'live') return baseRows
     const arr = [...(baseRows as any[])]
     const getVal = (r: any): any => {
+      if (sortField.startsWith('L')) {
+        return Number.isFinite(r[sortField.toLowerCase()])
+          ? r[sortField.toLowerCase()]
+          : -Infinity
+      }
+      if (r.envScores && sortField in r.envScores) {
+        const score = r.envScores[sortField]
+        if (score === null) return -Infinity
+        const match = String(score).match(/^[0-9.]+/)
+        return match ? parseFloat(match[0]) : -Infinity
+      }
       switch (sortField) {
         case 'weight':
           return Number.isFinite(r.weight) ? r.weight : -Infinity
@@ -220,7 +229,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   const {} = useEnvironments()
 
-  const toggleSort = (field: typeof sortField) => {
+  const toggleSort = (field: string) => {
     if (viewMode !== 'live') return
     setSortDir((prev) =>
       sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc',
