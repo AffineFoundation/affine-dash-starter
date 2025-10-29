@@ -4,6 +4,7 @@ import { LiveEnrichmentRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
+import ScoreCell from './ScoreCell'
 
 interface ModelsTableProps {
   theme: 'light' | 'dark'
@@ -294,21 +295,22 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       <td className={tdClasses} title={model.rev}>
                         {midTrunc(model.rev, 10)}
                       </td>
-                      {envs.map((env) => (
-                        <td key={env} className={tdClasses}>
-                          {fmt(
-                            isLive
-                              ? (model.envScores[
-                                  `bittensor-text-prompting-test:${env}`
-                                ] as number | null)
-                              : ((model as any)[
-                                  env
-                                    .toLowerCase()
-                                    .replace(/[^a-z0-9_]/g, '_')
-                                ] as number | null),
-                          )}
-                        </td>
-                      ))}
+                      {envs.map((env) => {
+                        const envScore = isLive
+                          ? model.envScores[env]
+                          : (model as any)[
+                              env.toLowerCase().replace(/[^a-z0-9_]/g, '_')
+                            ]
+                        return (
+                          <td key={env} className={tdClasses}>
+                            {isLive ? (
+                              <ScoreCell score={envScore} />
+                            ) : (
+                              fmt(envScore as number | null)
+                            )}
+                          </td>
+                        )
+                      })}
                       <td className={tdClasses}>
                         {fmt(
                           isLive

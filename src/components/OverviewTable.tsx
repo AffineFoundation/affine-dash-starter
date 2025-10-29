@@ -42,7 +42,7 @@ type LiveDisplayRow = {
   l7?: number | null
   l8?: number | null
   hotkey: string
-  envScores: Record<string, number | null>
+  envScores: Record<string, string | null>
 }
 
 const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
@@ -120,7 +120,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       iHotkey = idx('hotkey'),
       iFirstBlk = idx('FIRSTBLK')
 
-    const parseScore = (v: unknown): number | null =>
+    const parseScoreValue = (v: unknown): number | null =>
       v == null
         ? null
         : parseFloat(String(v).replace(/\*/g, '').split('/')[0]) || null
@@ -132,14 +132,15 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       v != null && String(v).trim().toUpperCase().startsWith('Y')
 
     return liveSummary.rows.map((row) => {
-      const envScores: Record<string, number | null> = {}
+      const envScores: Record<string, string | null> = {}
+      const numericScores: (number | null)[] = []
       envCols.forEach((env) => {
-        envScores[env.name] = parseScore(row[env.index])
+        const rawScore = row[env.index]
+        envScores[env.name] = rawScore == null ? null : String(rawScore)
+        numericScores.push(parseScoreValue(rawScore))
       })
 
-      const validScores = Object.values(envScores).filter(
-        (s): s is number => s != null,
-      )
+      const validScores = numericScores.filter((s): s is number => s != null)
       const avgScore = validScores.length
         ? validScores.reduce((a, b) => a + b, 0) / validScores.length
         : null
