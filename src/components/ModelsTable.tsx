@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Check, MoreVertical } from 'lucide-react'
+import { Check, MoreVertical, Search } from 'lucide-react'
 import { LiveEnrichmentRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
@@ -17,6 +17,8 @@ interface ModelsTableProps {
   sortDir: 'asc' | 'desc'
   toggleSort: (field: string) => void
   liveKey: (uid: string | number, model: string) => string
+  searchQuery: string
+  setSearchQuery: (query: string) => void
 }
 
 const ModelsTable: React.FC<ModelsTableProps> = ({
@@ -30,6 +32,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   sortDir,
   toggleSort,
   liveKey,
+  searchQuery,
+  setSearchQuery,
 }) => {
   const [expandedModel, setExpandedModel] = useState<string | null>(null)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -120,16 +124,43 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const tdClasses =
     'p-5 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
 
+  const pagedStartIndex = rows.length === 0 ? 0 : (page - 1) * pageSize + 1
+  const pagedEndIndex = Math.min(rows.length, page * pageSize)
+
   return (
     <div className="space-y-3">
-      <TablePaginationControls
-        theme={theme}
-        total={rows.length}
-        page={page}
-        setPage={setPage}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-      />
+      <div className="flex justify-between items-center">
+        <div className="text-sm uppercase tracking-wide leading-none [word-spacing:15px] text-light-slate font-medium">
+          Showing{' '}
+          <span className="text-light-smoke">
+            {pagedStartIndex}–{pagedEndIndex}
+          </span>{' '}
+          of <span className="text-light-smoke">{rows.length}</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={16}
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by model, UID, or hotkey"
+              className="pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <TablePaginationControls
+            theme={theme}
+            total={rows.length}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+          />
+        </div>
+      </div>
 
       <div className="overflow-x-auto rounded-[4px] bg-white border border-light-200 dark:border-dark-200">
         <table className="min-w-full border-collapse">

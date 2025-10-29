@@ -54,6 +54,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   >({})
   const [enriching, setEnriching] = useState<boolean>(false)
   const [enrichmentError, setEnrichmentError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const [sortField, setSortField] = useState<string>('weight')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
@@ -171,10 +172,27 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     viewMode === 'historical' ? historicalRows : liveRows
   ) as Array<any & { uniqueId: string; eligible: boolean }>
 
+  const searchedRows = useMemo(() => {
+    if (!searchQuery) {
+      return baseRows
+    }
+    const lowerQuery = searchQuery.toLowerCase()
+    return baseRows.filter((row) => {
+      const model = String(row.model || '').toLowerCase()
+      const uid = String(row.uid || '').toLowerCase()
+      const hotkey = String(row.hotkey || '').toLowerCase()
+      return (
+        model.includes(lowerQuery) ||
+        uid.includes(lowerQuery) ||
+        hotkey.includes(lowerQuery)
+      )
+    })
+  }, [baseRows, searchQuery])
+
   // Sorting logic for Live view
   const rows = useMemo(() => {
-    if (viewMode !== 'live') return baseRows
-    const arr = [...(baseRows as any[])]
+    if (viewMode !== 'live') return searchedRows
+    const arr = [...(searchedRows as any[])]
     const getVal = (r: any): any => {
       if (sortField.startsWith('L')) {
         return Number.isFinite(r[sortField.toLowerCase()])
@@ -214,7 +232,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       return sortDir === 'asc' ? cmp : -cmp
     })
     return arr
-  }, [baseRows, viewMode, sortField, sortDir, enrichedMap])
+  }, [searchedRows, viewMode, sortField, sortDir, enrichedMap])
 
   const loading =
     viewMode === 'historical'
@@ -273,6 +291,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           sortDir={sortDir}
           toggleSort={toggleSort}
           liveKey={liveKey}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
       </div>
 

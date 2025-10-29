@@ -24,14 +24,6 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
 
   return (
     <div className="text-light-slate flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">
-      <div className="text-sm uppercase tracking-wide leading-none [word-spacing:15px]">
-        Showing{' '}
-        <span className="text-light-smoke">
-          {startIndex}–{endIndex}
-        </span>{' '}
-        of <span className="text-light-smoke">{total}</span>
-      </div>
-
       <div className="text-sm uppercase tracking-wide leading-none flex items-center gap-3">
         <label>Rows per page</label>
 
