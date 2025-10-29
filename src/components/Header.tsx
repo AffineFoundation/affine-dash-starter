@@ -9,18 +9,24 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
-    <header className="h-20 mx-auto p-5 mb-11 flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <header className="md:h-20 p-3 md:p-5 mb-11 flex items-center justify-between">
+      <div className="flex items-center gap-2 md:gap-4">
         <img src="/logo.svg" alt="Logo" />
 
-        <h1 className="text-xs font-medium w-80 text-black/30 uppercase leading-none tracking-wide">
-          <span className="text-black">AFFINE</span> — a decentralized ML
-          network on Bittensor where subnets converge, models are trained, and
-          contributors earn TAO.
+        <h1 className="uppercase md:w-80">
+          <div className="md:hidden text-xs text-black leading-none tracking-wide font-medium">
+            AFFINE
+          </div>
+
+          <div className="hidden md:block text-xs text-black/30 leading-none tracking-wide font-medium">
+            <span className="text-black">AFFINE</span> — a decentralized ML
+            network on Bittensor where subnets converge, models are trained, and
+            contributors earn TAO.
+          </div>
         </h1>
       </div>
 
-      <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
+      <nav className="flex items-center gap-5 md:gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
         <a href="">Chat</a>
 
         <a href="">Research</a>
