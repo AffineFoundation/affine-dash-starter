@@ -217,7 +217,7 @@ function App() {
       <Hero />
 
       {/* Main Content */}
-      <main className="mt-16 px-5 pb-20 w-full">
+      <main className="mt-9 md:mt-16 px-3 md:px-5 pb-20 w-full">
         {/* Content */}
         <Routes>
           <Route
@@ -248,7 +248,7 @@ function App() {
                   }
                 >
                   <div className="flex gap-16">
-                    <aside className="w-60 sticky top-5 self-start h-fit">
+                    <aside className="w-60 sticky top-5 self-start h-fit hidden md:block">
                       <h3 className="font-mono uppercase text-xs leading-none tracking-wide">
                         ENVIRONMENT OVERVIEW
                       </h3>

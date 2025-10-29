@@ -232,14 +232,14 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12 text-gray-900 dark:text-white">
       <div className="lg:col-span-full order-1">
-        <div className="grid grid-cols-3 gap-[10px]">
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-[10px]">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4 h-24 md:h-auto">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Models
             </div>
 
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
+            <div className="mt-7 md:mt-14 flex justify-between items-end">
+              <div className="text-4xl md:text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : rows.length === 0 ? (
@@ -253,13 +253,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
           </div>
 
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4 h-24 md:h-auto">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Eligible
             </div>
 
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
+            <div className="mt-7 md:mt-14 flex justify-between items-end">
+              <div className="text-4xl md:text-7xl leading-[80%]">
                 {loading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : rows.filter((r) => r.eligible).length === 0 ? (
@@ -273,13 +273,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
             </div>
           </div>
 
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
+          <div className="text-light-smoke bg-white rounded-[4px] p-4 h-24 md:h-auto">
             <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
               Environments
             </div>
 
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
+            <div className="mt-7 md:mt-14 flex justify-between items-end">
+              <div className="text-4xl md:text-7xl leading-[80%]">
                 {envLoading ? (
                   <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
                 ) : envs.length === 0 ? (
@@ -310,7 +310,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         />
       </div>
 
-{/* <div className="lg:col-span-1 order-3">
+      {/* <div className="lg:col-span-1 order-3">
   <ActivityFeed theme={theme} />
 </div> */}
     </div>
