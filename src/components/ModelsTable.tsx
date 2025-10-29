@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronRight, Check, MoreVertical } from 'lucide-react'
+import { Check, MoreVertical } from 'lucide-react'
 import { LiveEnrichmentRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
-import Button from './Button'
 
 interface ModelsTableProps {
   theme: 'light' | 'dark'
@@ -40,8 +39,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [page, setPage] = useState<number>(1)
   const { environments: envs } = useEnvironments()
 
-  const gridCols =
-    'grid grid-cols-[0.4fr_1.6fr_1fr_1fr_1fr_1fr_1.5fr] items-center'
+  const L_SUBSETS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
   const startIndex = (page - 1) * pageSize
@@ -111,6 +109,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     return () => document.removeEventListener('keydown', onKey)
   }, [openMenuId, hoveredRowId, rows, enrichedMap, liveKey])
 
+  const thClasses =
+    'p-3 h-8 text-xs font-mono uppercase tracking-wide leading-none text-left border-r border-black/5 last:border-r-0'
+  const tdClasses =
+    'p-3 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
+
   return (
     <div className="space-y-3">
       <TablePaginationControls
@@ -122,486 +125,523 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         setPageSize={setPageSize}
       />
 
-      {/* Models Table */}
-      <div className="rounded-[4px] bg-white">
-        {/* Table Header */}
-        <div className="px-2 py-[10px] text-light-smoke border-b border-black/5">
-          <div
-            className={`${gridCols} text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
-          >
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center pr-3">
-              <button
-                disabled={viewMode !== 'live'}
-                onClick={() => toggleSort('uid')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
-              >
-                <span className="uppercase">Uid</span>
-                <span>{sortIndicator('uid')}</span>
-              </button>
-            </div>
-
-            <div className="text-xs font-mono tracking-wide h-full leading-none flex items-center px-3">
-              <button
-                disabled={viewMode !== 'live'}
-                onClick={() => toggleSort('model')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
-              >
-                <span className="uppercase">Model</span>
-                <span>{sortIndicator('model')}</span>
-              </button>
-            </div>
-
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex  items-center px-3">
-              Rev
-            </div>
-
-            <div className="text-xs font-mono  tracking-wide h-full leading-none flex  items-center px-3">
-              <button
-                disabled={viewMode !== 'live'}
-                onClick={() => toggleSort('avgScore')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
-              >
-                <span className="uppercase">Avg Score</span>
-                <span>{sortIndicator('avgScore')}</span>
-              </button>
-            </div>
-
-            {/* <div className="text-xs font-mono tracking-wide h-full leading-none flex  items-center px-3">
-              <button
-                disabled={viewMode !== 'live'}
-                onClick={() => toggleSort('success')}
-                // className={`inline-flex items-center gap-1 ${
-                //   viewMode === 'live'
-                //     ? 'cursor-pointer underline-offset-2 hover:underline'
-                //     : 'opacity-60 cursor-default'
-                // }`}
-              >
-                <span className="uppercase">Success %</span>
-                <span>{sortIndicator('success')}</span>
-              </button>
-            </div> */}
-
-            <div className="text-xs font-mono  tracking-wide h-full leading-none flex  items-center px-3">
-              {viewMode === 'live' ? (
+      <div className="overflow-x-auto rounded-[4px] bg-white">
+        <table className="w-full border-collapse">
+          <thead className="bg-light-haze text-light-smoke">
+            <tr className="border-b border-black/5">
+              <th className={`${thClasses} pr-3`}>
                 <button
-                  onClick={() => toggleSort('weight')}
-                  // className="inline-flex items-center gap-1 cursor-pointer underline-offset-2 hover:underline"
+                  disabled={viewMode !== 'live'}
+                  onClick={() => toggleSort('uid')}
+                  className="flex items-center"
                 >
-                  <span className="uppercase">Weight</span>
-                  {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
-
-                  {/* <span>{sortIndicator('weight')}</span> */}
-
-                  {/* -------------------------- */}
+                  <span className="uppercase">Uid</span>
+                  <span>{sortIndicator('uid')}</span>
                 </button>
-              ) : (
-                'Avg Latency (s)'
-              )}
-            </div>
-
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pl-3">
-              Eligible
-            </div>
-
-            <div className="text-xs font-mono uppercase tracking-wide h-full leading-none flex items-center pl-3">
-              Hotkey
-            </div>
-
-            {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
-
-            {/* <div className="text-xs font-mono uppercase tracking-wide  ">
-              Actions
-            </div> */}
-
-            {/* -------------------------- */}
-          </div>
-        </div>
-
-        {/* Table Body */}
-        <div className="text-light-smoke divide-y divide-black/5">
-          {errorMsg && (
-            <div className="p-4 text-red-600 dark:text-red-400">{errorMsg}</div>
-          )}
-
-          {/* Skeleton Loader */}
-          {loading &&
-            !errorMsg &&
-            Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
-              <div
-                key={i}
-                className="p-3 hover:bg-light-50/60 dark:hover:bg-gray-800/40"
-              >
-                <div className={`${gridCols} text-center`}>
-                  <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
-                  <div className="text-left">
-                    <SkeletonText theme={theme} className="h-4 w-48" />
-                  </div>
-                  <SkeletonText theme={theme} className="h-3 w-10 mx-auto" />
-                  <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
-                  <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
-                  <SkeletonText theme={theme} className="h-4 w-16 mx-auto" />
-                  <div className="flex items-center justify-center">
-                    <Skeleton theme={theme} className="h-4 w-4 rounded-full" />
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Skeleton theme={theme} className="h-8 w-8" />
-                    <Skeleton theme={theme} className="h-8 w-8" />
-                  </div>
-                </div>
-              </div>
-            ))}
-
-          {/* Render Rows */}
-          {!loading &&
-            !errorMsg &&
-            pagedRows.map((model: any) => {
-              const isLive = viewMode === 'live'
-              const enriched = isLive
-                ? enrichedMap[liveKey(model.uid, model.model)]
-                : null
-              const chuteId = isLive ? enriched?.chute_id : model.chute_id
-
-              return (
-                <div
-                  key={model.uniqueId}
-                  onMouseEnter={() => setHoveredRowId(model.uniqueId)}
-                  onMouseLeave={() => setHoveredRowId(null)}
+              </th>
+              <th className={thClasses}>
+                <button
+                  disabled={viewMode !== 'live'}
+                  onClick={() => toggleSort('model')}
+                  className="flex items-center"
                 >
-                  {/* Main Row */}
-                  <div className="p-5 transition-colors duration-300 hover:bg-light-sand/50 group">
-                    <div
-                      className={`${gridCols} font-medium text-sm leading-none tracking-wide`}
-                    >
-                      <div className="whitespace-nowrap pr-3">{model.uid}</div>
+                  <span className="uppercase">Model</span>
+                  <span>{sortIndicator('model')}</span>
+                </button>
+              </th>
+              <th className={thClasses}>Rev</th>
+              {envs.map((env) => (
+                <th key={env} className={thClasses}>
+                  {env}
+                </th>
+              ))}
+              <th className={thClasses}>
+                <button
+                  disabled={viewMode !== 'live'}
+                  onClick={() => toggleSort('avgScore')}
+                  className="flex items-center"
+                >
+                  <span className="uppercase">Avg Score</span>
+                  <span>{sortIndicator('avgScore')}</span>
+                </button>
+              </th>
+              {L_SUBSETS.map((subset) => (
+                <th key={subset} className={thClasses}>
+                  {subset}
+                </th>
+              ))}
+              <th className={thClasses}>Points</th>
+              <th className={thClasses}>FirstBlk</th>
+              <th className={thClasses}>Eligible</th>
+              <th className={thClasses}>Hotkey</th>
+              <th className={thClasses}>
+                {viewMode === 'live' ? (
+                  <button
+                    onClick={() => toggleSort('weight')}
+                    className="flex items-center"
+                  >
+                    <span className="uppercase">Weight</span>
+                  </button>
+                ) : (
+                  'Avg Latency (s)'
+                )}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-light-smoke divide-y divide-black/5">
+            {errorMsg && (
+              <tr>
+                <td
+                  colSpan={11 + envs.length + L_SUBSETS.length}
+                  className="p-4 text-red-600 dark:text-red-400"
+                >
+                  {errorMsg}
+                </td>
+              </tr>
+            )}
+            {loading &&
+              !errorMsg &&
+              Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
+                <tr
+                  key={i}
+                  className="hover:bg-light-50/60 dark:hover:bg-gray-800/40"
+                >
+                  <td className={tdClasses}>
+                    <SkeletonText theme={theme} className="h-4 w-12" />
+                  </td>
+                  <td className={tdClasses}>
+                    <SkeletonText theme={theme} className="h-4 w-48" />
+                  </td>
+                  <td className={tdClasses}>
+                    <SkeletonText theme={theme} className="h-3 w-10" />
+                  </td>
+                  {envs.map((env) => (
+                    <td key={env} className={tdClasses}>
+                      <SkeletonText
+                        theme={theme}
+                        className="h-4 w-12 mx-auto"
+                      />
+                    </td>
+                  ))}
+                  <td className={tdClasses}>
+                    <SkeletonText
+                      theme={theme}
+                      className="h-4 w-12 mx-auto"
+                    />
+                  </td>
+                  {L_SUBSETS.map((subset) => (
+                    <td key={subset} className={tdClasses}>
+                      <SkeletonText
+                        theme={theme}
+                        className="h-4 w-8 mx-auto"
+                      />
+                    </td>
+                  ))}
+                  <td className={tdClasses}>
+                    <SkeletonText
+                      theme={theme}
+                      className="h-4 w-12 mx-auto"
+                    />
+                  </td>
+                  <td className={tdClasses}>
+                    <SkeletonText
+                      theme={theme}
+                      className="h-4 w-12 mx-auto"
+                    />
+                  </td>
+                  <td className={tdClasses}>
+                    <div className="flex items-center justify-center">
+                      <Skeleton
+                        theme={theme}
+                        className="h-4 w-4 rounded-full"
+                      />
+                    </div>
+                  </td>
+                  <td className={tdClasses}>
+                    <SkeletonText theme={theme} className="h-4 w-16" />
+                  </td>
+                  <td className={tdClasses}>
+                    <div className="flex items-center justify-between gap-2">
+                      <SkeletonText theme={theme} className="h-4 w-16" />
+                      <Skeleton theme={theme} className="h-8 w-8" />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            {!loading &&
+              !errorMsg &&
+              pagedRows.map((model: any) => {
+                const isLive = viewMode === 'live'
+                const enriched = isLive
+                  ? enrichedMap[liveKey(model.uid, model.model)]
+                  : null
+                const chuteId = isLive ? enriched?.chute_id : model.chute_id
 
-                      <div
-                        className="truncate whitespace-nowrap px-3"
+                return (
+                  <React.Fragment key={model.uniqueId}>
+                    <tr
+                      onMouseEnter={() => setHoveredRowId(model.uniqueId)}
+                      onMouseLeave={() => setHoveredRowId(null)}
+                      className="transition-colors duration-300 hover:bg-light-sand/50 group"
+                    >
+                      <td className={`${tdClasses} pr-3`}>{model.uid}</td>
+                      <td
+                        className={`${tdClasses} truncate`}
                         title={model.model}
                       >
                         {midTrunc(model.model, 48)}
-                      </div>
-
-                      <div className="whitespace-nowrap px-3" title={model.rev}>
+                      </td>
+                      <td className={tdClasses} title={model.rev}>
                         {midTrunc(model.rev, 10)}
-                      </div>
-
-                      <div className="whitespace-nowrap px-3">
-                        {fmt(isLive ? model.avgScore : model.overall_avg_score)}
-                      </div>
-
-                      {/* <div className="whitespace-nowrap px-3">
-                        {isLive
-                          ? enriched?.success_rate_percent != null
-                            ? `${enriched.success_rate_percent.toFixed(1)}%`
-                            : dash
-                          : model.success_rate_percent != null
-                          ? `${model.success_rate_percent.toFixed(1)}%`
-                          : dash}
-                      </div> */}
-
-                      <div className="whitespace-nowrap px-3">
-                        {isLive
-                          ? fmt(model.weight, 4)
-                          : fmt(model.avg_latency, 2)}
-                      </div>
-
-                      <div className="whitespace-nowrap px-3">
+                      </td>
+                      {envs.map((env) => (
+                        <td key={env} className={tdClasses}>
+                          {fmt(
+                            isLive
+                              ? (model.envScores[
+                                  `bittensor-text-prompting-test:${env}`
+                                ] as number | null)
+                              : ((model as any)[
+                                  env
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9_]/g, '_')
+                                ] as number | null),
+                          )}
+                        </td>
+                      ))}
+                      <td className={tdClasses}>
+                        {fmt(
+                          isLive
+                            ? (model.avgScore as number | null)
+                            : (model.overall_avg_score as number | null),
+                        )}
+                      </td>
+                      {L_SUBSETS.map((subset) => (
+                        <td key={subset} className={tdClasses}>
+                          {fmt(
+                            isLive
+                              ? (model[
+                                  subset.toLowerCase() as keyof typeof model
+                                ] as number | null)
+                              : null,
+                          )}
+                        </td>
+                      ))}
+                      <td className={tdClasses}>
+                        {fmt(isLive ? (model.pts as number | null) : null)}
+                      </td>
+                      <td className={tdClasses}>
+                        {fmt(isLive ? (model.firstBlk as number | null) : null, 0)}
+                      </td>
+                      <td className={tdClasses}>
                         {model.eligible ? (
-                          <div
-                            style={{
-                              width: '14px',
-                              height: '14px',
-                              backgroundColor: '#D39C37',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              borderRadius: '2px',
-                            }}
-                          >
-                            <Check
+                          <div className="flex justify-center">
+                            <div
                               style={{
-                                width: '8.5px',
-                                height: '6px',
-                                color: '#FFFFFF',
-                                strokeWidth: '6',
+                                width: '14px',
+                                height: '14px',
+                                backgroundColor: '#D39C37',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '2px',
                               }}
-                            />
+                            >
+                              <Check
+                                style={{
+                                  width: '8.5px',
+                                  height: '6px',
+                                  color: '#FFFFFF',
+                                  strokeWidth: '6',
+                                }}
+                              />
+                            </div>
                           </div>
                         ) : (
-                          <span className="text-sm font-sans ">{dash}</span>
+                          <span className="text-sm font-sans text-center block">
+                            {dash}
+                          </span>
                         )}
-                      </div>
-                      <div className="flex items-center justify-between pl-3">
+                      </td>
+                      <td className={tdClasses}>
                         <div
                           className="whitespace-nowrap"
                           title={isLive ? model.hotkey : model.hotkey}
                         >
-                          {midTrunc(isLive ? model.hotkey : model.hotkey, 16)}
+                          {midTrunc(
+                            isLive ? model.hotkey : model.hotkey,
+                            16,
+                          )}
                         </div>
-                        {/* Actions */}
-                        <div className="flex items-center justify-center gap-2">
-                          {/* WILL WE NEED THIS? IT IS NOT ON NEW DESIGN */}
-
-                          {/* <Button
-                            onClick={() => toggleExpanded(model.uniqueId)}
-                            theme={theme}
-                            aria-label="Toggle details"
-                            title="Toggle details (T)"
-                            className="h-8 w-8 p-0 hover:text-light-50 hover:bg-light-highlight dark:hover:text-dark-100 dark:hover:bg-dark-highlight"
-                          >
-                            {expandedModel === model.uniqueId ? (
-                              <ChevronDown size={16} />
-                            ) : (
-                              <ChevronRight size={16} />
-                            )}
-                          </Button> */}
-
-                          {/* ------------------------------- */}
-
-                          <div className="relative">
-                            <button
-                              onClick={() =>
-                                setOpenMenuId((prev) =>
-                                  prev === model.uniqueId
-                                    ? null
-                                    : model.uniqueId,
-                                )
-                              }
-                              title="Actions (open menu)"
-                              className="h-6 w-h-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
-                            >
-                              <MoreVertical size={16} />
-                            </button>
-
-                            {openMenuId === model.uniqueId && (
-                              <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75  text-light-500 dark:bg-dark-200  dark:text-dark-500">
-                                <button
-                                  onClick={() => {
-                                    toggleExpanded(model.uniqueId)
-                                    setOpenMenuId(null)
-                                  }}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                >
-                                  <span>Toggle details</span>
-                                  <span className="text-xs opacity-70">T</span>
-                                </button>
-                                <a
-                                  href={`https://huggingface.co/${model.model}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                >
-                                  <span>View on Hugging Face</span>
-                                  <span className="text-xs opacity-70">H</span>
-                                </a>
-                                {chuteId ? (
+                      </td>
+                      <td className={tdClasses}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            {isLive
+                              ? fmt(model.weight as number | null, 4)
+                              : fmt(model.avg_latency as number | null, 2)}
+                          </div>
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="relative">
+                              <button
+                                onClick={() =>
+                                  setOpenMenuId((prev) =>
+                                    prev === model.uniqueId
+                                      ? null
+                                      : model.uniqueId,
+                                  )
+                                }
+                                title="Actions (open menu)"
+                                className="h-6 w-h-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                              {openMenuId === model.uniqueId && (
+                                <div className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75 text-light-500 dark:bg-dark-200 dark:text-dark-500">
+                                  <button
+                                    onClick={() => {
+                                      toggleExpanded(model.uniqueId)
+                                      setOpenMenuId(null)
+                                    }}
+                                    className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                                  >
+                                    <span>Toggle details</span>
+                                    <span className="text-xs opacity-70">
+                                      T
+                                    </span>
+                                  </button>
                                   <a
-                                    href={`https://chutes.ai/app/chute/${chuteId}`}
+                                    href={`https://huggingface.co/${model.model}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={() => setOpenMenuId(null)}
                                     className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                   >
-                                    <span>Open Chutes</span>
+                                    <span>View on Hugging Face</span>
                                     <span className="text-xs opacity-70">
-                                      C
+                                      H
                                     </span>
                                   </a>
-                                ) : (
-                                  <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
-                                    <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">
-                                      C
-                                    </span>
+                                  {chuteId ? (
+                                    <a
+                                      href={`https://chutes.ai/app/chute/${chuteId}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={() => setOpenMenuId(null)}
+                                      className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                                    >
+                                      <span>Open Chutes</span>
+                                      <span className="text-xs opacity-70">
+                                        C
+                                      </span>
+                                    </a>
+                                  ) : (
+                                    <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
+                                      <span>Open Chutes</span>
+                                      <span className="text-xs opacity-70">
+                                        C
+                                      </span>
+                                    </div>
+                                  )}
+                                  <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
+                                    Shortcuts: T, H, C, Esc
                                   </div>
-                                )}
-                                <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
-                                  Shortcuts: T, H, C, Esc
                                 </div>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expanded Details Panel */}
-                  {expandedModel === model.uniqueId && (
-                    <div
-                      className="p-14 text-left"
-                      style={{ backgroundColor: '#e9ebed' }}
-                    >
-                      <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
-                        {/* Common fields */}
-                        <div>
-                          <span className="font-bold">UID:</span> {model.uid}
-                        </div>
-                        <div className="break-all">
-                          <span className="font-bold">Rev:</span> {model.rev}
-                        </div>
-                        <div>
-                          <span className="font-bold">Avg Score:</span>{' '}
-                          {fmt(
-                            isLive ? model.avgScore : model.overall_avg_score,
-                          )}
-                        </div>
-                        <div>
-                          <span className="font-bold">Success %:</span>{' '}
-                          {isLive
-                            ? enriched?.success_rate_percent != null
-                              ? `${enriched.success_rate_percent.toFixed(1)}%`
-                              : dash
-                            : model.success_rate_percent != null
-                            ? `${model.success_rate_percent.toFixed(1)}%`
-                            : dash}
-                        </div>
-                        <div>
-                          <span className="font-bold">Eligible:</span>{' '}
-                          {model.eligible ? 'Yes' : 'No'}
-                        </div>
-                        {/* View-specific fields */}
-                        {isLive ? (
-                          <>
+                      </td>
+                    </tr>
+                    {expandedModel === model.uniqueId && (
+                      <tr>
+                        <td
+                          colSpan={11 + envs.length + L_SUBSETS.length}
+                          className="p-14 text-left"
+                          style={{ backgroundColor: '#e9ebed' }}
+                        >
+                          <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                             <div>
-                              <span className="font-bold">Hotkey:</span>{' '}
-                              {model.hotkey}
+                              <span className="font-bold">UID:</span>{' '}
+                              {model.uid}
                             </div>
-                            <div>
-                              <span className="font-bold">
-                                Avg Latency (s):
-                              </span>{' '}
-                              {fmt(enriched?.avg_latency, 2)}
-                            </div>
-                            <div>
-                              <span className="font-bold">Total Rollouts:</span>{' '}
-                              {enriched?.total_rollouts?.toLocaleString() ??
-                                dash}
-                            </div>
-                            <div>
-                              <span className="font-bold">Last Rollout:</span>{' '}
-                              {fmtTs(enriched?.last_rollout_at)}
-                            </div>
-                            <div>
-                              <span className="font-bold">PTS:</span>{' '}
-                              {fmt(model.pts, 4)}
-                            </div>
-                            <div>
-                              <span className="font-bold">Weight:</span>{' '}
-                              {fmt(model.weight, 4)}
-                            </div>
-                            {Object.entries(model.envScores).map(
-                              ([name, score]) => (
-                                <div key={name}>
-                                  <span className="font-bold">
-                                    {name.split(':')[1]}:
-                                  </span>{' '}
-                                  {fmt(score)}
-                                </div>
-                              ),
-                            )}
-                            {model.l1 != null && (
-                              <div>
-                                <span className="font-bold">L1:</span>{' '}
-                                {fmt(model.l1)}
-                              </div>
-                            )}
-                            {model.l2 != null && (
-                              <div>
-                                <span className="font-bold">L2:</span>{' '}
-                                {fmt(model.l2)}
-                              </div>
-                            )}
-                            {model.l3 != null && (
-                              <div>
-                                <span className="font-bold">L3:</span>{' '}
-                                {fmt(model.l3)}
-                              </div>
-                            )}
-                            {model.l4 != null && (
-                              <div>
-                                <span className="font-bold">L4:</span>{' '}
-                                {fmt(model.l4)}
-                              </div>
-                            )}
-                            {model.l5 != null && (
-                              <div>
-                                <span className="font-bold">L5:</span>{' '}
-                                {fmt(model.l5)}
-                              </div>
-                            )}
-                            {model.l6 != null && (
-                              <div>
-                                <span className="font-bold">L6:</span>{' '}
-                                {fmt(model.l6)}
-                              </div>
-                            )}
-                            {model.l7 != null && (
-                              <div>
-                                <span className="font-bold">L7:</span>{' '}
-                                {fmt(model.l7)}
-                              </div>
-                            )}
-                            {model.l8 != null && (
-                              <div>
-                                <span className="font-bold">L8:</span>{' '}
-                                {fmt(model.l8)}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <>
                             <div className="break-all">
-                              <span className="font-bold">Hotkey:</span>{' '}
-                              {model.hotkey}
+                              <span className="font-bold">Rev:</span>{' '}
+                              {model.rev}
                             </div>
                             <div>
-                              <span className="font-bold">
-                                Avg Latency (s):
-                              </span>{' '}
-                              {fmt(model.avg_latency, 2)}
+                              <span className="font-bold">Avg Score:</span>{' '}
+                              {fmt(
+                                isLive
+                                  ? (model.avgScore as number | null)
+                                  : (model.overall_avg_score as number | null),
+                              )}
                             </div>
                             <div>
-                              <span className="font-bold">Total Rollouts:</span>{' '}
-                              {model.total_rollouts.toLocaleString()}
+                              <span className="font-bold">Success %:</span>{' '}
+                              {isLive
+                                ? enriched?.success_rate_percent != null
+                                  ? `${enriched.success_rate_percent.toFixed(
+                                      1,
+                                    )}%`
+                                  : dash
+                                : model.success_rate_percent != null
+                                ? `${model.success_rate_percent.toFixed(1)}%`
+                                : dash}
                             </div>
                             <div>
-                              <span className="font-bold">Last Rollout:</span>{' '}
-                              {fmtTs(model.last_rollout_at)}
+                              <span className="font-bold">Eligible:</span>{' '}
+                              {model.eligible ? 'Yes' : 'No'}
                             </div>
-                            {envs.map((env) => {
-                              const key = env
-                                .toLowerCase()
-                                .replace(/[^a-z0-9_]/g, '_')
-                              return (
-                                <div key={env}>
-                                  <span className="font-bold">{env}:</span>{' '}
-                                  {fmt((model as any)[key] as number | null)}
+                            {isLive ? (
+                              <>
+                                <div>
+                                  <span className="font-bold">
+                                    Hotkey:
+                                  </span>{' '}
+                                  {model.hotkey}
                                 </div>
-                              )
-                            })}
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-        </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Avg Latency (s):
+                                  </span>{' '}
+                                  {fmt(enriched?.avg_latency, 2)}
+                                </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Total Rollouts:
+                                  </span>{' '}
+                                  {enriched?.total_rollouts?.toLocaleString() ??
+                                    dash}
+                                </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Last Rollout:
+                                  </span>{' '}
+                                  {fmtTs(enriched?.last_rollout_at)}
+                                </div>
+                                <div>
+                                  <span className="font-bold">PTS:</span>{' '}
+                                  {fmt(model.pts as number | null, 4)}
+                                </div>
+                                <div>
+                                  <span className="font-bold">Weight:</span>{' '}
+                                  {fmt(model.weight as number | null, 4)}
+                                </div>
+                                {Object.entries(model.envScores).map(
+                                  ([name, score]) => (
+                                    <div key={name}>
+                                      <span className="font-bold">
+                                        {name.split(':')[1]}:
+                                      </span>{' '}
+                                      {fmt(score as number | null)}
+                                    </div>
+                                  ),
+                                )}
+                                {model.l1 != null && (
+                                  <div>
+                                    <span className="font-bold">L1:</span>{' '}
+                                    {fmt(model.l1 as number | null)}
+                                  </div>
+                                )}
+                                {model.l2 != null && (
+                                  <div>
+                                    <span className="font-bold">L2:</span>{' '}
+                                    {fmt(model.l2 as number | null)}
+                                  </div>
+                                )}
+                                {model.l3 != null && (
+                                  <div>
+                                    <span className="font-bold">L3:</span>{' '}
+                                    {fmt(model.l3 as number | null)}
+                                  </div>
+                                )}
+                                {model.l4 != null && (
+                                  <div>
+                                    <span className="font-bold">L4:</span>{' '}
+                                    {fmt(model.l4 as number | null)}
+                                  </div>
+                                )}
+                                {model.l5 != null && (
+                                  <div>
+                                    <span className="font-bold">L5:</span>{' '}
+                                    {fmt(model.l5 as number | null)}
+                                  </div>
+                                )}
+                                {model.l6 != null && (
+                                  <div>
+                                    <span className="font-bold">L6:</span>{' '}
+                                    {fmt(model.l6 as number | null)}
+                                  </div>
+                                )}
+                                {model.l7 != null && (
+                                  <div>
+                                    <span className="font-bold">L7:</span>{' '}
+                                    {fmt(model.l7 as number | null)}
+                                  </div>
+                                )}
+                                {model.l8 != null && (
+                                  <div>
+                                    <span className="font-bold">L8:</span>{' '}
+                                    {fmt(model.l8 as number | null)}
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <div className="break-all">
+                                  <span className="font-bold">
+                                    Hotkey:
+                                  </span>{' '}
+                                  {model.hotkey}
+                                </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Avg Latency (s):
+                                  </span>{' '}
+                                  {fmt(
+                                    model.avg_latency as number | null,
+                                    2,
+                                  )}
+                                </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Total Rollouts:
+                                  </span>{' '}
+                                  {model.total_rollouts.toLocaleString()}
+                                </div>
+                                <div>
+                                  <span className="font-bold">
+                                    Last Rollout:
+                                  </span>{' '}
+                                  {fmtTs(model.last_rollout_at)}
+                                </div>
+                                {envs.map((env) => {
+                                  const key = env
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9_]/g, '_')
+                                  return (
+                                    <div key={env}>
+                                      <span className="font-bold">
+                                        {env}:
+                                      </span>{' '}
+                                      {fmt(
+                                        (model as any)[key] as number | null,
+                                      )}
+                                    </div>
+                                  )
+                                })}
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+          </tbody>
+        </table>
       </div>
     </div>
   )

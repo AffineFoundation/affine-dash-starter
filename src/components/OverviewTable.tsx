@@ -32,6 +32,7 @@ type LiveDisplayRow = {
   weight: number | null
   eligible: boolean
   pts: number | null
+  firstBlk: number | null
   l1?: number | null
   l2?: number | null
   l3?: number | null
@@ -116,7 +117,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       iPts = idx('Pts'),
       iElig = idx('Elig'),
       iWgt = idx('Wgt'),
-      iHotkey = idx('hotkey')
+      iHotkey = idx('hotkey'),
+      iFirstBlk = idx('FIRSTBLK')
 
     const parseScore = (v: unknown): number | null =>
       v == null
@@ -152,6 +154,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         pts: parseNum(row[iPts]),
         eligible: parseBoolY(row[iElig]),
         hotkey: String(row[iHotkey] ?? ''),
+        firstBlk: parseNum(row[iFirstBlk]),
         envScores,
         l1: parseNum(row[iL1]),
         l2: parseNum(row[iL2]),
