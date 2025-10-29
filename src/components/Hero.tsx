@@ -1,7 +1,10 @@
 import { NavLink } from 'react-router-dom'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
-import RedIndicator from './RedIndicator'
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useValidatorSummary } from '../hooks/useValidatorSummary'
+import { Skeleton } from './Skeleton'
+
+const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
 
 export default function Hero() {
   const {
@@ -9,6 +12,17 @@ export default function Hero() {
     loading: envLoading,
     error: envError,
   } = useEnvironments()
+  const { data: liveSummary, loading: isLiveLoading } = useValidatorSummary()
+
+  const liveRows = useMemo(() => {
+    if (!liveSummary) return []
+    const cols = liveSummary.columns || []
+    const idx = (name: string) => cols.indexOf(name)
+    const iElig = idx('Elig')
+    return liveSummary.rows.map((row) => ({
+      eligible: String(row[iElig]).trim().toUpperCase().startsWith('Y'),
+    }))
+  }, [liveSummary])
 
   const sidebarItemClass = (active: boolean) => {
     const base =
@@ -20,13 +34,68 @@ export default function Hero() {
   }
 
   return (
-    <div className="px-5 flex justify-between items-center">
-      <div className="flex items-start gap-3">
-        <h1 className="uppercase text-7xl leading-[80%]">Dashboard</h1>
+    <div className="px-5 flex justify-between items-end">
+      <div className="grid grid-cols-3 gap-[10px] w-2/5">
+        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+          <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
+            Models
+          </div>
 
-        <RedIndicator text="Live" live />
+          <div className="mt-2 flex justify-between items-end">
+            <div className="text-3xl leading-[80%]">
+              {isLiveLoading ? (
+                <Skeleton theme={'light'} className="h-4 w-8" />
+              ) : liveRows.length === 0 ? (
+                <StyledNA />
+              ) : (
+                liveRows.length
+              )}
+            </div>
+
+            <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
+          </div>
+        </div>
+
+        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+          <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
+            Eligible
+          </div>
+
+          <div className="mt-2 flex justify-between items-end">
+            <div className="text-3xl leading-[80%]">
+              {isLiveLoading ? (
+                <Skeleton theme={'light'} className="h-4 w-8" />
+              ) : liveRows.filter((r) => r.eligible).length === 0 ? (
+                <StyledNA />
+              ) : (
+                liveRows.filter((r) => r.eligible).length
+              )}
+            </div>
+
+            <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
+          </div>
+        </div>
+
+        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+          <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
+            Environments
+          </div>
+
+          <div className="mt-2 flex justify-between items-end">
+            <div className="text-3xl leading-[80%]">
+              {envLoading ? (
+                <Skeleton theme={'light'} className="h-4 w-8" />
+              ) : environments.length === 0 ? (
+                <StyledNA />
+              ) : (
+                environments.length
+              )}
+            </div>
+
+            <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
+          </div>
+        </div>
       </div>
-
       <nav
         className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6"
       >

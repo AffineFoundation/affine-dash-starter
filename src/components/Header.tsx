@@ -1,23 +1,25 @@
 import React from 'react'
 import { Code2, Moon, Sun, ExternalLink } from 'lucide-react'
 import HeaderLink from './HeaderLink'
+import RedIndicator from './RedIndicator'
 
 interface HeaderProps {
   theme: 'light' | 'dark'
   toggleTheme: () => void
 }
 
-const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
+const Header: React.FC<HeaderProps> = ({}) => {
   return (
     <header className="h-20 mx-auto p-5 mb-11 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <img src="/logo.svg" alt="Logo" />
 
-        <h1 className="text-xs font-medium w-80 text-black/30 uppercase leading-none tracking-wide">
-          <span className="text-black">AFFINE</span> — a decentralized RL
-          network on Bittensor where subnets converge, models are trained, and
-          contributors earn TAO.
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xs font-medium text-black/30 uppercase leading-none tracking-wide">
+            <span className="text-black">AFFINE</span> — Reasoning Commodification
+          </h1>
+          <RedIndicator text="Live" live />
+        </div>
       </div>
 
       <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">

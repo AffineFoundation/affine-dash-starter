@@ -118,7 +118,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       iElig = idx('Elig'),
       iWgt = idx('Wgt'),
       iHotkey = idx('hotkey'),
-      iFirstBlk = idx('FIRSTBLK')
+      iFirstBlk = idx('FirstBlk')
 
     const parseScoreValue = (v: unknown): number | null =>
       v == null
@@ -218,7 +218,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         : null
       : liveError ?? null
 
-  const { environments: envs, loading: envLoading } = useEnvironments()
+  const {} = useEnvironments()
 
   const toggleSort = (field: typeof sortField) => {
     if (viewMode !== 'live') return
@@ -252,70 +252,6 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   // RENDER METHOD STARTS HERE
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12 text-gray-900 dark:text-white">
-      <div className="lg:col-span-full order-1">
-        <div className="grid grid-cols-3 gap-[10px]">
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
-            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
-              Models
-            </div>
-
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
-                {loading ? (
-                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-                ) : rows.length === 0 ? (
-                  <StyledNA />
-                ) : (
-                  rows.length
-                )}
-              </div>
-
-              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
-            </div>
-          </div>
-
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
-            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
-              Eligible
-            </div>
-
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
-                {loading ? (
-                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-                ) : rows.filter((r) => r.eligible).length === 0 ? (
-                  <StyledNA />
-                ) : (
-                  rows.filter((r) => r.eligible).length
-                )}
-              </div>
-
-              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
-            </div>
-          </div>
-
-          <div className="text-light-smoke bg-white rounded-[4px] p-4">
-            <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
-              Environments
-            </div>
-
-            <div className="mt-14 flex justify-between items-end">
-              <div className="text-7xl leading-[80%]">
-                {envLoading ? (
-                  <Skeleton theme={theme} className="h-6 w-12 mx-auto" />
-                ) : envs.length === 0 ? (
-                  <StyledNA />
-                ) : (
-                  envs.length
-                )}
-              </div>
-
-              <div className="size-3 bg-light-iron [clip-path:polygon(0_100%,100%_0,100%_100%)]" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="lg:col-span-full order-2">
         <ModelsTable
           theme={theme}
