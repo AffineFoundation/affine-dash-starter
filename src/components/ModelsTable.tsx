@@ -316,8 +316,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       <div className="flex items-center justify-between pl-3">
                         {model.eligible ? (
                           <Check
-                            size={16}
-                            className="text-green-600 dark:text-green-400"
+                            size={14}
+                            strokeWidth={5}
+                            strokeLinecap="square"
+                            strokeLinejoin="miter"
+                            className="text-white bg-light-mustard p-[2px]"
                           />
                         ) : (
                           <span className="text-sm font-sans ">{dash}</span>
