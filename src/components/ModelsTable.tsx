@@ -111,9 +111,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   }, [openMenuId, hoveredRowId, rows, enrichedMap, liveKey])
 
   const thClasses =
-    'p-3 h-8 text-xs font-mono uppercase tracking-wide leading-none text-left border-r border-black/5 last:border-r-0'
+    'px-3 py-2 text-xs font-mono uppercase tracking-wide text-left border-r border-black/5 last:border-r-0'
   const tdClasses =
-    'p-3 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
+    'p-5 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
 
   return (
     <div className="space-y-3">
@@ -129,7 +129,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       <div className="overflow-x-auto rounded-[4px] bg-white">
         <table className="w-full border-collapse">
           <thead className="bg-light-haze text-light-smoke">
-            <tr className="border-b border-black/5">
+            <tr className="border-b border-black/5 h-8">
               <th className={`${thClasses} pr-3`}>
                 <button
                   disabled={viewMode !== 'live'}

@@ -18,7 +18,10 @@ const ScoreCell: React.FC<ScoreCellProps> = ({ score }) => {
   }
 
   return (
-    <span className={isBest ? 'font-bold text-yellow-500' : ''}>
+    <span
+      style={{ color: isBest ? '#d59b37' : undefined }}
+      className={isBest ? 'font-bold' : ''}
+    >
       {cleanScore}
     </span>
   );
