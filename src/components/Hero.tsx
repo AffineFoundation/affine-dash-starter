@@ -50,7 +50,7 @@ export default function Hero() {
 
   const sidebarItemClass = (active: boolean) => {
     const base =
-      'rounded-full px-6 py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide leading-[80%]'
+      'rounded-full px-4 md:px-6 py-2 md:py-3 text-sm transition-colors duration-500 uppercase font-medium tracking-wide leading-[80%]'
     if (active) {
       return `${base} bg-black text-white`
     }
@@ -61,23 +61,23 @@ export default function Hero() {
   const hiddenItems = environments.slice(visibleCount - 1)
 
   return (
-    <div className="px-5 flex justify-between items-center">
+    <div className="px-3 md:px-5 md:flex md:justify-between md:items-center">
       <div className="flex items-start gap-3">
-        <h1 className="uppercase text-7xl leading-[80%]">Dashboard</h1>
+        <h1 className="uppercase text-4xl md:text-7xl leading-[80%]">
+          Dashboard
+        </h1>
 
         <RedIndicator text="Live" live />
       </div>
 
       <nav
         ref={navRef}
-        className="flex items-center gap-2 bg-white p-[10px] rounded-full border border-black/6"
+        className="flex items-center gap-2 bg-white p-[10px] rounded-full border border-black/6 mt-16 md:mt-0"
       >
         <NavLink
           to="/"
           end
-          className={({ isActive }) =>
-            `${sidebarItemClass(isActive)} nav-item`
-          }
+          className={({ isActive }) => `${sidebarItemClass(isActive)} nav-item`}
           title="Press N then 0 to switch to Overview"
         >
           Overview
@@ -114,7 +114,7 @@ export default function Hero() {
             </button>
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-light-100 dark:bg-dark-100 rounded-md shadow-lg z-10 border border-gray-200 dark:border-gray-700">
-                {hiddenItems.map(env => (
+                {hiddenItems.map((env) => (
                   <NavLink
                     key={env}
                     to={`/environment/${encodeURIComponent(env)}`}
