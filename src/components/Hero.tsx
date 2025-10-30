@@ -34,8 +34,8 @@ export default function Hero() {
   }
 
   return (
-    <div className="px-5 flex justify-between items-end">
-      <div className="grid grid-cols-3 gap-[10px] w-2/5">
+    <div className="px-3 md:px-5 md:flex md:justify-between md:items-end">
+      <div className="grid grid-cols-3 gap-[10px] w-full md:w-2/5">
         <div className="text-light-smoke bg-white rounded-[4px] p-4">
           <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
             Models
@@ -96,15 +96,12 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      <nav
-        className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6"
-      >
+
+      <nav className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6 mt-10 md:mt-0">
         <NavLink
           to="/"
           end
-          className={({ isActive }) =>
-            `${sidebarItemClass(isActive)} nav-item`
-          }
+          className={({ isActive }) => `${sidebarItemClass(isActive)} nav-item`}
           title="Press N then 0 to switch to Overview"
         >
           Overview

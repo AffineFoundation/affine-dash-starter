@@ -121,8 +121,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
   const thClasses =
     'px-3 py-2 text-xs font-mono uppercase tracking-wide text-left border-r border-black/5 last:border-r-0 whitespace-nowrap font-mono font-normal'
-  const tdClasses =
-    'p-5 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
+  const tdClasses = 'p-5 font-medium text-sm leading-none tracking-wide'
 
   const pagedStartIndex = rows.length === 0 ? 0 : (page - 1) * pageSize + 1
   const pagedEndIndex = Math.min(rows.length, page * pageSize)
@@ -162,8 +161,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] bg-white border border-light-200 dark:border-dark-200">
-        <table className="min-w-full border-collapse">
+      <div className="overflow-x-auto rounded-[4px] bg-white shadow-sm">
+        <table className="min-w-full">
           <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
             <tr className="border-b border-black/5 h-8 bg-light-haze">
               <th className={`${thClasses} pr-3`}>
