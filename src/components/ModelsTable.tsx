@@ -164,7 +164,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
       <div className="overflow-x-auto rounded-[4px] bg-white border border-light-200 dark:border-dark-200">
         <table className="min-w-full border-collapse">
-          <thead className="text-light-smoke">
+          <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
             <tr className="border-b border-black/5 h-8 bg-light-haze">
               <th className={`${thClasses} pr-3`}>
                 <button
@@ -263,10 +263,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             {loading &&
               !errorMsg &&
               Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
-                <tr
-                  key={i}
-                  className=""
-                >
+                <tr key={i} className="">
                   <td className={tdClasses}>
                     <SkeletonText theme={theme} className="h-4 w-12" />
                   </td>
@@ -285,30 +282,18 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     </td>
                   ))}
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   {L_SUBSETS.map((subset) => (
                     <td key={subset} className={tdClasses}>
-                      <SkeletonText
-                        theme={theme}
-                        className="h-4 w-8 mx-auto"
-                      />
+                      <SkeletonText theme={theme} className="h-4 w-8 mx-auto" />
                     </td>
                   ))}
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   <td className={tdClasses}>
                     <div className="flex items-center justify-center">
@@ -393,7 +378,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         {fmt(isLive ? (model.pts as number | null) : null)}
                       </td>
                       <td className={tdClasses}>
-                        {fmt(isLive ? (model.firstBlk as number | null) : null, 0)}
+                        {fmt(
+                          isLive ? (model.firstBlk as number | null) : null,
+                          0,
+                        )}
                       </td>
                       <td className={tdClasses}>
                         {model.eligible ? (
@@ -430,10 +418,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           className="whitespace-nowrap"
                           title={isLive ? model.hotkey : model.hotkey}
                         >
-                          {midTrunc(
-                            isLive ? model.hotkey : model.hotkey,
-                            16,
-                          )}
+                          {midTrunc(isLive ? model.hotkey : model.hotkey, 16)}
                         </div>
                       </td>
                       <td className={tdClasses}>
@@ -558,9 +543,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             {isLive ? (
                               <>
                                 <div>
-                                  <span className="font-bold">
-                                    Hotkey:
-                                  </span>{' '}
+                                  <span className="font-bold">Hotkey:</span>{' '}
                                   {model.hotkey}
                                 </div>
                                 <div>
@@ -652,19 +635,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             ) : (
                               <>
                                 <div className="break-all">
-                                  <span className="font-bold">
-                                    Hotkey:
-                                  </span>{' '}
+                                  <span className="font-bold">Hotkey:</span>{' '}
                                   {model.hotkey}
                                 </div>
                                 <div>
                                   <span className="font-bold">
                                     Avg Latency (s):
                                   </span>{' '}
-                                  {fmt(
-                                    model.avg_latency as number | null,
-                                    2,
-                                  )}
+                                  {fmt(model.avg_latency as number | null, 2)}
                                 </div>
                                 <div>
                                   <span className="font-bold">
@@ -684,9 +662,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                     .replace(/[^a-z0-9_]/g, '_')
                                   return (
                                     <div key={env}>
-                                      <span className="font-bold">
-                                        {env}:
-                                      </span>{' '}
+                                      <span className="font-bold">{env}:</span>{' '}
                                       {fmt(
                                         (model as any)[key] as number | null,
                                       )}
