@@ -129,15 +129,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <div className="text-sm uppercase tracking-wide leading-none [word-spacing:15px] text-light-slate font-medium">
-          Showing{' '}
+        <div className="text-sm uppercase tracking-wide leading-none [word-spacing:0.5rem] md:[word-spacing:15px] text-light-slate font-medium">
+          <span className="hidden md:inline">Showing </span>
           <span className="text-light-smoke">
             {pagedStartIndex}–{pagedEndIndex}
           </span>{' '}
           of <span className="text-light-smoke">{rows.length}</span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="relative">
+          <div className="relative hidden md:block">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={16}
@@ -327,7 +327,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     <tr
                       onMouseEnter={() => setHoveredRowId(model.uniqueId)}
                       onMouseLeave={() => setHoveredRowId(null)}
-                      className="transition-colors duration-300 group"
+                      className="transition-colors duration-300 group hover:bg-light-sand/50"
                     >
                       <td className={`${tdClasses} pr-3`}>{model.uid}</td>
                       <td
@@ -504,7 +504,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         <td
                           colSpan={11 + envs.length + L_SUBSETS.length}
                           className="p-14 text-left"
-                          style={{ backgroundColor: '#e9ebed' }}
+                          style={{ backgroundColor: 'white' }}
                         >
                           <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                             <div>

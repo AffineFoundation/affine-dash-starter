@@ -278,8 +278,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   // RENDER METHOD STARTS HERE
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12 text-gray-900 dark:text-white">
-      <div className="lg:col-span-full order-2">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-12">
+      <div className="lg:col-span-full order-1">
         <ModelsTable
           theme={theme}
           rows={rows}
@@ -296,7 +296,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         />
       </div>
 
-{/* <div className="lg:col-span-1 order-3">
+      {/* <div className="lg:col-span-1 order-2">
   <ActivityFeed theme={theme} />
 </div> */}
     </div>

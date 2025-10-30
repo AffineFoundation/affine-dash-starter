@@ -215,7 +215,7 @@ function App() {
       <Hero />
 
       {/* Main Content */}
-      <main className="mt-16 px-5 pb-20 w-full">
+      <main className="mt-10 md:mt-16 px-3 md:px-5 pb-20 w-full">
         {/* Content */}
         <Routes>
           <Route

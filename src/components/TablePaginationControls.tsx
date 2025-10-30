@@ -25,12 +25,12 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
   return (
     <div className="text-light-slate flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">
       <div className="text-sm uppercase tracking-wide leading-none flex items-center gap-3">
-        <label>Rows per page</label>
+        <label className="hidden md:block">Rows per page</label>
 
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className="h-7 px-3 rounded-full transition-colors duration-300 text-light-500 bg-white border border-black/12 "
+          className="hidden md:block h-7 px-3 rounded-full transition-colors duration-300 text-light-500 bg-white border border-black/12 "
         >
           <option value={20}>20</option>
           <option value={50}>50</option>
@@ -38,7 +38,7 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
           <option value={200}>200</option>
         </select>
 
-        <div className="flex items-center gap-1 [word-spacing:15px]">
+        <div className="flex items-center gap-1 [word-spacing:0.5rem] md:[word-spacing:15px]">
           <PaginationButton
             onClick={() => setPage(1)}
             disabled={page === 1}
@@ -56,7 +56,8 @@ const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
             <img src="/arrow-left.svg" alt="Arrow Left" />
           </PaginationButton>
           <span className="px-2">
-            Page <span className="text-light-smoke">{page}</span> of{' '}
+            <span className="hidden md:inline">Page</span>{' '}
+            <span className="text-light-smoke">{page}</span> of{' '}
             <span className="text-light-smoke">{totalPages}</span>
           </span>
           <PaginationButton
