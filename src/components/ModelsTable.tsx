@@ -6,6 +6,26 @@ import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
 import ScoreCell from './ScoreCell'
 
+const buildRolloutsUrl = (modelName: string | null | undefined) => {
+  if (!modelName) return '/api/rollouts/model';
+  const raw = String(modelName).trim();
+  if (!raw) return '/api/rollouts/model';
+  const segments = raw
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment));
+  const path = '/api/rollouts/model';
+  const params = new URLSearchParams();
+  params.set('model', segments.length ? segments.join('/') : raw);
+  const query = params.toString();
+  return query ? `${path}?${query}` : path;
+};
+
+const buildRolloutsDownloadName = (modelName: string | null | undefined) => {
+  const safe = (modelName ?? '').replace(/[^\w.-]/g, '_') || 'model';
+  return `rollouts_${safe}.jsonl`;
+};
+
 interface ModelsTableProps {
   theme: 'light' | 'dark'
   rows: any[]
@@ -112,6 +132,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         if (chuteId) {
           window.open(`https://chutes.ai/app/chute/${chuteId}`, '_blank')
         }
+        setOpenMenuId(null)
+      }
+      if (key === 'd') {
+        const url = buildRolloutsUrl(row.model)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = buildRolloutsDownloadName(row.model)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
         setOpenMenuId(null)
       }
     }
@@ -484,6 +514,17 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                       H
                                     </span>
                                   </a>
+                                  <a
+                                    href={buildRolloutsUrl(model.model)}
+                                    download={buildRolloutsDownloadName(model.model)}
+                                    onClick={() => setOpenMenuId(null)}
+                                    className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                                  >
+                                    <span>Download rollouts</span>
+                                    <span className="text-xs opacity-70">
+                                      D
+                                    </span>
+                                  </a>
                                   {chuteId ? (
                                     <a
                                       href={`https://chutes.ai/app/chute/${chuteId}`}
@@ -506,7 +547,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                     </div>
                                   )}
                                   <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
-                                    Shortcuts: T, H, C, Esc
+                                    Shortcuts: T, H, D, C, Esc
                                   </div>
                                 </div>
                               )}
