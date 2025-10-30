@@ -12,6 +12,8 @@ import { useValidatorSummary } from '../hooks/useValidatorSummary'
 import Card from './Card'
 import ToggleButton from './ToggleButton'
 import ModelsTable from './ModelsTable'
+import useSubtensorChain from '../hooks/useSubtensorChain'
+import { getEnvScoreStats } from './ScoreCell'
 // import ActivityFeed from './ActivityFeed'
 
 interface OverviewTableProps {
@@ -33,6 +35,8 @@ type LiveDisplayRow = {
   eligible: boolean
   pts: number | null
   firstBlk: number | null
+  emissionRaw: string | null
+  emissionAlpha: number | null
   l1?: number | null
   l2?: number | null
   l3?: number | null
@@ -56,8 +60,15 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
   const [enrichmentError, setEnrichmentError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [sortField, setSortField] = useState<string>('weight')
+  const [sortField, setSortField] = useState<string>('emission')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+
+  const {
+    currentBlock,
+    currentBlockLoading,
+    currentBlockError,
+    emissionByUid,
+  } = useSubtensorChain()
 
   const liveKey = (uid: string | number, model: string) =>
     `${Number(uid)}|${model.toLowerCase()}`
@@ -129,6 +140,12 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         : (typeof v === 'number' ? v : parseFloat(String(v))) || null
     const parseBoolY = (v: unknown): boolean =>
       v != null && String(v).trim().toUpperCase().startsWith('Y')
+    const parseEmissionAlpha = (v: string | null | undefined): number | null => {
+      if (!v) return null
+      const numeric = Number(v)
+      if (!Number.isFinite(numeric)) return null
+      return numeric / 1_000_000_000
+    }
 
     return liveSummary.rows.map((row) => {
       const envScores: Record<string, string | null> = {}
@@ -143,6 +160,13 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       const avgScore = validScores.length
         ? validScores.reduce((a, b) => a + b, 0) / validScores.length
         : null
+      const uidNumeric = parseNum(row[iUID])
+      const emissionEntry =
+        uidNumeric != null
+          ? emissionByUid.get(Number(uidNumeric))
+          : undefined
+      const emissionRaw = emissionEntry?.emission ?? null
+      const emissionAlpha = parseEmissionAlpha(emissionRaw)
 
       return {
         uniqueId: `live-${row[iUID]}-${row[iModel]}-${row[iRev]}`,
@@ -156,6 +180,8 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         hotkey: String(row[iHotkey] ?? ''),
         firstBlk: parseNum(row[iFirstBlk]),
         envScores,
+        emissionRaw,
+        emissionAlpha,
         l1: parseNum(row[iL1]),
         l2: parseNum(row[iL2]),
         l3: parseNum(row[iL3]),
@@ -166,7 +192,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         l8: parseNum(row[iL8]),
       }
     })
-  }, [liveSummary])
+  }, [liveSummary, emissionByUid])
 
   const baseRows = (
     viewMode === 'historical' ? historicalRows : liveRows
@@ -200,12 +226,21 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           : -Infinity
       }
       if (r.envScores && sortField in r.envScores) {
-        const score = r.envScores[sortField]
-        if (score === null) return -Infinity
-        const match = String(score).match(/^[0-9.]+/)
-        return match ? parseFloat(match[0]) : -Infinity
+        const rawScore = r.envScores[sortField]
+        if (!rawScore) return -Infinity
+        const stats = getEnvScoreStats(rawScore)
+        if (stats) return stats.min
+        const match = String(rawScore)
+          .trim()
+          .match(/[+-]?\d+(?:\.\d+)?/)
+        const numeric = match ? parseFloat(match[0]) : NaN
+        return Number.isFinite(numeric) ? numeric : -Infinity
       }
       switch (sortField) {
+        case 'emission':
+          return Number.isFinite(r.emissionAlpha)
+            ? r.emissionAlpha
+            : -Infinity
         case 'weight':
           return Number.isFinite(r.weight) ? r.weight : -Infinity
         case 'uid':
@@ -293,6 +328,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           liveKey={liveKey}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          currentBlock={currentBlock}
+          currentBlockLoading={currentBlockLoading}
+          currentBlockError={currentBlockError}
         />
       </div>
 
