@@ -1,15 +1,15 @@
-import React from 'react';
+import React from 'react'
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark'
 
 interface PaginationControlsProps {
-  theme: Theme;
-  total: number;
-  page: number;
-  setPage: (page: number | ((p: number) => number)) => void;
-  pageSize: number;
-  setPageSize: (size: number) => void;
-  className?: string;
+  theme: Theme
+  total: number
+  page: number
+  setPage: (page: number | ((p: number) => number)) => void
+  pageSize: number
+  setPageSize: (size: number) => void
+  className?: string
 }
 
 export const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -21,21 +21,29 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
   setPageSize,
   className = '',
 }) => {
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const endIndex = Math.min(total, (page - 1) * pageSize + pageSize);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const endIndex = Math.min(total, (page - 1) * pageSize + pageSize)
 
   return (
-    <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${className}`}>
-      <div className="text-xs font-sans text-gray-600 dark:text-gray-300">
+    <div
+      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${className}`}
+    >
+      <div className="text-xs font-sans hidden md:block">
         Showing {startIndex}–{endIndex} of {total}
       </div>
       <div className="flex items-center gap-2">
-        <label className="text-xs font-sans text-gray-600 dark:text-gray-300">Rows per page:</label>
+        <label className="text-xs font-sans hidden md:block">
+          Rows per page:
+        </label>
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className={`h-8 px-2 border text-xs font-sans rounded-sm ${theme === 'dark' ? 'border-white bg-black text-white' : 'border-gray-400 bg-white text-gray-800'}`}
+          className={`h-8 px-2 border text-xs font-sans rounded-sm hidden md:block ${
+            theme === 'dark'
+              ? 'border-white bg-black text-white'
+              : 'border-gray-400 bg-white text-gray-800'
+          }`}
           aria-label="Rows per page"
         >
           <option value={20}>20</option>
@@ -43,11 +51,16 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <option value={100}>100</option>
           <option value={200}>200</option>
         </select>
+
         <div className="flex items-center gap-1">
           <button
             onClick={() => setPage(1)}
             disabled={page === 1}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${
+              theme === 'dark'
+                ? 'border-white text-white hover:bg-gray-800'
+                : 'border-gray-400 text-gray-700 hover:bg-gray-100'
+            }`}
             aria-label="First page"
             title="First page"
           >
@@ -56,7 +69,11 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${
+              theme === 'dark'
+                ? 'border-white text-white hover:bg-gray-800'
+                : 'border-gray-400 text-gray-700 hover:bg-gray-100'
+            }`}
             aria-label="Previous page"
             title="Previous page"
           >
@@ -68,7 +85,11 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${
+              theme === 'dark'
+                ? 'border-white text-white hover:bg-gray-800'
+                : 'border-gray-400 text-gray-700 hover:bg-gray-100'
+            }`}
             aria-label="Next page"
             title="Next page"
           >
@@ -77,7 +98,11 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
           <button
             onClick={() => setPage(totalPages)}
             disabled={page >= totalPages}
-            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${theme === 'dark' ? 'border-white text-white hover:bg-gray-800' : 'border-gray-400 text-gray-700 hover:bg-gray-100'}`}
+            className={`inline-flex items-center justify-center h-8 w-8 border text-xs font-sans disabled:opacity-50 ${
+              theme === 'dark'
+                ? 'border-white text-white hover:bg-gray-800'
+                : 'border-gray-400 text-gray-700 hover:bg-gray-100'
+            }`}
             aria-label="Last page"
             title="Last page"
           >
@@ -86,8 +111,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PaginationControls;
-
+export default PaginationControls

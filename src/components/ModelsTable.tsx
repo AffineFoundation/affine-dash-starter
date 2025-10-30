@@ -151,8 +151,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
   const thClasses =
     'px-3 py-2 text-xs font-mono uppercase tracking-wide text-left border-r border-black/5 last:border-r-0 whitespace-nowrap font-mono font-normal'
-  const tdClasses =
-    'p-5 font-medium text-sm leading-none tracking-wide border-r border-black/5 last:border-r-0'
+  const tdClasses = 'p-5 font-medium text-sm leading-none tracking-wide'
 
   const pagedStartIndex = rows.length === 0 ? 0 : (page - 1) * pageSize + 1
   const pagedEndIndex = Math.min(rows.length, page * pageSize)
@@ -160,15 +159,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <div className="text-sm uppercase tracking-wide leading-none [word-spacing:15px] text-light-slate font-medium">
-          Showing{' '}
+        <div className="text-sm uppercase tracking-wide leading-none [word-spacing:0.5rem] md:[word-spacing:15px] text-light-slate font-medium">
+          <span className="hidden md:inline">Showing </span>
           <span className="text-light-smoke">
             {pagedStartIndex}–{pagedEndIndex}
           </span>{' '}
           of <span className="text-light-smoke">{rows.length}</span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="relative">
+          <div className="relative hidden md:block">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={16}
@@ -192,9 +191,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] bg-white border border-light-200 dark:border-dark-200">
-        <table className="min-w-full border-collapse">
-          <thead className="text-light-smoke">
+      <div className="overflow-x-auto rounded-[4px] bg-white shadow-sm">
+        <table className="min-w-full">
+          <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
             <tr className="border-b border-black/5 h-8 bg-light-haze">
               <th className={`${thClasses} pr-3`}>
                 <button
@@ -293,10 +292,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             {loading &&
               !errorMsg &&
               Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
-                <tr
-                  key={i}
-                  className=""
-                >
+                <tr key={i} className="">
                   <td className={tdClasses}>
                     <SkeletonText theme={theme} className="h-4 w-12" />
                   </td>
@@ -315,30 +311,18 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     </td>
                   ))}
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   {L_SUBSETS.map((subset) => (
                     <td key={subset} className={tdClasses}>
-                      <SkeletonText
-                        theme={theme}
-                        className="h-4 w-8 mx-auto"
-                      />
+                      <SkeletonText theme={theme} className="h-4 w-8 mx-auto" />
                     </td>
                   ))}
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   <td className={tdClasses}>
-                    <SkeletonText
-                      theme={theme}
-                      className="h-4 w-12 mx-auto"
-                    />
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                   <td className={tdClasses}>
                     <div className="flex items-center justify-center">
@@ -373,7 +357,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     <tr
                       onMouseEnter={() => setHoveredRowId(model.uniqueId)}
                       onMouseLeave={() => setHoveredRowId(null)}
-                      className="transition-colors duration-300 group"
+                      className="transition-colors duration-300 group hover:bg-light-sand/50"
                     >
                       <td className={`${tdClasses} pr-3`}>{model.uid}</td>
                       <td
@@ -423,7 +407,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         {fmt(isLive ? (model.pts as number | null) : null)}
                       </td>
                       <td className={tdClasses}>
-                        {fmt(isLive ? (model.firstBlk as number | null) : null, 0)}
+                        {fmt(
+                          isLive ? (model.firstBlk as number | null) : null,
+                          0,
+                        )}
                       </td>
                       <td className={tdClasses}>
                         {model.eligible ? (
@@ -460,10 +447,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           className="whitespace-nowrap"
                           title={isLive ? model.hotkey : model.hotkey}
                         >
-                          {midTrunc(
-                            isLive ? model.hotkey : model.hotkey,
-                            16,
-                          )}
+                          {midTrunc(isLive ? model.hotkey : model.hotkey, 16)}
                         </div>
                       </td>
                       <td className={tdClasses}>
@@ -561,7 +545,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         <td
                           colSpan={11 + envs.length + L_SUBSETS.length}
                           className="p-14 text-left"
-                          style={{ backgroundColor: '#e9ebed' }}
+                          style={{ backgroundColor: 'white' }}
                         >
                           <div className="text-xs font-sans grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
                             <div>
@@ -599,9 +583,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             {isLive ? (
                               <>
                                 <div>
-                                  <span className="font-bold">
-                                    Hotkey:
-                                  </span>{' '}
+                                  <span className="font-bold">Hotkey:</span>{' '}
                                   {model.hotkey}
                                 </div>
                                 <div>
@@ -693,19 +675,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             ) : (
                               <>
                                 <div className="break-all">
-                                  <span className="font-bold">
-                                    Hotkey:
-                                  </span>{' '}
+                                  <span className="font-bold">Hotkey:</span>{' '}
                                   {model.hotkey}
                                 </div>
                                 <div>
                                   <span className="font-bold">
                                     Avg Latency (s):
                                   </span>{' '}
-                                  {fmt(
-                                    model.avg_latency as number | null,
-                                    2,
-                                  )}
+                                  {fmt(model.avg_latency as number | null, 2)}
                                 </div>
                                 <div>
                                   <span className="font-bold">
@@ -725,9 +702,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                     .replace(/[^a-z0-9_]/g, '_')
                                   return (
                                     <div key={env}>
-                                      <span className="font-bold">
-                                        {env}:
-                                      </span>{' '}
+                                      <span className="font-bold">{env}:</span>{' '}
                                       {fmt(
                                         (model as any)[key] as number | null,
                                       )}

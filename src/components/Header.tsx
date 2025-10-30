@@ -10,13 +10,22 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({}) => {
   return (
-    <header className="h-20 mx-auto p-5 mb-11 flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <header className="md:h-20 mx-auto p-3 md:p-5 mb-11 flex items-center justify-between">
+      <div className="flex items-center gap-2 md:gap-4">
         <img src="/logo.svg" alt="Logo" />
 
-        <div className="flex items-center gap-2">
-          <h1 className="text-xs font-medium text-black/30 uppercase leading-none tracking-wide">
-            <span className="text-black">AFFINE</span> — Reasoning Commodification
+        <div className="flex items-center gap-2 md:hidden">
+          <h1 className="text-xs font-medium text-black uppercase leading-none tracking-wide">
+            AFFINE
+          </h1>
+          <RedIndicator text="Live" live />
+        </div>
+
+        {/* DESKTOP */}
+        <div className="hidden md:flex items-center gap-2">
+          <h1 className="text-xs font-medium text-black uppercase leading-none tracking-wide">
+            AFFINE
+            <span className="text-black/30"> — Reasoning Commodification</span>
           </h1>
           <RedIndicator text="Live" live />
         </div>

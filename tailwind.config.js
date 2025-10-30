@@ -24,6 +24,7 @@ export default {
           geyser: '#D1D8DD',
           goblin: '#3A7E3E',
           scarlet: '#EE2812',
+          gold: '#B97E0F',
         },
         // dark: {
         //   50: '#080A05',

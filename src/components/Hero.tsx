@@ -26,17 +26,17 @@ export default function Hero() {
 
   const sidebarItemClass = (active: boolean) => {
     const base =
-      'rounded-full px-4 py-2 text-xs transition-colors duration-500 uppercase font-medium tracking-wide leading-[80%]'
+      'rounded-full px-4 py-2 text-xs transition-colors duration-500 ease-out uppercase font-medium tracking-wide leading-[80%]'
     if (active) {
       return `${base} bg-black text-white`
     }
-    return `${base} text-light-smoke`
+    return `${base} text-light-smoke hover:bg-light-sand`
   }
 
   return (
-    <div className="px-5 flex justify-between items-end">
-      <div className="grid grid-cols-3 gap-[10px] w-2/5">
-        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+    <div className="px-3 md:px-5 md:flex md:justify-between md:items-end">
+      <div className="grid grid-cols-3 gap-[10px] w-full md:w-2/5">
+        <div className="text-light-smoke bg-white rounded-[4px] p-2 md:p-4 flex flex-col justify-between">
           <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
             Models
           </div>
@@ -56,7 +56,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+        <div className="text-light-smoke bg-white rounded-[4px] p-2 md:p-4 flex flex-col justify-between">
           <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
             Eligible
           </div>
@@ -76,7 +76,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="text-light-smoke bg-white rounded-[4px] p-4">
+        <div className="text-light-smoke bg-white rounded-[4px] p-2 md:p-4 flex flex-col justify-between">
           <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
             Environments
           </div>
@@ -96,15 +96,12 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      <nav
-        className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6"
-      >
+
+      <nav className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6 mt-10 md:mt-0">
         <NavLink
           to="/"
           end
-          className={({ isActive }) =>
-            `${sidebarItemClass(isActive)} nav-item`
-          }
+          className={({ isActive }) => `${sidebarItemClass(isActive)} nav-item`}
           title="Press N then 0 to switch to Overview"
         >
           Overview
