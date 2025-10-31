@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { RAO_PER_TAO } from './pricing'
 
 export const DEFAULT_SUBTENSOR_ENDPOINT =
   import.meta.env.VITE_SUBTENSOR_ENDPOINT ?? 'wss://entrypoint-finney.opentensor.ai:443'
@@ -112,4 +113,16 @@ export const disconnectSubtensor = async () => {
   const api = await apiPromise
   api.disconnect()
   apiPromise = null
+}
+
+export const convertRaoToTao = (value: bigint | null | undefined): number | null => {
+  if (value == null) return null
+  try {
+    const whole = value / RAO_PER_TAO
+    const remainder = value % RAO_PER_TAO
+    return Number(whole) + Number(remainder) / Number(RAO_PER_TAO)
+  } catch (error) {
+    console.error('[subtensor] failed to convert RAO to TAO', error)
+    return null
+  }
 }

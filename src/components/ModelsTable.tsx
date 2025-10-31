@@ -5,6 +5,7 @@ import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
 import ScoreCell, { getEnvScoreStats } from './ScoreCell'
+import { RAO_PER_TAO } from '../services/pricing'
 
 const buildRolloutsUrl = (modelName: string | null | undefined) => {
   if (!modelName) return '/api/rollouts/model';
@@ -26,6 +27,16 @@ const buildRolloutsDownloadName = (modelName: string | null | undefined) => {
   return `rollouts_${safe}.jsonl`;
 };
 
+const buildTaostatsUrl = (hotkey: string | null | undefined) => {
+  if (!hotkey) return null;
+  const url = new URL('https://taostats.io/subnets/120/metagraph');
+  const params = new URLSearchParams();
+  params.set('order', 'stake:desc');
+  params.set('filter', hotkey);
+  url.search = params.toString();
+  return url.toString();
+};
+
 interface ModelsTableProps {
   theme: 'light' | 'dark'
   rows: any[]
@@ -42,6 +53,77 @@ interface ModelsTableProps {
   currentBlock: number | null | undefined
   currentBlockLoading: boolean
   currentBlockError: string | null
+  alphaPriceUsd: number | null
+  alphaPriceTao: number | null
+  alphaPriceLoading: boolean
+  alphaPriceError: string | null
+  alphaPriceTimestamp: string | null
+  taoPriceUsd: number | null
+  taoPriceLoading: boolean
+  taoPriceError: string | null
+}
+
+const CopyHotkeyButton: React.FC<{ hotkey: string; display: string }> = ({
+  hotkey,
+  display,
+}) => {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!copied) return
+    const timer = window.setTimeout(() => setCopied(false), 1600)
+    return () => window.clearTimeout(timer)
+  }, [copied])
+
+  const handleCopy = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    try {
+      if (
+        typeof navigator !== 'undefined' &&
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ) {
+        await navigator.clipboard.writeText(hotkey)
+      } else if (typeof document !== 'undefined') {
+        const textarea = document.createElement('textarea')
+        textarea.value = hotkey
+        textarea.style.position = 'fixed'
+        textarea.style.top = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.focus()
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setCopied(true)
+    } catch (error) {
+      console.error('Failed to copy hotkey to clipboard', error)
+      setCopied(false)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      title={copied ? 'Hotkey copied' : 'Click to copy hotkey'}
+      className="group inline-flex items-center gap-2 rounded px-2 py-1 text-left text-xs font-medium text-light-smoke hover:text-blue-500 focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500"
+    >
+      <span className="font-mono" title={hotkey}>
+        {display}
+      </span>
+      <span
+        className={`text-[10px] uppercase tracking-[0.18em] transition-colors ${
+          copied
+            ? 'text-emerald-500'
+            : 'text-light-slate group-hover:text-blue-500'
+        }`}
+      >
+        {copied ? 'Copied' : 'Copy'}
+      </span>
+    </button>
+  )
 }
 
 const ModelsTable: React.FC<ModelsTableProps> = ({
@@ -60,6 +142,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   currentBlock,
   currentBlockLoading,
   currentBlockError,
+  alphaPriceUsd,
+  alphaPriceTao,
+  alphaPriceLoading,
+  alphaPriceError,
+  alphaPriceTimestamp,
+  taoPriceUsd,
+  taoPriceLoading,
+  taoPriceError,
 }) => {
   const [expandedModel, setExpandedModel] = useState<string | null>(null)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -127,9 +217,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     )
   }
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
-  const startIndex = (page - 1) * pageSize
-  const endIndex = Math.min(rows.length, startIndex + pageSize)
+  const isAllRows = !Number.isFinite(pageSize)
+  const effectivePageSize = isAllRows ? rows.length || 1 : pageSize
+  const totalPages = isAllRows
+    ? 1
+    : Math.max(1, Math.ceil(rows.length / effectivePageSize))
+  const startIndex = isAllRows ? 0 : (page - 1) * effectivePageSize
+  const endIndex = isAllRows
+    ? rows.length
+    : Math.min(rows.length, startIndex + effectivePageSize)
   const pagedRows = rows.slice(startIndex, endIndex)
 
   const envBestMin = useMemo(() => {
@@ -163,10 +259,27 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const fmtTs = (iso: string | null | undefined) =>
     !iso ? '—' : new Date(iso).toLocaleString()
   const dash = '—'
+  const BLOCK_TO_DAY_MULTIPLIER = 0.0001388889
+  const fmtSamples = (count: number | null | undefined) =>
+    count == null ? null : count.toLocaleString()
   const midTrunc = (s: string, max = 36) =>
     s && s.length > max
       ? `${s.slice(0, max / 2)}…${s.slice(s.length - max / 2)}`
       : s
+  const RAO_PER_TAO_NUMBER = Number(RAO_PER_TAO)
+  const usdFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
+      }),
+    [],
+  )
+  const formatUsd = (value: number | null | undefined) => {
+    if (value == null || Number.isNaN(value)) return null
+    return usdFormatter.format(value)
+  }
   const computeAge = (firstBlock: number | null | undefined): number | null => {
     if (
       typeof currentBlock !== 'number' ||
@@ -180,21 +293,23 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     if (!Number.isFinite(age)) return null
     return Math.max(0, age)
   }
-  const formatAge = (age: number | null) =>
-    age == null ? dash : age.toLocaleString()
-  const formatAlpha = (raw: string | null | undefined) => {
-    if (!raw) return dash
+  const formatAge = (ageBlocks: number | null) => {
+    if (ageBlocks == null) return dash
+    const days = ageBlocks * BLOCK_TO_DAY_MULTIPLIER
+    if (!Number.isFinite(days)) return dash
+    return `${days.toFixed(2)} days`
+  }
+  const parseAlpha = (raw: string | null | undefined): number | null => {
+    if (!raw) return null
     try {
-      const base = BigInt(1_000_000_000)
       const value = BigInt(raw)
-      const whole = value / base
-      const fraction = value % base
-      const normalized =
-        Number(`${whole.toString()}.${fraction.toString().padStart(9, '0')}`)
-      if (!Number.isFinite(normalized)) return dash
-      return normalized.toFixed(2)
+      const whole = value / RAO_PER_TAO
+      const remainder = value % RAO_PER_TAO
+      return Number(whole) + Number(remainder) / RAO_PER_TAO_NUMBER
     } catch {
-      return raw
+      const numeric = Number(raw)
+      if (!Number.isFinite(numeric)) return null
+      return numeric / 1_000_000_000
     }
   }
 
@@ -284,8 +399,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     'px-3 py-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-left border-r border-black/5 last:border-r-0 whitespace-nowrap font-normal'
   const tdClasses = 'px-3 py-3 font-medium text-xs leading-snug tracking-wide'
 
-  const pagedStartIndex = rows.length === 0 ? 0 : (page - 1) * pageSize + 1
-  const pagedEndIndex = Math.min(rows.length, page * pageSize)
   const blockStatus = currentBlockError
     ? 'Block unavailable'
     : currentBlock
@@ -293,21 +406,38 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     : currentBlockLoading
     ? 'Block syncing…'
     : 'Block —'
+  const alphaPriceInfo =
+    alphaPriceLoading
+      ? 'Loading…'
+      : alphaPriceUsd != null && alphaPriceTao != null
+      ? `ⴷ ${alphaPriceTao.toFixed(4)} (${formatUsd(alphaPriceUsd)})`
+      : 'Unavailable'
+  const alphaPriceUpdatedAt = (() => {
+    if (!alphaPriceTimestamp) return null
+    const date = new Date(alphaPriceTimestamp)
+    return Number.isNaN(date.getTime()) ? null : date.toLocaleString()
+  })()
+  const alphaPriceTitle = alphaPriceError
+    ? alphaPriceError
+    : alphaPriceLoading
+    ? undefined
+    : alphaPriceUpdatedAt
+    ? `Updated ${alphaPriceUpdatedAt}`
+    : undefined
+  const taoPriceFormatted =
+    taoPriceUsd != null ? formatUsd(taoPriceUsd) ?? '—' : null
+  const taoPriceInfo =
+    taoPriceLoading ? 'Loading…' : taoPriceFormatted ?? 'Unavailable'
+  const taoPriceTitle =
+    taoPriceLoading || taoPriceFormatted
+      ? undefined
+      : taoPriceError ?? undefined
 
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-1">
-          <div className="text-sm uppercase tracking-wide leading-none [word-spacing:0.5rem] md:[word-spacing:15px] text-light-slate font-medium">
-            <span className="hidden md:inline">Showing </span>
-            <span className="text-light-smoke">
-              {pagedStartIndex}–{pagedEndIndex}
-            </span>{' '}
-            of <span className="text-light-smoke">{rows.length}</span>
-          </div>
-          <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
-            {blockStatus}
-          </div>
+        <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
+          {blockStatus}
         </div>
         <div className="flex items-center gap-4">
           <div className="relative hidden md:block">
@@ -332,6 +462,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             setPageSize={setPageSize}
           />
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.18em] text-light-slate">
+        <span title={alphaPriceTitle ?? undefined}>
+          Alpha Price: {alphaPriceInfo}
+        </span>
+        <span title={taoPriceTitle ?? undefined}>
+          TAO Price: {taoPriceInfo}
+        </span>
       </div>
 
       <div className="overflow-x-auto rounded-[4px] bg-white shadow-sm">
@@ -373,7 +512,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   </button>
                 </th>
               ))}
-              <th className={thClasses}>Age</th>
+              <th className={thClasses}>Age (days)</th>
               <th className={thClasses}>Eligible</th>
             </tr>
           </thead>
@@ -458,34 +597,116 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 const ageValue = formatAge(ageRaw)
                 const ptsValue = fmt(toNumber((model as any).pts), 4)
                 const weightValue = fmt(toNumber((model as any).weight), 4)
-                const emissionValue = formatAlpha(
+                const emissionAlphaNumeric = parseAlpha(
                   (model as any).emissionRaw ?? null,
                 )
+                const emissionAlphaDisplay =
+                  emissionAlphaNumeric == null
+                    ? null
+                    : `ⴷ ${emissionAlphaNumeric.toFixed(2)}`
+                const emissionUsdValue =
+                  emissionAlphaNumeric != null && alphaPriceUsd != null
+                    ? emissionAlphaNumeric * alphaPriceUsd
+                    : null
+                const emissionUsdDisplay = formatUsd(emissionUsdValue)
+  const primaryEmission = emissionAlphaDisplay
+  const secondaryEmission = emissionUsdDisplay
+                const withPerHour = (value: string | null) =>
+                  value ? `${value} /hr` : null
+                const mainEmission = primaryEmission ?? secondaryEmission
+  const hasBothUnits =
+    primaryEmission != null && secondaryEmission != null && primaryEmission !== secondaryEmission
+                const emissionDetailNode =
+                  mainEmission == null ? (
+                    dash
+                  ) : (
+                    <span className="flex flex-col items-end leading-tight">
+                      <span>{withPerHour(mainEmission)}</span>
+                      {hasBothUnits ? (
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
+                          {withPerHour(secondaryEmission)}
+                        </span>
+                      ) : null}
+                    </span>
+                  )
+                const emissionCellContent = isLive
+                  ? mainEmission == null
+                    ? dash
+                    : (
+                        <div className="flex flex-col items-end leading-tight">
+                          <span>{mainEmission}</span>
+                          {hasBothUnits ? (
+                            <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
+                              {withPerHour(secondaryEmission)}
+                            </span>
+                          ) : null}
+                        </div>
+                      )
+                  : fmt(model.avg_latency as number | null, 2)
                 const revDisplay =
                   model.rev && model.rev !== '' ? (
                     <span className="font-mono">{model.rev}</span>
                   ) : (
                     '—'
                   )
-                const hotkeyDisplay =
-                  model.hotkey && model.hotkey !== '' ? (
-                    <span className="font-mono" title={model.hotkey}>
-                      {midTrunc(model.hotkey, 18)}
-                    </span>
+                const rawHotkey =
+                  typeof model.hotkey === 'string'
+                    ? model.hotkey.trim()
+                    : ''
+                const hotkeyValue =
+                  rawHotkey !== '' ? (
+                    <CopyHotkeyButton
+                      hotkey={rawHotkey}
+                      display={midTrunc(rawHotkey, 18)}
+                    />
                   ) : (
                     '—'
                   )
+                const huggingFaceUrl = model.model
+                  ? `https://huggingface.co/${model.model}`
+                  : null
+                const taostatsUrl = buildTaostatsUrl(rawHotkey || null)
+                const rolloutsHref = buildRolloutsUrl(model.model as string)
+                const rolloutsFileName = buildRolloutsDownloadName(
+                  model.model as string,
+                )
+                const detailLinkClass =
+                  'inline-flex items-center gap-1 text-xs font-medium tracking-wide text-light-smoke hover:text-blue-500 focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500'
                 const envEntries: DetailCell[] = isLive
                   ? Object.entries(model.envScores).map(
                       ([fullName, score]) => {
                         const stats = getEnvScoreStats(score)
                         const label = fullName.split(':')[1] ?? fullName
-                        return {
-                          label,
-                          value:
+                        const sampleCount =
+                          (model as any).envSamples?.[fullName] ?? null
+                        const sampleText = fmtSamples(sampleCount)
+                        let valueNode: React.ReactNode = '—'
+                        if (stats != null || sampleText != null) {
+                          const rangeText =
                             stats != null
                               ? `${stats.minFormatted}-${stats.maxFormatted}`
-                              : '—',
+                              : null
+                          if (rangeText && sampleText) {
+                            valueNode = (
+                              <span className="inline-flex items-center gap-2">
+                                <span>{rangeText}</span>
+                                <span className="text-[10px] tracking-[0.18em] text-light-iron">
+                                  |
+                                </span>
+                                <span className="text-[11px] tracking-[0.12em] text-light-slate">
+                                  {sampleText} samples
+                                </span>
+                              </span>
+                            )
+                          } else if (rangeText) {
+                            valueNode = rangeText
+                          } else if (sampleText) {
+                            valueNode = `${sampleText} samples`
+                          }
+                        }
+                        return {
+                          label,
+                          value: valueNode,
                         }
                       },
                     )
@@ -511,13 +732,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   }
                 }).filter(Boolean) as DetailCell[]
                 const baseMetricItems: DetailCell[] = [
-                  { label: 'Age', value: ageValue },
+                  { label: 'Age (days)', value: ageValue },
                   ...(firstBlockRaw != null
-                    ? [{ label: 'FirstBlk', value: fmt(firstBlockRaw, 0) }]
+                    ? [{ label: 'First Block', value: fmt(firstBlockRaw, 0) }]
                     : []),
                   { label: 'PTS', value: ptsValue },
                   { label: 'Weight', value: weightValue },
-                  { label: 'Emission', value: emissionValue },
+                  {
+                    label: 'Emission (ⴷ/hr)',
+                    value: emissionDetailNode,
+                  },
                 ]
                 const lowerColumns: DetailCell[][] = [
                   baseMetricItems,
@@ -527,6 +751,65 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 ].map((column) =>
                   column.length ? column : [{ label: '', value: '—' }],
                 )
+                const externalLinkItems: DetailCell[] = [
+                  {
+                    label: 'Hugging Face',
+                    value: huggingFaceUrl ? (
+                      <a
+                        href={huggingFaceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={detailLinkClass}
+                      >
+                        Open
+                      </a>
+                    ) : (
+                      '—'
+                    ),
+                  },
+                  {
+                    label: 'Chutes',
+                    value: chuteId ? (
+                      <a
+                        href={`https://chutes.ai/app/chute/${chuteId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={detailLinkClass}
+                      >
+                        Open
+                      </a>
+                    ) : (
+                      '—'
+                    ),
+                  },
+                  {
+                    label: 'TaoStats',
+                    value: taostatsUrl ? (
+                      <a
+                        href={taostatsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={detailLinkClass}
+                      >
+                        View
+                      </a>
+                    ) : (
+                      '—'
+                    ),
+                  },
+                  {
+                    label: 'Rollouts',
+                    value: (
+                      <a
+                        href={rolloutsHref}
+                        download={rolloutsFileName}
+                        className={detailLinkClass}
+                      >
+                        Download
+                      </a>
+                    ),
+                  },
+                ]
                 const summaryColumns: DetailCell[][] = [
                   [
                     {
@@ -538,7 +821,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   ],
                   [
                     { label: 'Rev', value: revDisplay, emphasize: true },
-                    { label: 'HotKey', value: hotkeyDisplay },
+                    { label: 'HotKey', value: hotkeyValue },
                   ],
                   [
                     {
@@ -551,8 +834,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       value: avgScoreValue,
                       emphasize: true,
                     },
+                  {
+                    label: 'ⴷ/hr',
+                    value: emissionDetailNode,
+                    emphasize: true,
+                  },
                     { label: 'Avg Latency', value: avgLatencyValue },
                   ],
+                  externalLinkItems,
                 ]
 
                 return (
@@ -569,10 +858,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       >
                         {midTrunc(model.model, 48)}
                       </td>
-                      <td className={tdClasses}>
-                        {isLive
-                          ? formatAlpha((model as any).emissionRaw ?? null)
-                          : fmt(model.avg_latency as number | null, 2)}
+                      <td className={`${tdClasses} text-right`}>
+                        {emissionCellContent}
                       </td>
                       {envs.map((env) => {
                         const envScore = isLive

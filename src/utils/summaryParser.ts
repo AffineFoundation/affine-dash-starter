@@ -1,4 +1,5 @@
 import { SummaryResponse } from '../hooks/useValidatorSummary';
+import { RAO_PER_TAO } from '../services/pricing';
 
 type EmissionEntry = { emission: string };
 
@@ -21,11 +22,21 @@ export interface EnvironmentMinerStat {
 
 const SCORE_FALLBACK = -Infinity;
 
+const RAO_PER_TAO_NUMBER = Number(RAO_PER_TAO);
+
 const parseEmissionAlpha = (value: string | null | undefined): number | null => {
   if (!value) return null;
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return null;
-  return numeric / 1_000_000_000;
+  try {
+    const raw = BigInt(value);
+    const whole = raw / RAO_PER_TAO;
+    const remainder = raw % RAO_PER_TAO;
+    const total = Number(whole) + Number(remainder) / RAO_PER_TAO_NUMBER;
+    return Number.isFinite(total) ? total : null;
+  } catch {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return null;
+    return numeric / 1_000_000_000;
+  }
 };
 
 export function transformSummaryForEnv(

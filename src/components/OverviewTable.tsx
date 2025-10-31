@@ -14,6 +14,7 @@ import ToggleButton from './ToggleButton'
 import ModelsTable from './ModelsTable'
 import useSubtensorChain from '../hooks/useSubtensorChain'
 import { getEnvScoreStats } from './ScoreCell'
+import { RAO_PER_TAO } from '../services/pricing'
 // import ActivityFeed from './ActivityFeed'
 
 interface OverviewTableProps {
@@ -48,6 +49,7 @@ type LiveDisplayRow = {
   l8?: number | null
   hotkey: string
   envScores: Record<string, string | null>
+  envSamples: Record<string, number | null>
 }
 
 const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
@@ -63,12 +65,22 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
 
   const [sortField, setSortField] = useState<string>('emission')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [emissionUnit, setEmissionUnit] = useState<'alpha' | 'usd'>('alpha')
+  const RAO_PER_TAO_NUMBER = Number(RAO_PER_TAO)
 
   const {
     currentBlock,
     currentBlockLoading,
     currentBlockError,
     emissionByUid,
+    alphaPriceUsd,
+    alphaPriceTao,
+    alphaPriceLoading,
+    alphaPriceError,
+    alphaPriceTimestamp,
+    taoPriceUsd,
+    taoPriceLoading,
+    taoPriceError,
   } = useSubtensorChain()
 
   const liveKey = (uid: string | number, model: string) =>
@@ -151,9 +163,18 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       v != null && String(v).trim().toUpperCase().startsWith('Y')
     const parseEmissionAlpha = (v: string | null | undefined): number | null => {
       if (!v) return null
-      const numeric = Number(v)
-      if (!Number.isFinite(numeric)) return null
-      return numeric / 1_000_000_000
+      try {
+        const value = BigInt(v)
+        const whole = value / RAO_PER_TAO
+        const remainder = value % RAO_PER_TAO
+        const total =
+          Number(whole) + Number(remainder) / RAO_PER_TAO_NUMBER
+        return Number.isFinite(total) ? total : null
+      } catch {
+        const numeric = Number(v)
+        if (!Number.isFinite(numeric)) return null
+        return numeric / 1_000_000_000
+      }
     }
 
     return liveSummary.rows.map((row) => {
@@ -161,13 +182,55 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       const miner = uidNumeric != null ? minersByUid.get(uidNumeric) : null
 
       const envScores: Record<string, string | null> = {}
+      const envSamples: Record<string, number | null> = {}
       const numericScores: (number | null)[] = []
       let totalSamples = 0
+      const envSampleLookup = new Map<string, number | null>()
+
+      if (miner && miner.environments) {
+        for (const [envName, envStats] of Object.entries(
+          miner.environments,
+        )) {
+          const count = envStats?.count ?? null
+          const normalized = envName.toLowerCase()
+          envSampleLookup.set(normalized, count)
+          const parts = envName.split(':')
+          if (parts.length > 1) {
+            const lastSegment = parts[parts.length - 1].toLowerCase()
+            if (!envSampleLookup.has(lastSegment)) {
+              envSampleLookup.set(lastSegment, count)
+            }
+            const tail = parts.slice(1).join(':').toLowerCase()
+            if (tail && !envSampleLookup.has(tail)) {
+              envSampleLookup.set(tail, count)
+            }
+          }
+        }
+      }
 
       envCols.forEach((env) => {
         const rawScore = row[env.index]
         envScores[env.name] = rawScore == null ? null : String(rawScore)
         numericScores.push(parseScoreValue(rawScore))
+
+        let sampleCount: number | null = null
+        const candidateKeys: string[] = []
+        const lowerName = env.name.toLowerCase()
+        candidateKeys.push(lowerName)
+        const parts = env.name.split(':')
+        if (parts.length > 1) {
+          const lastSegment = parts[parts.length - 1]
+          if (lastSegment) candidateKeys.push(lastSegment.toLowerCase())
+          const tail = parts.slice(1).join(':')
+          if (tail) candidateKeys.push(tail.toLowerCase())
+        }
+        for (const key of candidateKeys) {
+          if (envSampleLookup.has(key)) {
+            sampleCount = envSampleLookup.get(key) ?? null
+            break
+          }
+        }
+        envSamples[env.name] = sampleCount
       })
 
       if (miner && miner.environments) {
@@ -204,6 +267,7 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         hotkey: miner?.hotkey ?? '',
         firstBlk: parseNum(row[iFirstBlk]),
         envScores,
+        envSamples,
         emissionRaw,
         emissionAlpha,
         l1: parseNum(row[iL1]),
@@ -355,6 +419,16 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
           currentBlock={currentBlock}
           currentBlockLoading={currentBlockLoading}
           currentBlockError={currentBlockError}
+          alphaPriceUsd={alphaPriceUsd}
+          alphaPriceTao={alphaPriceTao}
+          alphaPriceLoading={alphaPriceLoading}
+          alphaPriceError={alphaPriceError}
+          alphaPriceTimestamp={alphaPriceTimestamp}
+          taoPriceUsd={taoPriceUsd}
+          taoPriceLoading={taoPriceLoading}
+          taoPriceError={taoPriceError}
+          emissionUnit={emissionUnit}
+          onEmissionUnitChange={setEmissionUnit}
         />
       </div>
 

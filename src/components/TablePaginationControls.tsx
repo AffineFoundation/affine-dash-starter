@@ -1,5 +1,4 @@
 import React from 'react'
-import PaginationButton from './PaginationButton'
 
 interface TablePaginationControlsProps {
   theme: 'light' | 'dark'
@@ -11,73 +10,36 @@ interface TablePaginationControlsProps {
 }
 
 const TablePaginationControls: React.FC<TablePaginationControlsProps> = ({
-  theme,
-  total,
+  theme: _theme,
+  total: _total,
   page,
   setPage,
   pageSize,
   setPageSize,
 }) => {
-  const totalPages = Math.max(1, Math.ceil(total / pageSize))
-  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1
-  const endIndex = Math.min(total, page * pageSize)
+  const normalizedValue = Number.isFinite(pageSize)
+    ? String(pageSize)
+    : 'all'
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const raw = event.target.value
+    const nextSize = raw === 'all' ? Number.POSITIVE_INFINITY : Number(raw)
+    setPage(1)
+    setPageSize(nextSize)
+  }
 
   return (
-    <div className="text-light-slate flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">
-      <div className="text-sm uppercase tracking-wide leading-none flex items-center gap-3">
-        <label className="hidden md:block">Rows per page</label>
-
-        <select
-          value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
-          className="hidden md:block h-7 px-3 rounded-full transition-colors duration-300 text-light-500 bg-white border border-black/12 "
-        >
-          <option value={20}>20</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-          <option value={200}>200</option>
-        </select>
-
-        <div className="flex items-center gap-1 [word-spacing:0.5rem] md:[word-spacing:15px]">
-          <PaginationButton
-            onClick={() => setPage(1)}
-            disabled={page === 1}
-            theme={theme}
-            title="First page"
-          >
-            <img src="/arrow-left-double.svg" alt="Arrow Left Double" />
-          </PaginationButton>
-          <PaginationButton
-            onClick={() => setPage(Math.max(1, page - 1))}
-            disabled={page === 1}
-            theme={theme}
-            title="Previous page"
-          >
-            <img src="/arrow-left.svg" alt="Arrow Left" />
-          </PaginationButton>
-          <span className="px-2">
-            <span className="hidden md:inline">Page</span>{' '}
-            <span className="text-light-smoke">{page}</span> of{' '}
-            <span className="text-light-smoke">{totalPages}</span>
-          </span>
-          <PaginationButton
-            onClick={() => setPage(Math.min(totalPages, page + 1))}
-            disabled={page >= totalPages}
-            theme={theme}
-            title="Next page"
-          >
-            <img src="/arrow-right.svg" alt="Arrow Right" />
-          </PaginationButton>
-          <PaginationButton
-            onClick={() => setPage(totalPages)}
-            disabled={page >= totalPages}
-            theme={theme}
-            title="Last page"
-          >
-            <img src="/arrow-right-double.svg" alt="Arrow Right Double" />
-          </PaginationButton>
-        </div>
-      </div>
+    <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-light-slate">
+      <span>Show</span>
+      <select
+        value={normalizedValue}
+        onChange={handleChange}
+        className="h-8 rounded-full border border-light-iron bg-light-haze px-4 text-[11px] font-semibold uppercase text-light-slate shadow-sm transition-colors duration-200 focus:border-light-slate focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value={10}>10</option>
+        <option value={20}>20</option>
+        <option value="all">All</option>
+      </select>
     </div>
   )
 }

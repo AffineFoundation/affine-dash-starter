@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { MoreVertical } from 'lucide-react'
 import { SkeletonText } from './Skeleton'
 import { EnvironmentMinerStat } from '../utils/summaryParser'
@@ -20,6 +20,7 @@ interface EnvironmentLiveTableProps {
   sortField: SortField
   sortDirection: 'asc' | 'desc'
   onSort: (field: SortField) => void
+  alphaPriceUsd: number | null
 }
 
 type DetailCell = {
@@ -126,10 +127,24 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
   sortField,
   sortDirection,
   onSort,
+  alphaPriceUsd,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const actionContainerRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const usdFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
+      }),
+    [],
+  )
+  const formatUsd = (value: number | null | undefined) => {
+    if (value == null || Number.isNaN(value)) return null
+    return usdFormatter.format(value)
+  }
 
   const toggleExpanded = (id: string) =>
     setExpandedId((prev) => (prev === id ? null : id))
@@ -275,7 +290,6 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                 row.lower_bound,
                 row.upper_bound,
               )
-              const emissionDisplay = formatScore(row.emission)
               const sampleDisplay = row.sample_count.toLocaleString()
               const averageDisplay = formatScore(row.average_score)
               const lowerBoundDisplay = formatScore(row.lower_bound)
@@ -303,6 +317,50 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
               ) : (
                 '—'
               )
+              const emissionAlphaDisplay =
+                row.emission == null || Number.isNaN(row.emission)
+                  ? null
+                  : `ⴷ ${row.emission.toFixed(3)}`
+              const emissionUsdValue =
+                row.emission != null && alphaPriceUsd != null
+                  ? row.emission * alphaPriceUsd
+                  : null
+              const emissionUsdDisplay = formatUsd(emissionUsdValue)
+              const primaryEmission = emissionAlphaDisplay
+              const secondaryEmission = emissionUsdDisplay
+              const mainEmission = primaryEmission ?? secondaryEmission
+              const hasBothUnits =
+                primaryEmission != null &&
+                secondaryEmission != null &&
+                primaryEmission !== secondaryEmission
+              const withPerHour = (value: string | null) =>
+                value ? `${value} /hr` : null
+              const emissionDetailNode =
+                mainEmission == null ? (
+                  '—'
+                ) : (
+                  <span className="flex flex-col items-end leading-tight">
+                    <span>{withPerHour(mainEmission)}</span>
+                    {hasBothUnits ? (
+                      <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
+                        {withPerHour(secondaryEmission)}
+                      </span>
+                    ) : null}
+                  </span>
+                )
+              const emissionCell =
+                mainEmission == null ? (
+                  '—'
+                ) : (
+                  <span className="flex flex-col items-end leading-tight">
+                    <span>{mainEmission}</span>
+                    {hasBothUnits ? (
+                      <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
+                        {withPerHour(secondaryEmission)}
+                      </span>
+                    ) : null}
+                  </span>
+                )
 
               const rolloutsUrl = buildRolloutsUrl(row.model)
               const rolloutsDownloadName = buildRolloutsDownloadName(row.model)
@@ -326,7 +384,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                   { label: 'Samples', value: sampleDisplay },
                 ],
                 [
-                  { label: 'ⴷ/hr', value: emissionDisplay, emphasize: true },
+                  { label: 'ⴷ/hr', value: emissionDetailNode, emphasize: true },
                   { label: 'Winner', value: row.is_winner ? 'Yes' : 'No' },
                 ],
               ].map((column) =>
@@ -368,7 +426,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                     <td className={tdClasses}>{boundsDisplay}</td>
                     <td className={`${tdClasses} pr-2`}>
                       <div className="flex items-center justify-end gap-2">
-                        <span>{emissionDisplay}</span>
+                        {emissionCell}
                         <div
                           className="relative"
                           ref={(node) => {

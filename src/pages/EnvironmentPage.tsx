@@ -15,7 +15,6 @@ import ScoreDistributionHistogram from '../components/ScoreDistributionHistogram
 import LatencyBoxPlot from '../components/LatencyBoxPlot'
 import Card from '../components/Card'
 import Button from '../components/Button'
-import ToggleButton from '../components/ToggleButton'
 import DataTable from '../components/DataTable'
 import { transformSummaryForEnv, EnvironmentMinerStat } from '../utils/summaryParser'
 import useSubtensorChain from '../hooks/useSubtensorChain'
@@ -66,6 +65,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     currentBlock,
     currentBlockLoading,
     currentBlockError,
+    alphaPriceUsd,
   } = useSubtensorChain()
 
   const rows = Array.isArray(data) ? data : []
@@ -184,18 +184,26 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     setPage(1)
   }, [pageSize, tableTotal])
 
-  const totalPages = Math.max(1, Math.ceil(tableTotal / pageSize))
+  const isAllRows = !Number.isFinite(pageSize)
+  const effectivePageSize = isAllRows ? tableTotal || 1 : pageSize
+  const totalPages = isAllRows
+    ? 1
+    : Math.max(1, Math.ceil(tableTotal / effectivePageSize))
   // Clamp page if it exceeds totalPages
   useEffect(() => {
     if (page > totalPages) setPage(totalPages)
   }, [page, totalPages])
 
-  const startIndex = tableTotal === 0 ? 0 : (page - 1) * pageSize
-  const endIndex = Math.min(tableTotal, startIndex + pageSize)
-  const pagedHistorical = filteredHistorical.slice(startIndex, endIndex)
-  const pagedLive = sortedLiveRows.slice(startIndex, endIndex)
-  const pagedStartIndex = tableTotal === 0 ? 0 : startIndex + 1
-  const pagedEndIndex = endIndex
+  const startIndex = isAllRows ? 0 : (page - 1) * effectivePageSize
+  const endIndex = isAllRows
+    ? tableTotal
+    : Math.min(tableTotal, startIndex + effectivePageSize)
+  const pagedHistorical = isAllRows
+    ? filteredHistorical
+    : filteredHistorical.slice(startIndex, endIndex)
+  const pagedLive = isAllRows
+    ? sortedLiveRows
+    : sortedLiveRows.slice(startIndex, endIndex)
   const blockStatus =
     viewMode === 'historical'
       ? 'Historical snapshot'
@@ -352,19 +360,10 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       >
         <div className="px-3 pt-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="space-y-1">
-              <div className="text-sm uppercase tracking-wide leading-none [word-spacing:0.5rem] md:[word-spacing:15px] text-light-slate font-medium">
-                <span className="hidden md:inline">Showing </span>
-                <span className="text-light-smoke">
-                  {pagedStartIndex}–{pagedEndIndex}
-                </span>{' '}
-                of <span className="text-light-smoke">{tableTotal}</span>
-              </div>
-              <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
-                {blockStatus}
-              </div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
+              {blockStatus}
             </div>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-end">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
               <div className="relative md:w-64">
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -407,6 +406,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             sortField={sortField}
             sortDirection={sortDir}
             onSort={handleSort}
+            alphaPriceUsd={alphaPriceUsd}
           />
           ) : (
             <DataTable

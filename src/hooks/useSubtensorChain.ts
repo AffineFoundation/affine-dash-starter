@@ -5,7 +5,9 @@ import {
   fetchCurrentBlock,
   fetchSubnetEmissions,
   SubtensorEmission,
+  convertRaoToTao,
 } from '../services/subtensor'
+import { fetchAlphaPriceLatest, fetchTaoUsdPrice } from '../services/pricing'
 
 const DEFAULT_NETUID = Number.parseInt(
   import.meta.env.VITE_SUBTENSOR_NETUID ?? '120',
@@ -20,6 +22,15 @@ type UseSubtensorChainResult = {
   emissionByUid: Map<number, SubtensorEmission>
   emissionsLoading: boolean
   emissionsError: string | null
+  alphaPriceRao: bigint | null
+  alphaPriceTao: number | null
+  alphaPriceUsd: number | null
+  alphaPriceLoading: boolean
+  alphaPriceError: string | null
+  alphaPriceTimestamp: string | null
+  taoPriceUsd: number | null
+  taoPriceLoading: boolean
+  taoPriceError: string | null
 }
 
 const endpoint =
@@ -49,6 +60,21 @@ const useSubtensorChain = (
     staleTime: 30000,
   })
 
+  const alphaPriceQuery = useQuery({
+    queryKey: ['subtensor', 'alpha-price', netuid],
+    queryFn: () => fetchAlphaPriceLatest(netuid),
+    enabled: Number.isFinite(netuid),
+    refetchInterval: 60000,
+    staleTime: 30000,
+  })
+
+  const taoPriceQuery = useQuery({
+    queryKey: ['market', 'tao-usd'],
+    queryFn: fetchTaoUsdPrice,
+    refetchInterval: 300000,
+    staleTime: 120000,
+  })
+
   const emissionByUid = useMemo(() => {
     const map = new Map<number, SubtensorEmission>()
     if (emissionQuery.data) {
@@ -59,6 +85,18 @@ const useSubtensorChain = (
     return map
   }, [emissionQuery.data])
 
+  const alphaPriceTao = useMemo(
+    () => convertRaoToTao(alphaPriceQuery.data?.priceRao ?? null),
+    [alphaPriceQuery.data],
+  )
+
+  const alphaPriceUsd = useMemo(() => {
+    if (alphaPriceTao == null) return null
+    const taoUsd = taoPriceQuery.data
+    if (typeof taoUsd !== 'number' || Number.isNaN(taoUsd)) return null
+    return alphaPriceTao * taoUsd
+  }, [alphaPriceTao, taoPriceQuery.data])
+
   return {
     currentBlock: blockQuery.data,
     currentBlockLoading: blockQuery.isLoading,
@@ -67,6 +105,15 @@ const useSubtensorChain = (
     emissionByUid,
     emissionsLoading: emissionQuery.isLoading,
     emissionsError: toErrorMessage(emissionQuery.error),
+    alphaPriceRao: alphaPriceQuery.data?.priceRao ?? null,
+    alphaPriceTao,
+    alphaPriceUsd,
+    alphaPriceLoading: alphaPriceQuery.isLoading,
+    alphaPriceError: toErrorMessage(alphaPriceQuery.error),
+    alphaPriceTimestamp: alphaPriceQuery.data?.timestamp ?? null,
+    taoPriceUsd: taoPriceQuery.data ?? null,
+    taoPriceLoading: taoPriceQuery.isLoading,
+    taoPriceError: toErrorMessage(taoPriceQuery.error),
   }
 }
 
