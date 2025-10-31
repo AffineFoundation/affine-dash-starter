@@ -7,16 +7,18 @@ import {
 } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { useValidatorSummary } from '../hooks/useValidatorSummary'
-import EnvironmentLiveTable from '../components/EnvironmentLiveTable'
+import EnvironmentLiveTable, { SortField } from '../components/EnvironmentLiveTable'
 import TablePaginationControls from '../components/TablePaginationControls'
 import CodeViewer from '../components/CodeViewer'
-import { ExternalLink, Code } from 'lucide-react'
+import { ExternalLink, Code, Search } from 'lucide-react'
 import ScoreDistributionHistogram from '../components/ScoreDistributionHistogram'
 import LatencyBoxPlot from '../components/LatencyBoxPlot'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import ToggleButton from '../components/ToggleButton'
 import DataTable from '../components/DataTable'
+import { transformSummaryForEnv, EnvironmentMinerStat } from '../utils/summaryParser'
+import useSubtensorChain from '../hooks/useSubtensorChain'
 
 const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const { envName: rawEnv } = useParams()
@@ -59,6 +61,12 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     loading: isLiveLoading,
     error: liveError,
   } = useValidatorSummary()
+  const {
+    emissionByUid,
+    currentBlock,
+    currentBlockLoading,
+    currentBlockError,
+  } = useSubtensorChain()
 
   const rows = Array.isArray(data) ? data : []
 
@@ -71,44 +79,98 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     .filter((x) => x.value != null)
     .sort((a, b) => b.value! - a.value!)
 
-  const liveRows = useMemo(() => {
-    if (!liveSummary) return []
-    const cols = liveSummary.columns || []
-    const idx = (name: string) => cols.indexOf(name)
+  const liveRows = useMemo(
+    () => transformSummaryForEnv(liveSummary, rawEnv, emissionByUid),
+    [liveSummary, rawEnv, emissionByUid],
+  )
 
-    const iUID = idx('UID'),
-      iModel = idx('Model'),
-      iRev = idx('Rev')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortField, setSortField] = useState<SortField>('average_score')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
-    const envColIndex = cols.findIndex(c => c === rawEnv)
-    if (envColIndex === -1) return []
+  const filteredLiveRows = useMemo(() => {
+    const trimmed = searchQuery.trim().toLowerCase()
+    if (!trimmed) return liveRows
+    return liveRows.filter((row) => {
+      const model = (row.model ?? '').toLowerCase()
+      const uid = String(row.uid ?? '').toLowerCase()
+      const hotkey = (row.hotkey ?? '').toLowerCase()
+      return (
+        model.includes(trimmed) ||
+        uid.includes(trimmed) ||
+        hotkey.includes(trimmed)
+      )
+    })
+  }, [liveRows, searchQuery])
 
-    const parseScore = (v: unknown): number | null =>
-      v == null
-        ? null
-        : parseFloat(String(v).replace(/\*/g, '').split('/')[0]) || null
+  const filteredHistorical = useMemo(() => {
+    const trimmed = searchQuery.trim().toLowerCase()
+    if (!trimmed) return ranked
+    return ranked.filter(({ row }) => {
+      const model = String(row.model ?? '').toLowerCase()
+      const uid = String(row.uid ?? '').toLowerCase()
+      const hotkey = String((row as any).hotkey ?? '').toLowerCase()
+      return (
+        model.includes(trimmed) ||
+        uid.includes(trimmed) ||
+        hotkey.includes(trimmed)
+      )
+    })
+  }, [ranked, searchQuery])
 
-    return liveSummary.rows
-      .map(row => {
-        const envScore = parseScore(row[envColIndex])
-        return {
-          uniqueId: `live-${row[iUID]}-${row[iModel]}-${row[iRev]}`,
-          uid: String(row[iUID] ?? ''),
-          model: String(row[iModel] ?? ''),
-          rev: String(row[iRev] ?? ''),
-          envScore,
-        }
-      })
-      .filter(row => row.envScore !== null)
-      .sort((a, b) => b.envScore! - a.envScore!)
-  }, [liveSummary, rawEnv])
+  const sortedLiveRows = useMemo(() => {
+    const getNumeric = (value: number | null | undefined) => {
+      if (value == null) return Number.MIN_SAFE_INTEGER
+      const numeric = typeof value === 'number' ? value : Number(value)
+      return Number.isFinite(numeric) ? numeric : Number.MIN_SAFE_INTEGER
+    }
+    const getValue = (row: EnvironmentMinerStat): number | string => {
+      switch (sortField) {
+        case 'model':
+          return (row.model ?? '').toLowerCase()
+        case 'sample_count':
+          return getNumeric(row.sample_count)
+        case 'average_score':
+          return getNumeric(row.average_score)
+        case 'lower_bound':
+          return getNumeric(row.lower_bound)
+        case 'emission':
+          return getNumeric(row.emission)
+        default:
+          return Number.MIN_SAFE_INTEGER
+      }
+    }
+    const sorted = [...filteredLiveRows]
+    sorted.sort((a, b) => {
+      const av = getValue(a)
+      const bv = getValue(b)
+      let comparison: number
+      if (typeof av === 'string' || typeof bv === 'string') {
+        comparison = String(av).localeCompare(String(bv))
+      } else {
+        comparison = (av as number) - (bv as number)
+      }
+      return sortDir === 'asc' ? comparison : -comparison
+    })
+    return sorted
+  }, [filteredLiveRows, sortField, sortDir])
+
+  const handleSort = (field: SortField) => {
+    setSortDir((prev) =>
+      sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc',
+    )
+    setSortField(field)
+  }
 
   // Unified table state derived from current mode
-  const tableTotal = viewMode === 'historical' ? ranked.length : liveRows.length
+  const tableTotal =
+    viewMode === 'historical'
+      ? filteredHistorical.length
+      : sortedLiveRows.length
   const tableLoading =
     viewMode === 'historical'
       ? isLoading
-      : isLiveLoading && liveRows.length === 0
+      : isLiveLoading && sortedLiveRows.length === 0
   const tableError =
     viewMode === 'historical' ? (error as unknown) : (liveError as unknown)
 
@@ -130,15 +192,20 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
   const startIndex = tableTotal === 0 ? 0 : (page - 1) * pageSize
   const endIndex = Math.min(tableTotal, startIndex + pageSize)
-  const pagedHistorical = ranked.slice(
-    startIndex,
-    Math.min(ranked.length, startIndex + pageSize),
-  )
-
-  const pagedLive = liveRows.slice(
-    startIndex,
-    Math.min(liveRows.length, startIndex + pageSize),
-  )
+  const pagedHistorical = filteredHistorical.slice(startIndex, endIndex)
+  const pagedLive = sortedLiveRows.slice(startIndex, endIndex)
+  const pagedStartIndex = tableTotal === 0 ? 0 : startIndex + 1
+  const pagedEndIndex = endIndex
+  const blockStatus =
+    viewMode === 'historical'
+      ? 'Historical snapshot'
+      : currentBlockError
+      ? 'Block unavailable'
+      : currentBlock
+      ? `Block ${currentBlock.toLocaleString()}`
+      : currentBlockLoading
+      ? 'Block syncing…'
+      : 'Block —'
 
   // Environment-specific overview stats
   const envTotals = ranked.length
@@ -153,7 +220,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     viewMode === 'historical'
       ? envHighest
       : liveRows.length > 0
-      ? liveRows[0].envScore
+      ? liveRows[0].average_score
       : null
 
   // Environment metadata and repo mapping (fallbacks; replace with real mappings when available)
@@ -284,25 +351,63 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         }
       >
         <div className="px-3 pt-3">
-          <TablePaginationControls
-            theme={theme}
-            total={tableTotal}
-            page={page}
-            setPage={setPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-          />
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <div className="text-sm uppercase tracking-wide leading-none [word-spacing:0.5rem] md:[word-spacing:15px] text-light-slate font-medium">
+                <span className="hidden md:inline">Showing </span>
+                <span className="text-light-smoke">
+                  {pagedStartIndex}–{pagedEndIndex}
+                </span>{' '}
+                of <span className="text-light-smoke">{tableTotal}</span>
+              </div>
+              <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
+                {blockStatus}
+              </div>
+            </div>
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-end">
+              <div className="relative md:w-64">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search by model, UID, or hotkey"
+                  className="w-full pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <TablePaginationControls
+                theme={theme}
+                total={tableTotal}
+                page={page}
+                setPage={setPage}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+              />
+            </div>
+          </div>
         </div>
         <div className="p-3">
           {viewMode === 'live' ? (
-            <EnvironmentLiveTable
-              theme={theme}
-              rows={pagedLive}
-              loading={isLiveLoading}
-              errorMsg={liveError}
-              envName={envName.toUpperCase()}
-              startIndex={startIndex}
-            />
+          <EnvironmentLiveTable
+            theme={theme}
+            rows={pagedLive}
+            loading={tableLoading}
+            errorMsg={
+              tableError
+                ? tableError instanceof Error
+                  ? tableError.message
+                  : String(tableError)
+                : null
+            }
+            envName={envName.toUpperCase()}
+            currentBlock={currentBlock}
+            sortField={sortField}
+            sortDirection={sortDir}
+            onSort={handleSort}
+          />
           ) : (
             <DataTable
               theme={theme}

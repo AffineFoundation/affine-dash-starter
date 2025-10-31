@@ -37,6 +37,7 @@ type LiveDisplayRow = {
   firstBlk: number | null
   emissionRaw: string | null
   emissionAlpha: number | null
+  samples: number | null
   l1?: number | null
   l2?: number | null
   l3?: number | null
@@ -106,6 +107,15 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     const cols = liveSummary.columns || []
     const idx = (name: string) => cols.indexOf(name)
 
+    const minersByUid = new Map()
+    if (liveSummary.miners) {
+      for (const miner of Object.values(liveSummary.miners)) {
+        if (miner) {
+          minersByUid.set(miner.uid, miner)
+        }
+      }
+    }
+
     const envCols: { name: string; index: number }[] = []
     cols.forEach((c, i) => {
       if (c.includes(':')) {
@@ -127,7 +137,6 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
       iPts = idx('Pts'),
       iElig = idx('Elig'),
       iWgt = idx('Wgt'),
-      iHotkey = idx('hotkey'),
       iFirstBlk = idx('FirstBlk')
 
     const parseScoreValue = (v: unknown): number | null =>
@@ -148,19 +157,33 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
     }
 
     return liveSummary.rows.map((row) => {
+      const uidNumeric = parseNum(row[iUID])
+      const miner = uidNumeric != null ? minersByUid.get(uidNumeric) : null
+
       const envScores: Record<string, string | null> = {}
       const numericScores: (number | null)[] = []
+      let totalSamples = 0
+
       envCols.forEach((env) => {
         const rawScore = row[env.index]
         envScores[env.name] = rawScore == null ? null : String(rawScore)
         numericScores.push(parseScoreValue(rawScore))
       })
 
+      if (miner && miner.environments) {
+        for (const envName in miner.environments) {
+          const envStats = miner.environments[envName]
+          if (envStats) {
+            totalSamples += envStats.count ?? 0
+          }
+        }
+      }
+
       const validScores = numericScores.filter((s): s is number => s != null)
       const avgScore = validScores.length
         ? validScores.reduce((a, b) => a + b, 0) / validScores.length
         : null
-      const uidNumeric = parseNum(row[iUID])
+
       const emissionEntry =
         uidNumeric != null
           ? emissionByUid.get(Number(uidNumeric))
@@ -174,10 +197,11 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         model: String(row[iModel] ?? ''),
         rev: String(row[iRev] ?? ''),
         avgScore,
+        samples: totalSamples,
         weight: parseNum(row[iWgt]),
         pts: parseNum(row[iPts]),
         eligible: parseBoolY(row[iElig]),
-        hotkey: String(row[iHotkey] ?? ''),
+        hotkey: miner?.hotkey ?? '',
         firstBlk: parseNum(row[iFirstBlk]),
         envScores,
         emissionRaw,

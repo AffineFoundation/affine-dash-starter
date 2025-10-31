@@ -246,10 +246,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         setOpenMenuId(null)
       }
       if (key === 'd') {
-        const url = buildRolloutsUrl(row.model)
+        const url = buildRolloutsUrl(row.model as string)
         const link = document.createElement('a')
         link.href = url
-        link.download = buildRolloutsDownloadName(row.model)
+        link.download = buildRolloutsDownloadName(row.model as string)
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -449,22 +449,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 const avgLatencyValue = isLive
                   ? fmt(toNumber(enriched?.avg_latency), 2)
                   : fmt(toNumber((model as any).avg_latency), 2)
-                const successPercentValue = (() => {
-                  const raw = isLive
-                    ? toNumber(enriched?.success_rate_percent)
-                    : toNumber((model as any).success_rate_percent)
-                  return raw != null ? `${raw.toFixed(1)}%` : '—'
-                })()
-                const totalRolloutsRaw = isLive
-                  ? toNumber(enriched?.total_rollouts)
-                  : toNumber((model as any).total_rollouts)
-                const totalRolloutsValue =
-                  totalRolloutsRaw != null
-                    ? totalRolloutsRaw.toLocaleString()
-                    : '—'
-                const lastRolloutValue = isLive
-                  ? fmtTs(enriched?.last_rollout_at)
-                  : fmtTs((model as any).last_rollout_at)
                 const firstBlockRaw = isLive
                   ? toNumber(model.firstBlk)
                   : toNumber(
@@ -485,7 +469,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   )
                 const hotkeyDisplay =
                   model.hotkey && model.hotkey !== '' ? (
-                    <span className="font-mono">
+                    <span className="font-mono" title={model.hotkey}>
                       {midTrunc(model.hotkey, 18)}
                     </span>
                   ) : (
@@ -527,7 +511,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   }
                 }).filter(Boolean) as DetailCell[]
                 const baseMetricItems: DetailCell[] = [
-                  { label: 'Last Rollout', value: lastRolloutValue },
                   { label: 'Age', value: ageValue },
                   ...(firstBlockRaw != null
                     ? [{ label: 'FirstBlk', value: fmt(firstBlockRaw, 0) }]
@@ -559,15 +542,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   ],
                   [
                     {
+                      label: 'Samples',
+                      value: model.samples?.toLocaleString() ?? '—',
+                      emphasize: true,
+                    },
+                    {
                       label: 'Avg Score',
                       value: avgScoreValue,
                       emphasize: true,
                     },
                     { label: 'Avg Latency', value: avgLatencyValue },
-                  ],
-                  [
-                    { label: 'Success %', value: successPercentValue },
-                    { label: 'Total Rollouts', value: totalRolloutsValue },
                   ],
                 ]
 
@@ -694,8 +678,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                   <span className="text-xs opacity-70">H</span>
                                 </a>
                                 <a
-                                  href={buildRolloutsUrl(model.model)}
-                                  download={buildRolloutsDownloadName(model.model)}
+                                  href={buildRolloutsUrl(model.model as string)}
+                                  download={buildRolloutsDownloadName(
+                                    model.model as string,
+                                  )}
                                   onClick={() => setOpenMenuId(null)}
                                   className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                 >
