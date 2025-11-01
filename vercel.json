@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/prices/:path*",
+      "destination": "https://api.app.trustedstake.ai/prices/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",

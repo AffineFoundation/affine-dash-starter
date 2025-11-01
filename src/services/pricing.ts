@@ -1,7 +1,7 @@
 const COINGECKO_URL =
   'https://api.coingecko.com/api/v3/simple/price?ids=bittensor&vs_currencies=usd'
 
-const DEFAULT_ALPHA_PRICE_BASE_URL = 'https://api.app.trustedstake.ai'
+const DEFAULT_ALPHA_PRICE_BASE_URL = '/api'
 
 type CoingeckoResponse = {
   bittensor?: {
