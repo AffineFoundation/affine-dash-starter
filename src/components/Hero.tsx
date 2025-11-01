@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router-dom'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import React, { useMemo } from 'react'
 import { useValidatorSummary } from '../hooks/useValidatorSummary'
 import { Skeleton } from './Skeleton'
+import ResponsiveNav from './ResponsiveNav'
 
 const StyledNA = () => <span className="text-light-iron uppercase">N/A</span>
 
@@ -97,37 +97,12 @@ export default function Hero() {
         </div>
       </div>
 
-      <nav className="flex items-center flex-wrap gap-1 bg-white p-[10px] rounded-full border border-black/6 mt-10 md:mt-0">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) => `${sidebarItemClass(isActive)} nav-item`}
-          title="Press N then 0 to switch to Overview"
-        >
-          Overview
-        </NavLink>
-
-        {envLoading && <div className={sidebarItemClass(false)}>Loading…</div>}
-
-        {!envLoading && envError && (
-          <div className={sidebarItemClass(false)}>Error</div>
-        )}
-
-        {!envLoading &&
-          !envError &&
-          environments.map((env, i) => (
-            <NavLink
-              key={env}
-              to={`/environment/${encodeURIComponent(env)}`}
-              className={({ isActive }) =>
-                `${sidebarItemClass(isActive)} nav-item`
-              }
-              title={`Press N then ${i + 1} to switch to ${env}`}
-            >
-              {env.replace(/.*:/, '')}
-            </NavLink>
-          ))}
-      </nav>
+      <ResponsiveNav
+        environments={environments}
+        envLoading={envLoading}
+        envError={envError}
+        sidebarItemClass={sidebarItemClass}
+      />
     </div>
   )
 }
