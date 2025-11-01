@@ -834,11 +834,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       value: avgScoreValue,
                       emphasize: true,
                     },
-                  {
-                    label: 'ⴷ/hr',
-                    value: emissionDetailNode,
-                    emphasize: true,
-                  },
                     { label: 'Avg Latency', value: avgLatencyValue },
                   ],
                   externalLinkItems,
