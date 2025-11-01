@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 
-// Singleton Postgres connection pool for serverless environments (Vercel)
-// Reuses connections across invocations within the same lambda instance.
+// Singleton Postgres connection pool for server environment
+// Reuses connections across requests.
 let pool;
 
 /**
@@ -11,15 +11,15 @@ export function getPool() {
   if (!pool) {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
-      throw new Error('DATABASE_URL env var is not set. Configure it in Vercel Project Settings.');
+      throw new Error('DATABASE_URL env var is not set. Configure it in environment variables.');
     }
 
     pool = new Pool({
       connectionString,
-      // RDS requires SSL; rejectUnauthorized false for simplicity in serverless.
+      // RDS requires SSL; rejectUnauthorized false for simplicity.
       ssl: { rejectUnauthorized: false },
-      // Conservative pool settings for serverless
-      max: 5,
+      // Increased pool settings for server environment
+      max: 20,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 10_000,
     });

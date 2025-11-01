@@ -1,4 +1,4 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
 /**
  * GET /api/miner-efficiency-cost
@@ -6,12 +6,7 @@ import { query } from './_db.js';
  * over the last 7 days. Filters out miners without valid cost data and with
  * insufficient recent activity.
  */
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getMinerEfficiencyCost(req, res, next) {
   try {
     const sql = `
       -- This query robustly calculates the average score and AVERAGE TOKEN COST for each active miner.
@@ -55,9 +50,11 @@ export default async function handler(req, res) {
           hotkey;
     `;
     const { rows } = await query(sql);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('miner-efficiency-cost query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getMinerEfficiencyCost;

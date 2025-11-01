@@ -1,13 +1,8 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function postLiveEnrichment(req, res, next) {
   try {
-    const { items } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+    const { items } = req.body || {};
     if (!Array.isArray(items)) {
       return res.status(400).json({ message: 'Invalid payload: expected { items: Array<{uid, model}> }' });
     }
@@ -28,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     // Build a VALUES list with parameter placeholders safely
-    // e.g. ( ($1::int,$2::text,$3::text), ($4::int,$5::text,$6::text), ... )
+    // e.g. ( ($1::int,$2::text), ($3::int,$4::text), ... )
     const valuesClauses = [];
     const params = [];
     for (let i = 0; i < tuples.length; i++) {
@@ -83,9 +78,12 @@ export default async function handler(req, res) {
 
     const { rows } = await query(sql, params);
     // rows: [{ uid, model, hotkey, total_rollouts, overall_avg_score, success_rate_percent, avg_latency, last_rollout_at, chute_id }]
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('Live enrichment error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default postLiveEnrichment;
+

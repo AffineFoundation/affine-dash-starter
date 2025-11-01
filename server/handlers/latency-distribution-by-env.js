@@ -1,11 +1,6 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getLatencyDistributionByEnv(req, res, next) {
   const env = (req.query?.env || req.query?.ENV || req.query?.e || '').toString().trim();
   if (!env) {
     return res.status(400).json({ message: 'Missing required query parameter: env' });
@@ -34,9 +29,12 @@ export default async function handler(req, res) {
         AND ingested_at > NOW() - INTERVAL '7 days';
     `;
     const { rows } = await query(sql, [env]);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('latency-distribution-by-env query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getLatencyDistributionByEnv;
+

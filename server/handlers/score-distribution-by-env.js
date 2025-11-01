@@ -1,11 +1,6 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getScoreDistributionByEnv(req, res, next) {
   const env = (req.query?.env || req.query?.ENV || req.query?.e || '').toString().trim();
   if (!env) {
     return res.status(400).json({ message: 'Missing required query parameter: env' });
@@ -32,9 +27,12 @@ export default async function handler(req, res) {
       ORDER BY score_bucket ASC;
     `;
     const { rows } = await query(sql, [env]);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('score-distribution-by-env query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getScoreDistributionByEnv;
+

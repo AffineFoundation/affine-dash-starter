@@ -1,11 +1,6 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getSubnetOverview(req, res, next) {
   try {
     // 1) Discover all environments dynamically from recent data (same window as metrics below)
     const envWindowDays = '30 days';
@@ -113,9 +108,12 @@ export default async function handler(req, res) {
 
     const params = envNames; // used in the dynamic CASE WHEN ... = $N clauses
     const { rows } = await query(sql, params);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('Subnet overview query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getSubnetOverview;
+

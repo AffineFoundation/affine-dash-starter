@@ -1,13 +1,8 @@
-import { query } from '../_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
-  // Dynamic route param: /api/live-env-leaderboard/[env]
-  const envParam = (req.query?.env || '').toString().trim();
+async function getLiveEnvLeaderboard(req, res, next) {
+  // Dynamic route param: /api/live-env-leaderboard/:env
+  const envParam = req.params.env || '';
   if (!envParam) {
     return res.status(400).json({ message: 'Missing required path parameter: env' });
   }
@@ -54,9 +49,11 @@ export default async function handler(req, res) {
           average_score DESC, total_rollouts DESC
     `;
     const { rows } = await query(sql, [env]);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('live-env-leaderboard query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getLiveEnvLeaderboard;

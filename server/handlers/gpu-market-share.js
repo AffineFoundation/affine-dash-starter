@@ -1,16 +1,11 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
 /**
  * GET /api/gpu-market-share
  * Returns aggregated counts of unique, active miners per GPU configuration over the last 7 days.
  * Note: The 'gpus' field is a JSON-stringified array (or string) as stored in DB.
  */
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getGpuMarketShare(req, res, next) {
   try {
     const sql = `
       -- This query accurately calculates the number of unique miners per GPU type.
@@ -34,9 +29,12 @@ export default async function handler(req, res) {
       ORDER BY miner_count DESC;
     `;
     const { rows } = await query(sql);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('gpu-market-share query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getGpuMarketShare;
+

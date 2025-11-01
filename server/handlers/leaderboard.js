@@ -1,11 +1,6 @@
-import { query } from './_db.js';
+import { query } from '../db.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+async function getLeaderboard(req, res, next) {
   try {
     const sql = `
       SELECT
@@ -23,9 +18,12 @@ export default async function handler(req, res) {
       LIMIT 20;
     `;
     const { rows } = await query(sql);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('Leaderboard query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    next(err);
   }
 }
+
+export default getLeaderboard;
+
