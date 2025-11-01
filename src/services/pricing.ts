@@ -103,14 +103,21 @@ export const fetchAlphaPriceLatest = async (
     options?.apiKey?.trim() || import.meta.env.VITE_SUBTENSOR_API_KEY?.trim() || ''
 
   const normalizedBase = baseUrl.replace(/\/+$/, '')
-  const requestUrl = new URL(`${normalizedBase}/prices/latest`)
-  requestUrl.searchParams.set('page', '1')
-  requestUrl.searchParams.set('limit', '256')
-  requestUrl.searchParams.set('sortDirection', 'DESC')
+  const params = new URLSearchParams({
+    page: '1',
+    limit: '256',
+    sortDirection: 'DESC',
+  })
+
+  const endpoint = `${normalizedBase}/prices/latest?${params.toString()}`
+  const requestUrl =
+    endpoint.startsWith('/') && typeof window !== 'undefined'
+      ? `${window.location.origin}${endpoint}`
+      : endpoint
 
   let res: Response
   try {
-    res = await fetch(requestUrl.toString(), {
+    res = await fetch(requestUrl, {
       method: 'GET',
       headers: {
         accept: 'application/json',
