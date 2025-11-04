@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import {
-  fetchSubnetOverview,
-  type SubnetOverviewRow,
-} from '../services/api'
+import { fetchSubnetOverview, type SubnetOverviewRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { useValidatorSummary } from '../hooks/useValidatorSummary'
-import EnvironmentLiveTable, { SortField } from '../components/EnvironmentLiveTable'
+import EnvironmentLiveTable, {
+  SortField,
+} from '../components/EnvironmentLiveTable'
 import TablePaginationControls from '../components/TablePaginationControls'
 import CodeViewer from '../components/CodeViewer'
 import { ExternalLink, Code, Search } from 'lucide-react'
@@ -16,7 +15,10 @@ import LatencyBoxPlot from '../components/LatencyBoxPlot'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import DataTable from '../components/DataTable'
-import { transformSummaryForEnv, EnvironmentMinerStat } from '../utils/summaryParser'
+import {
+  transformSummaryForEnv,
+  EnvironmentMinerStat,
+} from '../utils/summaryParser'
 import useSubtensorChain from '../hooks/useSubtensorChain'
 
 const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
@@ -37,9 +39,9 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     'affine:abd': 'ABD',
     'affine:sat': 'SAT',
     'affine:ded': 'DED',
-  };
+  }
 
-  const apiEnvName = legacyEnvNameMapping[rawEnv] || rawEnv;
+  const apiEnvName = legacyEnvNameMapping[rawEnv] || rawEnv
 
   const envName = rawEnv.toUpperCase()
   const envKey = envName.toLowerCase().replace(/.*:/, '')
@@ -373,7 +375,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                   type="text"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search by model, UID, or hotkey"
+                  placeholder="Search"
                   className="w-full pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -390,24 +392,24 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
         </div>
         <div className="p-3">
           {viewMode === 'live' ? (
-          <EnvironmentLiveTable
-            theme={theme}
-            rows={pagedLive}
-            loading={tableLoading}
-            errorMsg={
-              tableError
-                ? tableError instanceof Error
-                  ? tableError.message
-                  : String(tableError)
-                : null
-            }
-            envName={envName.toUpperCase()}
-            currentBlock={currentBlock}
-            sortField={sortField}
-            sortDirection={sortDir}
-            onSort={handleSort}
-            alphaPriceUsd={alphaPriceUsd}
-          />
+            <EnvironmentLiveTable
+              theme={theme}
+              rows={pagedLive}
+              loading={tableLoading}
+              errorMsg={
+                tableError
+                  ? tableError instanceof Error
+                    ? tableError.message
+                    : String(tableError)
+                  : null
+              }
+              envName={envName.toUpperCase()}
+              currentBlock={currentBlock}
+              sortField={sortField}
+              sortDirection={sortDir}
+              onSort={handleSort}
+              alphaPriceUsd={alphaPriceUsd}
+            />
           ) : (
             <DataTable
               theme={theme}
@@ -446,9 +448,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
                 overallAvg: fmt(row.overall_avg_score, 1),
                 successRate: `${row.success_rate_percent.toFixed(1)}%`,
                 avgLatency:
-                  row.avg_latency == null
-                    ? dash
-                    : row.avg_latency.toFixed(2),
+                  row.avg_latency == null ? dash : row.avg_latency.toFixed(2),
                 rollouts: row.total_rollouts.toLocaleString(),
               }))}
               loading={tableLoading}

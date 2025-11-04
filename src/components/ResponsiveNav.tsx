@@ -42,10 +42,10 @@ export default function ResponsiveNav({
       if (!navRef.current) return
 
       const isMobile = window.innerWidth < 768
-      
+
       if (isMobile) {
         // Mobile: show Overview + active item only
-        const activeIndex = allItems.findIndex(item => {
+        const activeIndex = allItems.findIndex((item) => {
           if (item.type === 'overview') {
             return window.location.pathname === '/'
           }
@@ -54,7 +54,7 @@ export default function ResponsiveNav({
           }
           return false
         })
-        
+
         if (activeIndex === 0 || activeIndex === -1) {
           // Overview is active or no match found
           setVisibleItems(1) // Show only Overview
@@ -120,28 +120,23 @@ export default function ResponsiveNav({
   }, [])
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  
+
   let visibleNavItems, hiddenNavItems
-  
-  if (isMobile && visibleItems !== -1) {
-    // Mobile: ensure Overview is always first, then active item if different
-    const overviewItem = allItems.find(item => item.type === 'overview')
-    const activeItem = allItems.find(item => {
+
+  if (isMobile) {
+    // Mobile: show "Environment" text + active item
+    const activeItem = allItems.find((item) => {
       if (item.type === 'overview') return window.location.pathname === '/'
       if (item.type === 'env') return window.location.pathname === item.to
       return false
     })
-    
-    if (activeItem && activeItem.type !== 'overview') {
-      visibleNavItems = [overviewItem!, activeItem]
-      hiddenNavItems = allItems.filter(item => item !== overviewItem && item !== activeItem)
-    } else {
-      visibleNavItems = [overviewItem!]
-      hiddenNavItems = allItems.filter(item => item !== overviewItem)
-    }
+
+    visibleNavItems = activeItem ? [activeItem] : [allItems[0]]
+    hiddenNavItems = allItems.filter((item) => item !== activeItem)
   } else {
     // Desktop: original logic
-    visibleNavItems = visibleItems === -1 ? allItems : allItems.slice(0, visibleItems)
+    visibleNavItems =
+      visibleItems === -1 ? allItems : allItems.slice(0, visibleItems)
     hiddenNavItems = visibleItems === -1 ? [] : allItems.slice(visibleItems)
   }
 
@@ -151,6 +146,11 @@ export default function ResponsiveNav({
       className="relative flex items-center justify-between bg-white p-[10px] rounded-full border border-black/6 mt-10 md:mt-0 md:max-w-[50vw]"
     >
       <div className="flex items-center gap-1">
+        {isMobile && (
+          <span className="text-xs text-light-smoke uppercase font-medium tracking-wide px-2">
+            Environment
+          </span>
+        )}
         {visibleNavItems.map((item, idx) => {
           if (item.type === 'loading' || item.type === 'error') {
             return (

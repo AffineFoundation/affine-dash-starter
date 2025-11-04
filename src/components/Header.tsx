@@ -31,41 +31,32 @@ const Header: React.FC<HeaderProps> = ({}) => {
         </div>
       </div>
 
-      <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
-        {/* Active simulation */}
+      {/* <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
         <a href="" className="text-light-slate relative">
           Dashboard
           <div className="size-2 absolute -bottom-4 left-1/2 -translate-x-1/2 bg-black rounded-full" />
         </a>
-
-        {/* DO WE STILL NEED THIS BELOW? */}
-
-        {/* <div className="flex items-center gap-4">
-            <HeaderLink
-              href="https://taostats.io/subnets/120/metagraph"
-              icon={ExternalLink}
-            >
-              METAGRAPH
-            </HeaderLink>
-            <HeaderLink
-              href="https://github.com/AffineFoundation/affine"
-              icon={Code2}
-            >
-              CODE
-            </HeaderLink>
-          </div> */}
-
-        {/* -------------------------------- */}
-
-        {/* WILL WE IMPLEMENT THIS CHANGE THEME BUTTON? */}
-
-        {/* <button
-            onClick={toggleTheme}
-            className="rounded-full p-3 transition-colors duration-500 text-light-500 hover:bg-light-200 hover:text-light-highlight dark:text-dark-500 dark:hover:bg-dark-300 dark:hover:text-dark-highlight"
+        <div className="flex items-center gap-4">
+          <HeaderLink
+            href="https://taostats.io/subnets/120/metagraph"
+            icon={ExternalLink}
           >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-          </button> */}
-      </nav>
+            METAGRAPH
+          </HeaderLink>
+          <HeaderLink
+            href="https://github.com/AffineFoundation/affine"
+            icon={Code2}
+          >
+            CODE
+          </HeaderLink>
+        </div>
+        <button
+          onClick={toggleTheme}
+          className="rounded-full p-3 transition-colors duration-500 text-light-500 hover:bg-light-200 hover:text-light-highlight dark:text-dark-500 dark:hover:bg-dark-300 dark:hover:text-dark-highlight"
+        >
+          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
+      </nav> */}
     </header>
   )
 }

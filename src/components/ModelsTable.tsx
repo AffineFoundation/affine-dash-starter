@@ -8,34 +8,34 @@ import ScoreCell, { getEnvScoreStats } from './ScoreCell'
 import { RAO_PER_TAO } from '../services/pricing'
 
 const buildRolloutsUrl = (modelName: string | null | undefined) => {
-  if (!modelName) return '/api/rollouts/model';
-  const raw = String(modelName).trim();
-  if (!raw) return '/api/rollouts/model';
+  if (!modelName) return '/api/rollouts/model'
+  const raw = String(modelName).trim()
+  if (!raw) return '/api/rollouts/model'
   const segments = raw
     .split('/')
     .filter(Boolean)
-    .map((segment) => encodeURIComponent(segment));
-  const path = '/api/rollouts/model';
-  const params = new URLSearchParams();
-  params.set('model', segments.length ? segments.join('/') : raw);
-  const query = params.toString();
-  return query ? `${path}?${query}` : path;
-};
+    .map((segment) => encodeURIComponent(segment))
+  const path = '/api/rollouts/model'
+  const params = new URLSearchParams()
+  params.set('model', segments.length ? segments.join('/') : raw)
+  const query = params.toString()
+  return query ? `${path}?${query}` : path
+}
 
 const buildRolloutsDownloadName = (modelName: string | null | undefined) => {
-  const safe = (modelName ?? '').replace(/[^\w.-]/g, '_') || 'model';
-  return `rollouts_${safe}.jsonl`;
-};
+  const safe = (modelName ?? '').replace(/[^\w.-]/g, '_') || 'model'
+  return `rollouts_${safe}.jsonl`
+}
 
 const buildTaostatsUrl = (hotkey: string | null | undefined) => {
-  if (!hotkey) return null;
-  const url = new URL('https://taostats.io/subnets/120/metagraph');
-  const params = new URLSearchParams();
-  params.set('order', 'stake:desc');
-  params.set('filter', hotkey);
-  url.search = params.toString();
-  return url.toString();
-};
+  if (!hotkey) return null
+  const url = new URL('https://taostats.io/subnets/120/metagraph')
+  const params = new URLSearchParams()
+  params.set('order', 'stake:desc')
+  params.set('filter', hotkey)
+  url.search = params.toString()
+  return url.toString()
+}
 
 interface ModelsTableProps {
   theme: 'light' | 'dark'
@@ -185,16 +185,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     return Number.isFinite(numeric) ? numeric : null
   }
 
-  const DetailItem = ({
-    label,
-    value,
-    emphasize = false,
-  }: DetailCell) => {
+  const DetailItem = ({ label, value, emphasize = false }: DetailCell) => {
     const hasValue =
-      value !== null &&
-      value !== undefined &&
-      value !== '' &&
-      value !== '—'
+      value !== null && value !== undefined && value !== '' && value !== '—'
 
     const display = hasValue ? value : '—'
     const valueClass = hasValue
@@ -208,9 +201,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         <span className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
           {label}
         </span>
-        <span
-          className={`flex items-center justify-end text-sm ${valueClass}`}
-        >
+        <span className={`flex items-center justify-end text-sm ${valueClass}`}>
           {display}
         </span>
       </div>
@@ -406,12 +397,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     : currentBlockLoading
     ? 'Block syncing…'
     : 'Block —'
-  const alphaPriceInfo =
-    alphaPriceLoading
-      ? 'Loading…'
-      : alphaPriceUsd != null && alphaPriceTao != null
-      ? `ⴷ ${alphaPriceTao.toFixed(4)} (${formatUsd(alphaPriceUsd)})`
-      : 'Unavailable'
+  const alphaPriceInfo = alphaPriceLoading
+    ? 'Loading…'
+    : alphaPriceUsd != null && alphaPriceTao != null
+    ? `ⴷ ${alphaPriceTao.toFixed(4)} (${formatUsd(alphaPriceUsd)})`
+    : 'Unavailable'
   const alphaPriceUpdatedAt = (() => {
     if (!alphaPriceTimestamp) return null
     const date = new Date(alphaPriceTimestamp)
@@ -426,8 +416,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     : undefined
   const taoPriceFormatted =
     taoPriceUsd != null ? formatUsd(taoPriceUsd) ?? '—' : null
-  const taoPriceInfo =
-    taoPriceLoading ? 'Loading…' : taoPriceFormatted ?? 'Unavailable'
+  const taoPriceInfo = taoPriceLoading
+    ? 'Loading…'
+    : taoPriceFormatted ?? 'Unavailable'
   const taoPriceTitle =
     taoPriceLoading || taoPriceFormatted
       ? undefined
@@ -449,7 +440,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by model, UID, or hotkey"
+              placeholder="Search"
               className="pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -550,7 +541,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   </td>
                   <td className={`${tdClasses} px-2`}>
                     <div className="flex items-center justify-center gap-2">
-                      <Skeleton theme={theme} className="h-4 w-4 rounded-full" />
+                      <Skeleton
+                        theme={theme}
+                        className="h-4 w-4 rounded-full"
+                      />
                       <Skeleton
                         theme={theme}
                         className="h-6 w-6 rounded-[2px]"
@@ -609,13 +603,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     ? emissionAlphaNumeric * alphaPriceUsd
                     : null
                 const emissionUsdDisplay = formatUsd(emissionUsdValue)
-  const primaryEmission = emissionAlphaDisplay
-  const secondaryEmission = emissionUsdDisplay
+                const primaryEmission = emissionAlphaDisplay
+                const secondaryEmission = emissionUsdDisplay
                 const withPerHour = (value: string | null) =>
                   value ? `${value} /hr` : null
                 const mainEmission = primaryEmission ?? secondaryEmission
-  const hasBothUnits =
-    primaryEmission != null && secondaryEmission != null && primaryEmission !== secondaryEmission
+                const hasBothUnits =
+                  primaryEmission != null &&
+                  secondaryEmission != null &&
+                  primaryEmission !== secondaryEmission
                 const emissionDetailNode =
                   mainEmission == null ? (
                     dash
@@ -629,20 +625,22 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       ) : null}
                     </span>
                   )
-                const emissionCellContent = isLive
-                  ? mainEmission == null
-                    ? dash
-                    : (
-                        <div className="flex flex-col items-end leading-tight">
-                          <span>{mainEmission}</span>
-                          {hasBothUnits ? (
-                            <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
-                              {withPerHour(secondaryEmission)}
-                            </span>
-                          ) : null}
-                        </div>
-                      )
-                  : fmt(model.avg_latency as number | null, 2)
+                const emissionCellContent = isLive ? (
+                  mainEmission == null ? (
+                    dash
+                  ) : (
+                    <div className="flex flex-col items-end leading-tight">
+                      <span>{mainEmission}</span>
+                      {hasBothUnits ? (
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-light-slate">
+                          {withPerHour(secondaryEmission)}
+                        </span>
+                      ) : null}
+                    </div>
+                  )
+                ) : (
+                  fmt(model.avg_latency as number | null, 2)
+                )
                 const revDisplay =
                   model.rev && model.rev !== '' ? (
                     <span className="font-mono">{model.rev}</span>
@@ -650,9 +648,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     '—'
                   )
                 const rawHotkey =
-                  typeof model.hotkey === 'string'
-                    ? model.hotkey.trim()
-                    : ''
+                  typeof model.hotkey === 'string' ? model.hotkey.trim() : ''
                 const hotkeyValue =
                   rawHotkey !== '' ? (
                     <CopyHotkeyButton
@@ -673,48 +669,44 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 const detailLinkClass =
                   'inline-flex items-center gap-1 text-xs font-medium tracking-wide text-light-smoke hover:text-blue-500 focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500'
                 const envEntries: DetailCell[] = isLive
-                  ? Object.entries(model.envScores).map(
-                      ([fullName, score]) => {
-                        const stats = getEnvScoreStats(score)
-                        const label = fullName.split(':')[1] ?? fullName
-                        const sampleCount =
-                          (model as any).envSamples?.[fullName] ?? null
-                        const sampleText = fmtSamples(sampleCount)
-                        let valueNode: React.ReactNode = '—'
-                        if (stats != null || sampleText != null) {
-                          const rangeText =
-                            stats != null
-                              ? `${stats.minFormatted}-${stats.maxFormatted}`
-                              : null
-                          if (rangeText && sampleText) {
-                            valueNode = (
-                              <span className="inline-flex items-center gap-2">
-                                <span>{rangeText}</span>
-                                <span className="text-[10px] tracking-[0.18em] text-light-iron">
-                                  |
-                                </span>
-                                <span className="text-[11px] tracking-[0.12em] text-light-slate">
-                                  {sampleText} samples
-                                </span>
+                  ? Object.entries(model.envScores).map(([fullName, score]) => {
+                      const stats = getEnvScoreStats(score)
+                      const label = fullName.split(':')[1] ?? fullName
+                      const sampleCount =
+                        (model as any).envSamples?.[fullName] ?? null
+                      const sampleText = fmtSamples(sampleCount)
+                      let valueNode: React.ReactNode = '—'
+                      if (stats != null || sampleText != null) {
+                        const rangeText =
+                          stats != null
+                            ? `${stats.minFormatted}-${stats.maxFormatted}`
+                            : null
+                        if (rangeText && sampleText) {
+                          valueNode = (
+                            <span className="inline-flex items-center gap-2">
+                              <span>{rangeText}</span>
+                              <span className="text-[10px] tracking-[0.18em] text-light-iron">
+                                |
                               </span>
-                            )
-                          } else if (rangeText) {
-                            valueNode = rangeText
-                          } else if (sampleText) {
-                            valueNode = `${sampleText} samples`
-                          }
+                              <span className="text-[11px] tracking-[0.12em] text-light-slate">
+                                {sampleText} samples
+                              </span>
+                            </span>
+                          )
+                        } else if (rangeText) {
+                          valueNode = rangeText
+                        } else if (sampleText) {
+                          valueNode = `${sampleText} samples`
                         }
-                        return {
-                          label,
-                          value: valueNode,
-                        }
-                      },
-                    )
+                      }
+                      return {
+                        label,
+                        value: valueNode,
+                      }
+                    })
                   : envs.map((env) => {
                       const key = env.toLowerCase().replace(/[^a-z0-9_]/g, '_')
-                      const label = env.includes(':')
-                        ? env.split(':')[1]
-                        : env
+                      const label = env.includes(':') ? env.split(':')[1] : env
                       const raw = (model as any)[key]
                       return {
                         label,
@@ -862,9 +854,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           : (model as any)[
                               env.toLowerCase().replace(/[^a-z0-9_]/g, '_')
                             ]
-                        const stats = isLive
-                          ? getEnvScoreStats(envScore)
-                          : null
+                        const stats = isLive ? getEnvScoreStats(envScore) : null
                         const bestMin = envBestMin[env]
                         const highlight =
                           isLive &&
@@ -874,7 +864,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         return (
                           <td key={env} className={tdClasses}>
                             {isLive ? (
-                              <ScoreCell score={envScore} highlight={highlight} />
+                              <ScoreCell
+                                score={envScore}
+                                highlight={highlight}
+                              />
                             ) : (
                               fmt(envScore as number | null)
                             )}
@@ -914,9 +907,12 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                             className="relative"
                             ref={(node) => {
                               if (node) {
-                                actionContainerRefs.current[model.uniqueId] = node
+                                actionContainerRefs.current[model.uniqueId] =
+                                  node
                               } else {
-                                delete actionContainerRefs.current[model.uniqueId]
+                                delete actionContainerRefs.current[
+                                  model.uniqueId
+                                ]
                               }
                             }}
                             onClick={(event) => event.stopPropagation()}
@@ -926,7 +922,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                               onClick={(event) => {
                                 event.stopPropagation()
                                 setOpenMenuId((prev) =>
-                                  prev === model.uniqueId ? null : model.uniqueId,
+                                  prev === model.uniqueId
+                                    ? null
+                                    : model.uniqueId,
                                 )
                               }}
                               title="Actions (open menu)"
@@ -979,12 +977,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                     className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                   >
                                     <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">C</span>
+                                    <span className="text-xs opacity-70">
+                                      C
+                                    </span>
                                   </a>
                                 ) : (
                                   <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
                                     <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">C</span>
+                                    <span className="text-xs opacity-70">
+                                      C
+                                    </span>
                                   </div>
                                 )}
                                 <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
@@ -1011,7 +1013,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                 >
                                   {column.map((item, itemIndex) => (
                                     <DetailItem
-                                      key={`${item.label || 'summary'}-${itemIndex}`}
+                                      key={`${
+                                        item.label || 'summary'
+                                      }-${itemIndex}`}
                                       {...item}
                                     />
                                   ))}
@@ -1026,7 +1030,9 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                 >
                                   {column.map((item, itemIndex) => (
                                     <DetailItem
-                                      key={`${item.label || 'detail'}-${itemIndex}`}
+                                      key={`${
+                                        item.label || 'detail'
+                                      }-${itemIndex}`}
                                       {...item}
                                     />
                                   ))}
