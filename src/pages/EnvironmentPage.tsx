@@ -322,45 +322,41 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       </Card> */}
 
       {/* Top Models Table for this Environment */}
-      <Card
-        title={
-          <span
-            className="font-sans"
-            style={{
-              fontWeight: 500,
-              fontSize: '20px',
-              lineHeight: '100%',
-              letterSpacing: '0%',
-              textTransform: 'uppercase',
-            }}
+
+      <div className="overflow-x-auto">
+        <span
+          className="font-sans"
+          style={{
+            fontWeight: 500,
+            fontSize: '20px',
+            lineHeight: '100%',
+            letterSpacing: '0%',
+            textTransform: 'uppercase',
+          }}
+        >
+          {`Model ${envName.toUpperCase()}`}
+        </span>
+
+        <div className="flex items-center gap-3 mt-5">
+          <Button
+            onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
+            theme={theme}
+            variant="secondary"
           >
-            {`Top Models in ${envName.toUpperCase()}`}
-          </span>
-        }
-        theme={theme}
-        className="overflow-x-auto"
-        headerActions={
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
-              theme={theme}
-              variant="secondary"
-            >
-              <ExternalLink size={12} />
-              REPO
-            </Button>
-            <Button
-              onClick={() => setShowCode(true)}
-              theme={theme}
-              variant="secondary"
-            >
-              <Code size={12} />
-              VIEW CODE
-            </Button>
-          </div>
-        }
-      >
-        <div className="px-3 pt-3">
+            <ExternalLink size={12} />
+            REPO
+          </Button>
+          <Button
+            onClick={() => setShowCode(true)}
+            theme={theme}
+            variant="secondary"
+          >
+            <Code size={12} />
+            VIEW CODE
+          </Button>
+        </div>
+
+        <div className="mt-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
               {blockStatus}
@@ -390,7 +386,8 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             </div>
           </div>
         </div>
-        <div className="p-3">
+
+        <div className="mt-5">
           {viewMode === 'live' ? (
             <EnvironmentLiveTable
               theme={theme}
@@ -464,7 +461,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
             />
           )}
         </div>
-      </Card>
+      </div>
       {/* {!tableLoading && (
         <div className="columns-2 gap-4 space-y-4">
           <div className="break-inside-avoid">

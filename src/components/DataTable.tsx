@@ -40,21 +40,16 @@ const DataTable: React.FC<DataTableProps> = ({
     sortField !== field ? '' : sortDir === 'asc' ? '▲' : '▼'
 
   return (
-    <div className="border rounded-md border-light-200 bg-light-100 dark:border-dark-200 dark:bg-dark-100">
+    <div className="border rounded-md border-light-200 bg-light-100 dark:border-dark-200 dark:bg-dark-100 overflow-hidden">
       {/* Table Header */}
       <div className="px-2 py-[10px] text-light-smoke border-b border-black/5">
-        <div
-          className={`${
-            gridCols || 'grid'
-          } text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5`}
-          style={{ gridTemplateColumns: gridTemplateCols }}
-        >
-          {columns.map((column) => (
+        <div className="grid text-left px-3 h-8 bg-light-haze rounded-[3px] divide-x divide-black/5" style={{ gridTemplateColumns: window.innerWidth < 768 ? '70% 30%' : gridTemplateCols }}>
+          {columns.map((column, index) => (
             <div
               key={column.key}
               className={`text-xs font-mono uppercase tracking-wide h-full flex items-center px-3 ${
                 column.align === 'left' ? 'text-left' : ''
-              }`}
+              } ${index > 1 ? 'hidden md:flex' : ''}`}
               title={column.label}
             >
               {column.sortable && onSort ? (
@@ -87,14 +82,11 @@ const DataTable: React.FC<DataTableProps> = ({
               key={i}
               className="p-3 hover:bg-light-50/60 dark:hover:bg-gray-800/40"
             >
-              <div
-                className={`${gridCols || 'grid'} text-center`}
-                style={{ gridTemplateColumns: gridTemplateCols }}
-              >
+              <div className="grid text-center" style={{ gridTemplateColumns: window.innerWidth < 768 ? '70% 30%' : gridTemplateCols }}>
                 {columns.map((column, idx) => (
                   <div
                     key={idx}
-                    className={column.align === 'left' ? 'text-left' : ''}
+                    className={`${column.align === 'left' ? 'text-left' : ''} ${idx > 1 ? 'hidden md:block' : ''}`}
                   >
                     <SkeletonText theme={theme} className="h-4 w-16 mx-auto" />
                   </div>
@@ -111,11 +103,8 @@ const DataTable: React.FC<DataTableProps> = ({
               key={index}
               className="p-3 transition-colors duration-300"
             >
-              <div
-                className={`${gridCols || 'grid'} text-center`}
-                style={{ gridTemplateColumns: gridTemplateCols }}
-              >
-                {columns.map((column) => (
+              <div className="grid text-center" style={{ gridTemplateColumns: window.innerWidth < 768 ? '70% 30%' : gridTemplateCols }}>
+                {columns.map((column, index) => (
                   <div
                     key={column.key}
                     className={`text-sm font-sans ${
@@ -126,7 +115,7 @@ const DataTable: React.FC<DataTableProps> = ({
                       column.key.includes('score')
                         ? 'font-bold tabular-nums'
                         : ''
-                    } whitespace-nowrap`}
+                    } whitespace-nowrap ${index > 1 ? 'hidden md:block' : ''}`}
                   >
                     {column.render
                       ? column.render(row[column.key], row)

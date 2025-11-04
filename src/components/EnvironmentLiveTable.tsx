@@ -180,8 +180,14 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
 
   return (
     <div className="rounded-[4px] bg-white shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full">
+        <table className="w-full table-fixed" style={{ tableLayout: 'fixed' }}>
+          <colgroup>
+            <col className="md:w-auto" style={{ width: '70%' }} />
+            <col className="md:w-auto" style={{ width: '30%' }} />
+            <col className="hidden md:table-column" />
+            <col className="hidden md:table-column" />
+            <col className="hidden md:table-column" />
+          </colgroup>
           <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
             <tr className="border-b border-black/5 h-8 bg-light-haze">
               <th className={thClasses}>
@@ -204,7 +210,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                   {sortIndicator('sample_count')}
                 </button>
               </th>
-              <th className={thClasses}>
+              <th className={`${thClasses} hidden md:table-cell`}>
                 <button
                   type="button"
                   onClick={() => onSort('average_score')}
@@ -214,7 +220,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                   {sortIndicator('average_score')}
                 </button>
               </th>
-              <th className={thClasses}>
+              <th className={`${thClasses} hidden md:table-cell`}>
                 <button
                   type="button"
                   onClick={() => onSort('lower_bound')}
@@ -224,7 +230,7 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                   {sortIndicator('lower_bound')}
                 </button>
               </th>
-              <th className={thClasses}>
+              <th className={`${thClasses} hidden md:table-cell`}>
                 <button
                   type="button"
                   onClick={() => onSort('emission')}
@@ -239,7 +245,10 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
           <tbody className="bg-white text-light-smoke">
             {errorMsg && (
               <tr>
-                <td colSpan={5} className="px-5 py-4 text-red-600">
+                <td colSpan={2} className="px-5 py-4 text-red-600 md:hidden">
+                  {errorMsg}
+                </td>
+                <td colSpan={5} className="px-5 py-4 text-red-600 hidden md:table-cell">
                   {errorMsg}
                 </td>
               </tr>
@@ -257,13 +266,13 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                   <td className={tdClasses}>
                     <SkeletonText theme={_theme} className="h-4 w-16" />
                   </td>
-                  <td className={tdClasses}>
+                  <td className={`${tdClasses} hidden md:table-cell`}>
                     <SkeletonText theme={_theme} className="h-4 w-16" />
                   </td>
-                  <td className={tdClasses}>
+                  <td className={`${tdClasses} hidden md:table-cell`}>
                     <SkeletonText theme={_theme} className="h-4 w-24" />
                   </td>
-                  <td className={`${tdClasses} pr-2`}>
+                  <td className={`${tdClasses} pr-2 hidden md:table-cell`}>
                     <div className="flex items-center justify-end gap-2">
                       <SkeletonText theme={_theme} className="h-4 w-12" />
                       <SkeletonText theme={_theme} className="h-4 w-4" />
@@ -275,8 +284,14 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
             {!loading && !errorMsg && rows.length === 0 && (
               <tr>
                 <td
+                  colSpan={2}
+                  className="px-5 py-6 text-center text-sm text-light-iron md:hidden"
+                >
+                  No live results yet for {envName}.
+                </td>
+                <td
                   colSpan={5}
-                  className="px-5 py-6 text-center text-sm text-light-iron"
+                  className="px-5 py-6 text-center text-sm text-light-iron hidden md:table-cell"
                 >
                   No live results yet for {envName}.
                 </td>
@@ -419,12 +434,12 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                     className="border-b border-black/5 transition-colors duration-300 hover:bg-light-sand/50 cursor-pointer group"
                   >
                     <td className={`${tdClasses} truncate`} title={row.model}>
-                      {midTrunc(row.model, 48)}
+                      {midTrunc(row.model, 24)}
                     </td>
                     <td className={tdClasses}>{sampleDisplay}</td>
-                    <td className={tdClasses}>{averageDisplay}</td>
-                    <td className={tdClasses}>{boundsDisplay}</td>
-                    <td className={`${tdClasses} pr-2`}>
+                    <td className={`${tdClasses} hidden md:table-cell`}>{averageDisplay}</td>
+                    <td className={`${tdClasses} hidden md:table-cell`}>{boundsDisplay}</td>
+                    <td className={`${tdClasses} pr-2 hidden md:table-cell`}>
                       <div className="flex items-center justify-end gap-2">
                         {emissionCell}
                         <div
@@ -492,7 +507,30 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                     </td>
                   </tr>
                   {isExpanded && (
-                    <tr>
+                    <tr className="md:hidden">
+                      <td colSpan={2} className="bg-white px-0 py-8">
+                        <div className="mx-5 rounded-md border border-light-iron bg-white text-xs font-sans text-light-smoke shadow-sm">
+                          <div className="grid grid-cols-1 divide-y divide-light-iron">
+                            {summaryColumns.map((column, columnIndex) => (
+                              <div
+                                key={`summary-${rowId}-${columnIndex}`}
+                                className="min-h-[84px] px-5 py-4 space-y-1.5"
+                              >
+                                {column.map((item, itemIndex) => (
+                                  <DetailItem
+                                    key={`${item.label || 'summary'}-${rowId}-${columnIndex}-${itemIndex}`}
+                                    {...item}
+                                  />
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  {isExpanded && (
+                    <tr className="hidden md:table-row">
                       <td colSpan={5} className="bg-white px-0 py-8">
                         <div className="mx-5 rounded-md border border-light-iron bg-white text-xs font-sans text-light-smoke shadow-sm">
                           <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-light-iron">
@@ -534,7 +572,6 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
             })}
           </tbody>
         </table>
-      </div>
     </div>
   )
 }

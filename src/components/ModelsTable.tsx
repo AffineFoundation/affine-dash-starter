@@ -464,7 +464,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         </span>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] bg-white shadow-sm">
+      <div className="rounded-[4px] bg-white shadow-sm">
         <table className="min-w-full">
           <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
             <tr className="border-b border-black/5 h-8 bg-light-haze">
@@ -492,7 +492,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 <th className={thClasses}>Avg Latency (s)</th>
               )}
               {envs.map((env) => (
-                <th key={env} className={thClasses}>
+                <th key={env} className={`${thClasses} hidden md:table-cell`}>
                   <button
                     disabled={viewMode !== 'live'}
                     onClick={() => toggleSort(env)}
@@ -503,16 +503,22 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   </button>
                 </th>
               ))}
-              <th className={thClasses}>Age (days)</th>
-              <th className={thClasses}>Eligible</th>
+              <th className={`${thClasses} hidden md:table-cell`}>Age (days)</th>
+              <th className={`${thClasses} hidden md:table-cell`}>Eligible</th>
             </tr>
           </thead>
           <tbody className="text-light-smoke divide-y divide-black/5">
             {errorMsg && (
               <tr>
                 <td
+                  colSpan={2}
+                  className="p-4 text-red-600 dark:text-red-400 md:hidden"
+                >
+                  {errorMsg}
+                </td>
+                <td
                   colSpan={envs.length + 4}
-                  className="p-4 text-red-600 dark:text-red-400"
+                  className="p-4 text-red-600 dark:text-red-400 hidden md:table-cell"
                 >
                   {errorMsg}
                 </td>
@@ -529,25 +535,21 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     <SkeletonText theme={theme} className="h-4 w-20" />
                   </td>
                   {envs.map((env) => (
-                    <td key={env} className={tdClasses}>
+                    <td key={env} className={`${tdClasses} hidden md:table-cell`}>
                       <SkeletonText
                         theme={theme}
                         className="h-4 w-12 mx-auto"
                       />
                     </td>
                   ))}
-                  <td className={tdClasses}>
+                  <td className={`${tdClasses} hidden md:table-cell`}>
                     <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
-                  <td className={`${tdClasses} px-2`}>
+                  <td className={`${tdClasses} px-2 hidden md:table-cell`}>
                     <div className="flex items-center justify-center gap-2">
                       <Skeleton
                         theme={theme}
                         className="h-4 w-4 rounded-full"
-                      />
-                      <Skeleton
-                        theme={theme}
-                        className="h-6 w-6 rounded-[2px]"
                       />
                     </div>
                   </td>
@@ -862,7 +864,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           bestMin != null &&
                           Math.abs(stats.min - bestMin) < 1e-6
                         return (
-                          <td key={env} className={tdClasses}>
+                          <td key={env} className={`${tdClasses} hidden md:table-cell`}>
                             {isLive ? (
                               <ScoreCell
                                 score={envScore}
@@ -874,8 +876,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           </td>
                         )
                       })}
-                      <td className={tdClasses}>{ageValue}</td>
-                      <td className={`${tdClasses} px-2`}>
+                      <td className={`${tdClasses} hidden md:table-cell`}>{ageValue}</td>
+                      <td className={`${tdClasses} px-2 hidden md:table-cell`}>
                         <div className="flex items-center justify-center gap-2">
                           {model.eligible ? (
                             <div
@@ -999,7 +1001,35 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       </td>
                     </tr>
                     {expandedModel === model.uniqueId && (
-                      <tr>
+                      <tr className="md:hidden">
+                        <td
+                          colSpan={2}
+                          className="bg-white px-0 py-8"
+                        >
+                          <div className="mx-5 rounded-md border border-light-iron bg-white text-xs font-sans text-light-smoke shadow-sm">
+                            <div className="grid grid-cols-1 divide-y divide-light-iron">
+                              {summaryColumns.map((column, columnIndex) => (
+                                <div
+                                  key={`summary-${columnIndex}`}
+                                  className="min-h-[84px] px-5 py-4 space-y-1.5"
+                                >
+                                  {column.map((item, itemIndex) => (
+                                    <DetailItem
+                                      key={`${
+                                        item.label || 'summary'
+                                      }-${itemIndex}`}
+                                      {...item}
+                                    />
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    {expandedModel === model.uniqueId && (
+                      <tr className="hidden md:table-row">
                         <td
                           colSpan={envs.length + 4}
                           className="bg-white px-0 py-8"
