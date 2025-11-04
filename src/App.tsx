@@ -7,6 +7,7 @@ import { useTheme } from './hooks/useTheme'
 import { useEnvironments } from './contexts/EnvironmentsContext'
 import EnvironmentPage from './pages/EnvironmentPage'
 import ModelsTable from './components/ModelsTable'
+import SubnetPerformanceChart from './components/SubnetPerformanceChart'
 
 // Lazy-load heavier components for better initial page load
 const NetworkActivityChart = React.lazy(
@@ -223,6 +224,7 @@ function App() {
             element={
               <div className="space-y-28">
                 <OverviewTable theme={theme} />
+                <SubnetPerformanceChart theme={theme} />
 
                 {/* <React.Suspense
                   fallback={

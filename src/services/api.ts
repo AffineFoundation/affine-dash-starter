@@ -65,6 +65,16 @@ export type NetworkActivityRow = {
   average_score?: number;
 };
 
+export type SubnetPerformanceTrendPoint = {
+  timestamp: string;
+  score: number | null;
+};
+
+export type SubnetPerformanceTrendResponse = {
+  hotkey: string | null;
+  data: SubnetPerformanceTrendPoint[];
+};
+
 export type EnvironmentStatsRow = {
   env_name: string;
   total_rollouts: number;
@@ -275,6 +285,12 @@ export function fetchNetworkActivity() {
 
 export function fetchEnvironmentStats() {
   return getJSON<EnvironmentStatsRow[]>('/api/environment-stats');
+}
+
+export function fetchSubnetPerformanceTrend() {
+  return getJSON<SubnetPerformanceTrendResponse>(
+    '/api/subnet/performance-trend'
+  );
 }
 
 export function fetchMinerEfficiency() {
