@@ -20,10 +20,10 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className={`rounded-md bg-white dark:bg-dark-100 ${className}`}>
       {title && (
-        <div className="p-4">
+        <div className="p-2 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-sans font-bold text-light-500 dark:text-dark-500">
+              <h3 className="text-lg font-sans font-medium uppercase">
                 {title}
               </h3>
               {subtitle && (
@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = ({
           </div>
         </div>
       )}
-      <div className="p-4">{children}</div>
+      <div className="p-2 md:p-4">{children}</div>
     </div>
   )
 }

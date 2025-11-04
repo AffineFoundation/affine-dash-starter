@@ -71,10 +71,9 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
   const points = data?.data ?? []
   const topHotkey = data?.hotkey ?? null
 
-  const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#1f2937')
-  const gridColor = colors.lines ?? (theme === 'dark' ? '#334155' : '#e2e8f0')
-  const areaStroke = colors.purple ?? '#6366f1'
-  const areaFill = colors.purple ? `${colors.purple}` : '#a855f7'
+  const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#1f2937') // Keep tick colors
+  const gridColor = '#f5f5f5' // light-sand color for vertical lines
+  const areaStroke = '#b97e0f' // light-gold color for the wave line
 
   return (
     <Card
@@ -82,7 +81,7 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
       title="Subnet Performance Trend"
       subtitle="Historical daily average performance of the current top miner."
     >
-      <div className="mb-4 text-xs font-mono uppercase tracking-wide text-gray-600 dark:text-gray-300">
+      <div className="mb-4 text-xs font-mono uppercase tracking-wide text-gray-600 dark:text-gray-300 break-all">
         Tracking hotkey: <span>{topHotkey ? topHotkey : 'Unavailable'}</span>
       </div>
 
@@ -111,31 +110,37 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
               data={points}
               margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
             >
-              <defs>
-                <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={areaFill} stopOpacity={0.35} />
-                  <stop offset="100%" stopColor={areaFill} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <CartesianGrid
+                horizontal={false}
+                vertical={true}
+                stroke={gridColor}
+                strokeWidth={3}
+                strokeDasharray="0"
+              />
               <XAxis
                 dataKey="timestamp"
                 tickFormatter={(value: string) => formatDateLabel(value)}
                 stroke={axisColor}
                 tickMargin={8}
+                axisLine={false}
+                tickLine={true}
+                tickCount={points.length * 2}
+                interval={0}
               />
               <YAxis
                 domain={[0, 1]}
                 stroke={axisColor}
                 tickFormatter={(value: number) => value.toFixed(2)}
                 tickMargin={8}
+                axisLine={false}
+                tickLine={true}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="score"
                 stroke={areaStroke}
-                fill="url(#trendFill)"
+                fill="transparent"
                 strokeWidth={2}
                 dot={false}
                 isAnimationActive={false}
