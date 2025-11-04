@@ -213,6 +213,11 @@ function App() {
   return (
     <div className="min-h-screen transition-colors duration-300 bg-light-sand text-light-smoke relative">
       <Header theme={theme} toggleTheme={toggleTheme} />
+
+      <div className="px-3 md:px-5">
+        <SubnetPerformanceChart theme={theme} />
+      </div>
+
       <Hero />
 
       {/* Main Content */}
@@ -224,7 +229,7 @@ function App() {
             element={
               <div className="space-y-28">
                 <OverviewTable theme={theme} />
-                <SubnetPerformanceChart theme={theme} />
+                {/* <SubnetPerformanceChart theme={theme} /> */}
 
                 {/* <React.Suspense
                   fallback={

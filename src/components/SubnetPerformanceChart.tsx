@@ -60,14 +60,13 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
 
 const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
   const colors = useTailwindColors(theme)
-  const { data, isLoading, error } =
-    useQuery<SubnetPerformanceTrendResponse>({
-      queryKey: ['subnet-performance-trend'],
-      queryFn: fetchSubnetPerformanceTrend,
-      staleTime: 60_000,
-      refetchInterval: 180_000,
-      refetchOnMount: false,
-    })
+  const { data, isLoading, error } = useQuery<SubnetPerformanceTrendResponse>({
+    queryKey: ['subnet-performance-trend'],
+    queryFn: fetchSubnetPerformanceTrend,
+    staleTime: 60_000,
+    refetchInterval: 180_000,
+    refetchOnMount: false,
+  })
 
   const points = data?.data ?? []
   const topHotkey = data?.hotkey ?? null
@@ -84,8 +83,7 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
       subtitle="Historical daily average performance of the current top miner."
     >
       <div className="mb-4 text-xs font-mono uppercase tracking-wide text-gray-600 dark:text-gray-300">
-        Tracking hotkey:{' '}
-        <span>{topHotkey ? topHotkey : 'Unavailable'}</span>
+        Tracking hotkey: <span>{topHotkey ? topHotkey : 'Unavailable'}</span>
       </div>
 
       {error && (
@@ -109,7 +107,10 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
       {!isLoading && !error && points.length > 0 && (
         <div className="h-72 w-full">
           <ResponsiveContainer>
-            <AreaChart data={points} margin={{ top: 16, right: 24, left: 8, bottom: 8 }}>
+            <AreaChart
+              data={points}
+              margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
+            >
               <defs>
                 <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={areaFill} stopOpacity={0.35} />

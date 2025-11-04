@@ -41,15 +41,39 @@ export default function ResponsiveNav({
     const checkOverflow = () => {
       if (!navRef.current) return
 
+      const isMobile = window.innerWidth < 768
+      
+      if (isMobile) {
+        // Mobile: show Overview + active item only
+        const activeIndex = allItems.findIndex(item => {
+          if (item.type === 'overview') {
+            return window.location.pathname === '/'
+          }
+          if (item.type === 'env') {
+            return window.location.pathname === item.to
+          }
+          return false
+        })
+        
+        if (activeIndex === 0 || activeIndex === -1) {
+          // Overview is active or no match found
+          setVisibleItems(1) // Show only Overview
+        } else {
+          // Show Overview + active item
+          setVisibleItems(activeIndex + 1)
+        }
+        return
+      }
+
+      // Desktop: original overflow logic
       const nav = navRef.current
       const items = nav.querySelectorAll('.nav-item')
-      const navWidth = nav.offsetWidth - 20 // padding
+      const navWidth = nav.offsetWidth - 20
       let totalWidth = 0
 
-      // First check if all items fit without dropdown
       for (let i = 0; i < items.length; i++) {
         const item = items[i] as HTMLElement
-        totalWidth += item.offsetWidth + (i > 0 ? 4 : 0) // gap except first
+        totalWidth += item.offsetWidth + (i > 0 ? 4 : 0)
       }
 
       if (totalWidth <= navWidth) {
@@ -57,9 +81,8 @@ export default function ResponsiveNav({
         return
       }
 
-      // If not, calculate with dropdown space reserved
-      const dropdownWidth = 44 // estimated dropdown button width
-      const availableWidth = navWidth - dropdownWidth - 8 // gap for dropdown
+      const dropdownWidth = 44
+      const availableWidth = navWidth - dropdownWidth - 8
       totalWidth = 0
       let visible = 0
 
@@ -77,7 +100,7 @@ export default function ResponsiveNav({
       setVisibleItems(visible)
     }
 
-    const timer = setTimeout(checkOverflow, 0) // Allow DOM to render first
+    const timer = setTimeout(checkOverflow, 0)
     window.addEventListener('resize', checkOverflow)
     return () => {
       clearTimeout(timer)
@@ -96,9 +119,31 @@ export default function ResponsiveNav({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const visibleNavItems =
-    visibleItems === -1 ? allItems : allItems.slice(0, visibleItems)
-  const hiddenNavItems = visibleItems === -1 ? [] : allItems.slice(visibleItems)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  
+  let visibleNavItems, hiddenNavItems
+  
+  if (isMobile && visibleItems !== -1) {
+    // Mobile: ensure Overview is always first, then active item if different
+    const overviewItem = allItems.find(item => item.type === 'overview')
+    const activeItem = allItems.find(item => {
+      if (item.type === 'overview') return window.location.pathname === '/'
+      if (item.type === 'env') return window.location.pathname === item.to
+      return false
+    })
+    
+    if (activeItem && activeItem.type !== 'overview') {
+      visibleNavItems = [overviewItem!, activeItem]
+      hiddenNavItems = allItems.filter(item => item !== overviewItem && item !== activeItem)
+    } else {
+      visibleNavItems = [overviewItem!]
+      hiddenNavItems = allItems.filter(item => item !== overviewItem)
+    }
+  } else {
+    // Desktop: original logic
+    visibleNavItems = visibleItems === -1 ? allItems : allItems.slice(0, visibleItems)
+    hiddenNavItems = visibleItems === -1 ? [] : allItems.slice(visibleItems)
+  }
 
   return (
     <nav

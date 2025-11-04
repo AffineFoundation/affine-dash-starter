@@ -34,7 +34,7 @@ export default function Hero() {
   }
 
   return (
-    <div className="px-3 md:px-5 md:flex md:justify-between md:items-end">
+    <div className="px-3 md:px-5 md:flex md:justify-between md:items-end mt-10 md:mt-20">
       <div className="grid grid-cols-3 gap-[10px] w-full md:w-2/5">
         <div className="text-light-smoke bg-white rounded-[4px] p-2 md:p-4 flex flex-col justify-between">
           <div className="text-xs font-mono uppercase tracking-wide leading-[80%]">
