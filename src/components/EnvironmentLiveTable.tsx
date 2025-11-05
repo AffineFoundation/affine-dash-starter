@@ -177,13 +177,13 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
 
   return (
     <div className="rounded-[4px] bg-white shadow-sm overflow-hidden">
-      <table className="w-full table-fixed" style={{ tableLayout: 'fixed' }}>
+      <table className="w-full table-fixed">
         <colgroup>
-          <col className="md:w-auto" style={{ width: '70%' }} />
-          <col className="md:w-auto" style={{ width: '30%' }} />
-          <col className="hidden md:table-column" />
-          <col className="hidden md:table-column" />
-          <col className="hidden md:table-column" />
+          <col className="w-[60%] md:w-[30%]" />
+          <col className="hidden md:table-column md:w-[17.5%]" />
+          <col className="hidden md:table-column md:w-[17.5%]" />
+          <col className="hidden md:table-column md:w-[17.5%]" />
+          <col className="w-[40%] md:w-[17.5%]" />
         </colgroup>
         <thead className="text-light-smoke outline outline-4 -outline-offset-4 outline-white">
           <tr className="border-b border-black/5 h-8 bg-light-haze">
