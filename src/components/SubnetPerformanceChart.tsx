@@ -1,8 +1,9 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
-  AreaChart,
-  Area,
+  ComposedChart,
+  Bar,
+  Line,
   ResponsiveContainer,
   CartesianGrid,
   XAxis,
@@ -24,7 +25,10 @@ interface Props {
 
 type TooltipProps = {
   active?: boolean
-  payload?: any[]
+  payload?: Array<{
+    payload: SubnetPerformanceTrendPoint
+    [key: string]: unknown
+  }>
   label?: string
 }
 
@@ -71,9 +75,14 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
   const points = data?.data ?? []
   const topHotkey = data?.hotkey ?? null
 
-  const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#1f2937') // Keep tick colors
-  const gridColor = '#f5f5f5' // light-sand color for vertical lines
-  const areaStroke = '#b97e0f' // light-gold color for the wave line
+  const chartData = points.map((point) => ({
+    ...point,
+    scoreComplement: 1 - (point.score ?? 0),
+  }))
+
+  const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#475569')
+  const gridColor =
+    theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
 
   return (
     <Card
@@ -106,46 +115,76 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
       {!isLoading && !error && points.length > 0 && (
         <div className="h-72 w-full">
           <ResponsiveContainer>
-            <AreaChart
-              data={points}
-              margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
+            <ComposedChart
+              data={chartData}
+              margin={{ top: 12, right: 24, left: 24, bottom: 20 }}
             >
+              <defs>
+                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#F55845" />
+                  <stop offset="100%" stopColor="#D39C37" />
+                </linearGradient>
+                <linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stopColor="#C3CFD7" />
+                  <stop offset="100%" stopColor="#77858E" />
+                </linearGradient>
+              </defs>
               <CartesianGrid
-                horizontal={false}
-                vertical={true}
+                strokeDasharray="none"
                 stroke={gridColor}
-                strokeWidth={3}
-                strokeDasharray="0"
+                vertical={true}
+                horizontal={false}
               />
               <XAxis
                 dataKey="timestamp"
                 tickFormatter={(value: string) => formatDateLabel(value)}
                 stroke={axisColor}
                 tickMargin={8}
+                tick={{
+                  fill: axisColor,
+                  fontSize: 12,
+                  fontFamily: 'PP Neue Montreal, Inter, system-ui, sans-serif',
+                }}
                 axisLine={false}
-                tickLine={true}
-                tickCount={points.length * 2}
-                interval={0}
+                tickLine={false}
               />
               <YAxis
                 domain={[0, 1]}
                 stroke={axisColor}
                 tickFormatter={(value: number) => value.toFixed(2)}
                 tickMargin={8}
+                tick={{
+                  fill: axisColor,
+                  fontSize: 12,
+                  fontFamily: 'PP Neue Montreal, Inter, system-ui, sans-serif',
+                }}
                 axisLine={false}
-                tickLine={true}
+                tickLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Area
+              <Bar
+                dataKey="score"
+                stackId="bar"
+                fill="url(#barGradient)"
+                radius={[2, 2, 0, 0]}
+                barSize={3}
+              />
+              <Bar
+                dataKey="scoreComplement"
+                stackId="bar"
+                fill="#F5F5F5"
+                radius={[0, 0, 2, 2]}
+                barSize={3}
+              />
+              <Line
                 type="monotone"
                 dataKey="score"
-                stroke={areaStroke}
-                fill="transparent"
+                stroke="url(#lineGradient)"
                 strokeWidth={2}
                 dot={false}
                 isAnimationActive={false}
               />
-            </AreaChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       )}
