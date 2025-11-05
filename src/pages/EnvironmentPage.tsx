@@ -324,36 +324,38 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
       {/* Top Models Table for this Environment */}
 
       <div className="overflow-x-auto">
-        <span
-          className="font-sans"
-          style={{
-            fontWeight: 500,
-            fontSize: '20px',
-            lineHeight: '100%',
-            letterSpacing: '0%',
-            textTransform: 'uppercase',
-          }}
-        >
-          {`Model ${envName.toUpperCase()}`}
-        </span>
+        <div className="md:flex md:items-center md:justify-between">
+          <span
+            className="font-sans"
+            style={{
+              fontWeight: 500,
+              fontSize: '20px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textTransform: 'uppercase',
+            }}
+          >
+            {`Model ${envName.toUpperCase()}`}
+          </span>
 
-        <div className="flex items-center gap-3 mt-5">
-          <Button
-            onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
-            theme={theme}
-            variant="secondary"
-          >
-            <ExternalLink size={12} />
-            REPO
-          </Button>
-          <Button
-            onClick={() => setShowCode(true)}
-            theme={theme}
-            variant="secondary"
-          >
-            <Code size={12} />
-            VIEW CODE
-          </Button>
+          <div className="flex items-center gap-3 mt-5">
+            <Button
+              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
+              theme={theme}
+              variant="secondary"
+            >
+              <ExternalLink size={12} />
+              REPO
+            </Button>
+            <Button
+              onClick={() => setShowCode(true)}
+              theme={theme}
+              variant="secondary"
+            >
+              <Code size={12} />
+              VIEW CODE
+            </Button>
+          </div>
         </div>
 
         <div className="mt-5">
