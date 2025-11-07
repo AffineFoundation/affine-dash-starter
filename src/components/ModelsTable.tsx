@@ -167,6 +167,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     emphasize?: boolean
   }
 
+  type DetailItemProps = DetailCell & {
+    variant?: 'horizontal' | 'stacked'
+  }
+
   const chunkList = <T,>(list: T[], parts: number): T[][] => {
     if (parts <= 0) return []
     if (list.length === 0) {
@@ -185,7 +189,12 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     return Number.isFinite(numeric) ? numeric : null
   }
 
-  const DetailItem = ({ label, value, emphasize = false }: DetailCell) => {
+  const DetailItem = ({
+    label,
+    value,
+    emphasize = false,
+    variant = 'horizontal',
+  }: DetailItemProps) => {
     const hasValue =
       value !== null && value !== undefined && value !== '' && value !== '—'
 
@@ -195,6 +204,20 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         ? 'font-semibold text-light-smoke'
         : 'font-medium text-light-slate'
       : 'font-medium text-light-iron'
+
+    if (variant === 'stacked') {
+      const showLabel = Boolean(label && label.trim() !== '')
+      return (
+        <div className="flex flex-col items-center gap-1 py-1 text-center">
+          {showLabel && (
+            <span className="text-[10px] uppercase tracking-[0.28em] text-light-iron">
+              {label}
+            </span>
+          )}
+          <div className={`text-sm leading-tight ${valueClass}`}>{display}</div>
+        </div>
+      )
+    }
 
     return (
       <div className="flex items-center justify-between gap-3 py-1">
@@ -832,6 +855,18 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   ],
                   externalLinkItems,
                 ]
+                const summaryInfoColumns =
+                  summaryColumns.length > 1
+                    ? summaryColumns.slice(0, summaryColumns.length - 1)
+                    : summaryColumns
+                const summaryInfoItems = summaryInfoColumns.flat()
+                const mobileSections = [
+                  { title: 'Summary', items: summaryInfoItems },
+                  { title: 'Key Metrics', items: baseMetricItems },
+                  { title: 'Environments', items: envEntries },
+                  { title: 'Subset Scores', items: lEntries },
+                  { title: 'Links', items: externalLinkItems },
+                ].filter((section) => section.items.length)
 
                 return (
                   <React.Fragment key={model.uniqueId}>
@@ -1007,20 +1042,24 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           className="bg-white px-0 py-8"
                         >
                           <div className="mx-5 rounded-md border border-light-iron bg-white text-xs font-sans text-light-smoke shadow-sm">
-                            <div className="grid grid-cols-1 divide-y divide-light-iron">
-                              {summaryColumns.map((column, columnIndex) => (
+                            <div className="divide-y divide-light-iron px-5 py-4 text-center">
+                              {mobileSections.map((section, sectionIndex) => (
                                 <div
-                                  key={`summary-${columnIndex}`}
-                                  className="min-h-[84px] px-5 py-4 space-y-1.5"
+                                  key={`mobile-section-${section.title}-${sectionIndex}`}
+                                  className="space-y-2 py-4 first:pt-0 last:pb-0"
                                 >
-                                  {column.map((item, itemIndex) => (
-                                    <DetailItem
-                                      key={`${
-                                        item.label || 'summary'
-                                      }-${itemIndex}`}
-                                      {...item}
-                                    />
-                                  ))}
+                                  <p className="text-[10px] uppercase tracking-[0.32em] text-light-iron">
+                                    {section.title}
+                                  </p>
+                                  <div className="flex flex-col gap-1">
+                                    {section.items.map((item, itemIndex) => (
+                                      <DetailItem
+                                        key={`${section.title}-${item.label || 'item'}-${itemIndex}`}
+                                        {...item}
+                                        variant="stacked"
+                                      />
+                                    ))}
+                                  </div>
                                 </div>
                               ))}
                             </div>
