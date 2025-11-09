@@ -6,7 +6,6 @@ import {
   LiveEnrichmentRow,
 } from '../services/api'
 import { useQuery } from '@tanstack/react-query'
-import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton } from './Skeleton'
 import { useValidatorSummary } from '../hooks/useValidatorSummary'
 import Card from './Card'
@@ -367,8 +366,6 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ theme }) => {
         ? String(historicalQueryError)
         : null
       : liveError ?? null
-
-  const {} = useEnvironments()
 
   const toggleSort = (field: string) => {
     if (viewMode !== 'live') return

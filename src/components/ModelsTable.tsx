@@ -6,6 +6,7 @@ import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
 import ScoreCell, { getEnvScoreStats } from './ScoreCell'
 import { RAO_PER_TAO } from '../services/pricing'
+import ResponsiveNav from './ResponsiveNav'
 
 const buildRolloutsUrl = (modelName: string | null | undefined) => {
   if (!modelName) return '/api/rollouts/model'
@@ -156,7 +157,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
   const [pageSize, setPageSize] = useState<number>(20)
   const [page, setPage] = useState<number>(1)
-  const { environments: envs } = useEnvironments()
+  const {
+    environments: envs,
+    loading: envLoading,
+    error: envError,
+  } = useEnvironments()
   const actionContainerRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const L_SUBSETS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']
@@ -210,7 +215,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
       return (
         <div className="flex flex-col items-center gap-1 py-1 text-center">
           {showLabel && (
-            <span className="text-[10px] uppercase tracking-[0.28em] text-light-iron">
+            <span className="text-[10px] uppercase tracking-[0.28em] text-light-slate">
               {label}
             </span>
           )}
@@ -413,47 +418,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     'px-3 py-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-left border-r border-black/5 last:border-r-0 whitespace-nowrap font-normal'
   const tdClasses = 'px-3 py-3 font-medium text-xs leading-snug tracking-wide'
 
-  const blockStatus = currentBlockError
-    ? 'Block unavailable'
-    : currentBlock
-    ? `Block ${currentBlock.toLocaleString()}`
-    : currentBlockLoading
-    ? 'Block syncing…'
-    : 'Block —'
-  const alphaPriceInfo = alphaPriceLoading
-    ? 'Loading…'
-    : alphaPriceUsd != null && alphaPriceTao != null
-    ? `ⴷ ${alphaPriceTao.toFixed(4)} (${formatUsd(alphaPriceUsd)})`
-    : 'Unavailable'
-  const alphaPriceUpdatedAt = (() => {
-    if (!alphaPriceTimestamp) return null
-    const date = new Date(alphaPriceTimestamp)
-    return Number.isNaN(date.getTime()) ? null : date.toLocaleString()
-  })()
-  const alphaPriceTitle = alphaPriceError
-    ? alphaPriceError
-    : alphaPriceLoading
-    ? undefined
-    : alphaPriceUpdatedAt
-    ? `Updated ${alphaPriceUpdatedAt}`
-    : undefined
-  const taoPriceFormatted =
-    taoPriceUsd != null ? formatUsd(taoPriceUsd) ?? '—' : null
-  const taoPriceInfo = taoPriceLoading
-    ? 'Loading…'
-    : taoPriceFormatted ?? 'Unavailable'
-  const taoPriceTitle =
-    taoPriceLoading || taoPriceFormatted
-      ? undefined
-      : taoPriceError ?? undefined
-
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
-          {blockStatus}
-        </div>
-        <div className="flex items-center gap-4">
+        <ResponsiveNav
+          environments={envs}
+          envLoading={envLoading}
+          envError={envError}
+          className="w-full md:max-w-[50vw]"
+        />
+        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
           <div className="relative hidden md:block">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -476,15 +450,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             setPageSize={setPageSize}
           />
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.18em] text-light-slate">
-        <span title={alphaPriceTitle ?? undefined}>
-          Alpha Price: {alphaPriceInfo}
-        </span>
-        <span title={taoPriceTitle ?? undefined}>
-          TAO Price: {taoPriceInfo}
-        </span>
       </div>
 
       <div className="rounded-[4px] bg-white shadow-sm">
@@ -832,24 +797,21 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     {
                       label: 'UID',
                       value: model.uid ?? '—',
-                      emphasize: true,
                     },
                     { label: 'Eligible', value: eligibleSummaryValue },
                   ],
                   [
-                    { label: 'Rev', value: revDisplay, emphasize: true },
+                    { label: 'Rev', value: revDisplay },
                     { label: 'HotKey', value: hotkeyValue },
                   ],
                   [
                     {
                       label: 'Samples',
                       value: model.samples?.toLocaleString() ?? '—',
-                      emphasize: true,
                     },
                     {
-                      label: 'Avg Score',
+                      label: 'Accuracy',
                       value: avgScoreValue,
-                      emphasize: true,
                     },
                     { label: 'Avg Latency', value: avgLatencyValue },
                   ],
@@ -1048,7 +1010,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                   key={`mobile-section-${section.title}-${sectionIndex}`}
                                   className="space-y-2 py-4 first:pt-0 last:pb-0"
                                 >
-                                  <p className="text-[10px] uppercase tracking-[0.32em] text-light-iron">
+                                  <p className="text-[10px] uppercase tracking-[0.32em] text-black dark:text-white">
                                     {section.title}
                                   </p>
                                   <div className="flex flex-col gap-1">

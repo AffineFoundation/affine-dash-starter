@@ -20,10 +20,12 @@ import {
   EnvironmentMinerStat,
 } from '../utils/summaryParser'
 import useSubtensorChain from '../hooks/useSubtensorChain'
+import ResponsiveNav from '../components/ResponsiveNav'
 
 const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const { envName: rawEnv } = useParams()
-  const { environments, loading: envLoading } = useEnvironments()
+  const { environments, loading: envLoading, error: envError } =
+    useEnvironments()
 
   // Validate the env from URL against the dynamic list
   if (envLoading) {
@@ -62,13 +64,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
     loading: isLiveLoading,
     error: liveError,
   } = useValidatorSummary()
-  const {
-    emissionByUid,
-    currentBlock,
-    currentBlockLoading,
-    currentBlockError,
-    alphaPriceUsd,
-  } = useSubtensorChain()
+  const { emissionByUid, currentBlock, alphaPriceUsd } = useSubtensorChain()
 
   const rows = Array.isArray(data) ? data : []
 
@@ -87,7 +83,7 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   )
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortField, setSortField] = useState<SortField>('average_score')
+  const [sortField, setSortField] = useState<SortField>('lower_bound')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   const filteredLiveRows = useMemo(() => {
@@ -206,16 +202,6 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
   const pagedLive = isAllRows
     ? sortedLiveRows
     : sortedLiveRows.slice(startIndex, endIndex)
-  const blockStatus =
-    viewMode === 'historical'
-      ? 'Historical snapshot'
-      : currentBlockError
-      ? 'Block unavailable'
-      : currentBlock
-      ? `Block ${currentBlock.toLocaleString()}`
-      : currentBlockLoading
-      ? 'Block syncing…'
-      : 'Block —'
 
   // Environment-specific overview stats
   const envTotals = ranked.length
@@ -323,73 +309,55 @@ const EnvironmentPage: React.FC<{ theme: 'light' | 'dark' }> = ({ theme }) => {
 
       {/* Top Models Table for this Environment */}
 
-      <div className="overflow-x-auto">
-        <div className="md:flex md:items-center md:justify-between">
-          <span
-            className="font-sans"
-            style={{
-              fontWeight: 500,
-              fontSize: '20px',
-              lineHeight: '100%',
-              letterSpacing: '0%',
-              textTransform: 'uppercase',
-            }}
-          >
-            {`Model ${envName.toUpperCase()}`}
-          </span>
+      <div className="flex justify-end gap-3 -mt-6 md:-mt-10">
+        <Button
+          onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
+          theme={theme}
+          variant="secondary"
+        >
+          <ExternalLink size={12} />
+          REPO
+        </Button>
+        <Button onClick={() => setShowCode(true)} theme={theme} variant="secondary">
+          <Code size={12} />
+          VIEW CODE
+        </Button>
+      </div>
 
-          <div className="flex items-center gap-3 mt-5">
-            <Button
-              onClick={() => window.open(activeEnvMeta.repoUrl, '_blank')}
-              theme={theme}
-              variant="secondary"
-            >
-              <ExternalLink size={12} />
-              REPO
-            </Button>
-            <Button
-              onClick={() => setShowCode(true)}
-              theme={theme}
-              variant="secondary"
-            >
-              <Code size={12} />
-              VIEW CODE
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-5">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="text-[11px] uppercase tracking-[0.18em] text-light-slate">
-              {blockStatus}
-            </div>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-              <div className="relative md:w-64">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search"
-                  className="w-full pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <TablePaginationControls
-                theme={theme}
-                total={tableTotal}
-                page={page}
-                setPage={setPage}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
+      <div className="space-y-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <ResponsiveNav
+            environments={environments}
+            envLoading={envLoading}
+            envError={envError}
+            className="w-full md:max-w-[50vw]"
+          />
+          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+            <div className="relative hidden md:block">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={16}
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search"
+                className="pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <TablePaginationControls
+              theme={theme}
+              total={tableTotal}
+              page={page}
+              setPage={setPage}
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+            />
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-3 overflow-x-auto">
           {viewMode === 'live' ? (
             <EnvironmentLiveTable
               theme={theme}

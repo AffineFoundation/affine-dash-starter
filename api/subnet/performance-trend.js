@@ -1,34 +1,23 @@
 import { query } from '../_db.js'
 
-const WEIGHTS_URL =
-  'https://pub-bf429ea7a5694b99adaf3d444cbbe64d.r2.dev/affine/weights/latest.json'
-
 const PERFORMANCE_SQL = `
   SELECT
-    date_trunc('day', ingested_at) AS timestamp,
-    AVG(
-      CASE
-        WHEN env_name = 'agentgym:sciworld' THEN (score - (-100.0)) / (100.0 - (-100.0))
-        ELSE score
-      END
-    ) AS score
+    timestamp,
+    block,
+    score / 100.0 AS score
   FROM
-    public.affine_results
+    public.epoch_top_miner_performance
   WHERE
-    hotkey = $1
-    AND ingested_at >= NOW() - INTERVAL '30 day'
-    AND score IS NOT NULL
-  GROUP BY
-    date_trunc('day', ingested_at)
+    timestamp >= NOW() - INTERVAL '30 day'
   ORDER BY
-    timestamp ASC;
+    block ASC;
 `
 
-const parseWeight = (value) => {
-  if (value == null) return null
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null
-  const numeric = Number.parseFloat(String(value))
-  return Number.isFinite(numeric) ? numeric : null
+const normalizeTimestamp = (value) => {
+  if (!value) return null
+  if (value instanceof Date) return value.toISOString()
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString()
 }
 
 export default async function handler(req, res) {
@@ -38,46 +27,24 @@ export default async function handler(req, res) {
   }
 
   try {
-    const summaryResponse = await fetch(WEIGHTS_URL, { cache: 'no-store' })
-    if (!summaryResponse.ok) {
-      throw new Error(`Failed to fetch latest weights: ${summaryResponse.status}`)
-    }
-    const summary = await summaryResponse.json()
-    const miners = summary?.data?.miners
-
-    let topMinerHotkey = null
-    let maxWeight = -Infinity
-
-    if (miners && typeof miners === 'object') {
-      for (const [hotkey, miner] of Object.entries(miners)) {
-        if (!miner) continue
-        const weightValue =
-          parseWeight(miner.weight ?? miner.total_weight ?? miner.score ?? null) ??
-          -Infinity
-        if (weightValue > maxWeight) {
-          maxWeight = weightValue
-          topMinerHotkey = hotkey
+    const { rows } = await query(PERFORMANCE_SQL)
+    const points = rows
+      .map((row) => {
+        const timestamp = normalizeTimestamp(row.timestamp)
+        const blockNumber = row.block == null ? null : Number(row.block)
+        const score = row.score == null ? null : Number(row.score)
+        if (!timestamp || blockNumber == null || Number.isNaN(blockNumber)) {
+          return null
         }
-      }
-    }
+        return {
+          timestamp,
+          block: blockNumber,
+          score,
+        }
+      })
+      .filter(Boolean)
 
-    if (!topMinerHotkey) {
-      return res.status(200).json({ hotkey: null, data: [] })
-    }
-
-    const { rows } = await query(PERFORMANCE_SQL, [topMinerHotkey])
-    const trend = rows.map((row) => ({
-      timestamp:
-        row.timestamp instanceof Date
-          ? row.timestamp.toISOString()
-          : new Date(row.timestamp).toISOString(),
-      score: row.score == null ? null : Number(row.score),
-    }))
-
-    return res.status(200).json({
-      hotkey: topMinerHotkey,
-      data: trend,
-    })
+    return res.status(200).json(points)
   } catch (err) {
     console.error('Subnet performance trend error:', err)
     return res.status(500).json({ message: 'Server Error' })

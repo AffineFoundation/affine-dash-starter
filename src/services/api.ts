@@ -67,13 +67,11 @@ export type NetworkActivityRow = {
 
 export type SubnetPerformanceTrendPoint = {
   timestamp: string;
+  block: number;
   score: number | null;
 };
 
-export type SubnetPerformanceTrendResponse = {
-  hotkey: string | null;
-  data: SubnetPerformanceTrendPoint[];
-};
+export type SubnetPerformanceTrendResponse = SubnetPerformanceTrendPoint[];
 
 export type EnvironmentStatsRow = {
   env_name: string;
@@ -158,6 +156,7 @@ async function getJSON<T>(path: string): Promise<T> {
         '/api/advanced-insights': '/mock/advanced-insights.json',
         '/api/gpu-market-share': '/mock/gpu-market-share.json',
         '/api/miner-efficiency-cost': '/mock/miner-efficiency-cost.json',
+        '/api/subnet/performance-trend': '/mock/subnet-performance-trend.json',
         // New env-specific endpoints (querystring stripped below)
         '/api/top-miners-by-env': '/mock/top-miners-by-env.json',
         '/api/score-distribution-by-env': '/mock/score-distribution-by-env.json',

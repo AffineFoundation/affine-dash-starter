@@ -2,6 +2,7 @@ import React from 'react'
 import { Code2, Moon, Sun, ExternalLink } from 'lucide-react'
 import HeaderLink from './HeaderLink'
 import RedIndicator from './RedIndicator'
+import TopMetricsBar from './TopMetricsBar'
 
 interface HeaderProps {
   theme: 'light' | 'dark'
@@ -10,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({}) => {
   return (
-    <header className="md:h-20 mx-auto p-3 md:p-5 mb-11 flex items-center justify-between">
+    <header className="mx-auto p-3 md:p-5 mb-11">
       <div className="flex items-center gap-2 md:gap-4">
         <img src="/logo.svg" alt="Logo" />
 
@@ -30,6 +31,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
           <RedIndicator text="Live" live />
         </div>
       </div>
+
+      <TopMetricsBar />
 
       {/* <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
         <a href="" className="text-light-slate relative">

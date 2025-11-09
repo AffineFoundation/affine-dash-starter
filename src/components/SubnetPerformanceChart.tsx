@@ -1,9 +1,8 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
-  ComposedChart,
-  Bar,
-  Line,
+  AreaChart,
+  Area,
   ResponsiveContainer,
   CartesianGrid,
   XAxis,
@@ -42,6 +41,20 @@ const formatDateLabel = (iso: string | undefined) => {
   })
 }
 
+const formatFullDateTime = (iso: string | undefined) => {
+  if (!iso) return '—'
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  return date.toLocaleString(undefined, {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+}
+
 const renderScore = (score: number | null | undefined, fractionDigits = 3) => {
   if (score == null || !Number.isFinite(score)) return '—'
   return score.toFixed(fractionDigits)
@@ -53,10 +66,13 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
   return (
     <div className="rounded-md border border-gray-200 bg-white px-3 py-2 text-xs shadow-lg dark:border-white/20 dark:bg-black/80 dark:text-white">
       <div className="font-semibold">
-        {formatDateLabel(label ?? point.timestamp)}
+        {formatFullDateTime(label ?? point.timestamp)}
       </div>
-      <div className="mt-1 font-mono">
-        Avg Score: {renderScore(point.score, 4)}
+      <div className="mt-1 text-[11px]">
+        Block: <span className="font-mono">{point.block.toLocaleString()}</span>
+      </div>
+      <div className="font-mono">
+        Top Accuracy: {renderScore(point.score, 4)}
       </div>
     </div>
   )
@@ -72,28 +88,23 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
     refetchOnMount: false,
   })
 
-  const points = data?.data ?? []
-  const topHotkey = data?.hotkey ?? null
-
-  const chartData = points.map((point) => ({
-    ...point,
-    scoreComplement: 1 - (point.score ?? 0),
-  }))
+  const points = data ?? []
+  const chartData = points.filter(
+    (point): point is SubnetPerformanceTrendPoint & { score: number } => {
+      if (typeof point.score !== 'number') return false
+      return Number.isFinite(point.score)
+    }
+  )
 
   const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#475569')
   const gridColor =
     theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
+  const gradientId = 'subnetTrendArea'
+
+  const hasChartData = chartData.length > 0
 
   return (
-    <Card
-      theme={theme}
-      title="Subnet Performance Trend"
-      subtitle="Historical daily average performance of the current top miner."
-    >
-      <div className="mb-4 text-xs font-mono uppercase tracking-wide text-gray-600 dark:text-gray-300 break-all">
-        Tracking hotkey: <span>{topHotkey ? topHotkey : 'Unavailable'}</span>
-      </div>
-
+    <Card theme={theme} title="Performance">
       {error && (
         <div className="text-sm text-red-600 dark:text-red-400">
           {(error as Error).message ?? 'Failed to load trend data'}
@@ -106,34 +117,30 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
         </div>
       )}
 
-      {!isLoading && !error && points.length === 0 && (
+      {!isLoading && !error && !hasChartData && (
         <div className="text-sm text-gray-600 dark:text-gray-300">
-          No historical data available for the top miner in the past 30 days.
+          No performance data available for the past 30 days.
         </div>
       )}
 
-      {!isLoading && !error && points.length > 0 && (
+      {!isLoading && !error && hasChartData && (
         <div className="h-72 w-full">
           <ResponsiveContainer>
-            <ComposedChart
+            <AreaChart
               data={chartData}
               margin={{ top: 12, right: 24, left: 24, bottom: 20 }}
             >
               <defs>
-                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#F55845" />
-                  <stop offset="100%" stopColor="#D39C37" />
-                </linearGradient>
-                <linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor="#C3CFD7" />
-                  <stop offset="100%" stopColor="#77858E" />
+                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#F55845" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#D39C37" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="none"
                 stroke={gridColor}
-                vertical={true}
-                horizontal={false}
+                vertical={false}
+                horizontal={true}
               />
               <XAxis
                 dataKey="timestamp"
@@ -162,29 +169,16 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
                 tickLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="score"
-                stackId="bar"
-                fill="url(#barGradient)"
-                radius={[2, 2, 0, 0]}
-                barSize={3}
-              />
-              <Bar
-                dataKey="scoreComplement"
-                stackId="bar"
-                fill="#F5F5F5"
-                radius={[0, 0, 2, 2]}
-                barSize={3}
-              />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="score"
-                stroke="url(#lineGradient)"
+                stroke="#F55845"
                 strokeWidth={2}
+                fill={`url(#${gradientId})`}
                 dot={false}
                 isAnimationActive={false}
               />
-            </ComposedChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       )}

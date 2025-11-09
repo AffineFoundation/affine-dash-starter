@@ -5,18 +5,26 @@ interface ResponsiveNavProps {
   environments: string[]
   envLoading: boolean
   envError: any
-  sidebarItemClass: (active: boolean) => string
+  className?: string
 }
 
 export default function ResponsiveNav({
   environments,
   envLoading,
   envError,
-  sidebarItemClass,
+  className = '',
 }: ResponsiveNavProps) {
   const navRef = useRef<HTMLElement>(null)
   const [visibleItems, setVisibleItems] = useState<number>(-1)
   const [showDropdown, setShowDropdown] = useState(false)
+
+  const sidebarItemClass = (active: boolean) => {
+    const base =
+      'rounded-full px-4 py-2 text-xs transition-colors duration-500 ease-out uppercase font-medium tracking-wide leading-[80%]'
+    return active
+      ? `${base} bg-black text-white`
+      : `${base} text-light-smoke hover:bg-light-sand`
+  }
 
   const allItems = [
     {
@@ -143,7 +151,7 @@ export default function ResponsiveNav({
   return (
     <nav
       ref={navRef}
-      className="relative flex items-center justify-between bg-white p-[10px] rounded-full border border-black/6 mt-10 md:mt-0 md:max-w-[50vw]"
+      className={`relative flex items-center justify-between bg-white p-[10px] rounded-full border border-black/6 ${className}`}
     >
       <div className="flex items-center gap-1">
         {isMobile && (

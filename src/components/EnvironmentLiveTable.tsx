@@ -534,6 +534,23 @@ const EnvironmentLiveTable: React.FC<EnvironmentLiveTableProps> = ({
                             </div>
                           ))}
                         </div>
+                        <div className="grid grid-cols-1 divide-y divide-light-iron border-t border-light-iron">
+                          {lowerColumns.map((column, columnIndex) => (
+                            <div
+                              key={`detail-${rowId}-${columnIndex}`}
+                              className="min-h-[110px] px-5 py-4 space-y-1.5"
+                            >
+                              {column.map((item, itemIndex) => (
+                                <DetailItem
+                                  key={`${
+                                    item.label || 'detail'
+                                  }-${rowId}-${columnIndex}-${itemIndex}`}
+                                  {...item}
+                                />
+                              ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </td>
                   </tr>
