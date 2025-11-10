@@ -1,18 +1,27 @@
-import { query } from '../_db.js';
+import { query } from '../config/database.js';
 
-export default async function handler(req, res) {
+/**
+ * GET /api/live-env-leaderboard/:env
+ */
+export default async function liveEnvLeaderboardHandler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only GET method is supported',
+      allowed_methods: ['GET']
+    });
   }
 
-  // Dynamic route param: /api/live-env-leaderboard/[env]
-  const envParam = (req.query?.env || '').toString().trim();
+  const envParam = (req.params?.env || '').toString().trim();
   if (!envParam) {
-    return res.status(400).json({ message: 'Missing required path parameter: env' });
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'Missing required path parameter: env',
+      timestamp: new Date().toISOString()
+    });
   }
 
-  // Prefer sending uppercase to match DB values, but keep query exact as requested
   const env = envParam.toUpperCase();
 
   try {
@@ -53,10 +62,32 @@ export default async function handler(req, res) {
       ORDER BY
           average_score DESC, total_rollouts DESC
     `;
+
     const { rows } = await query(sql, [env]);
-    return res.status(200).json(rows);
+
+    console.log(`Live environment leaderboard for '${env}' returned ${rows.length} rows`);
+
+    return res.status(200).json({
+      success: true,
+      data: rows,
+      count: rows.length,
+      environment: env,
+      timestamp: new Date().toISOString()
+    });
+
   } catch (err) {
-    console.error('live-env-leaderboard query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('Live environment leaderboard query error:', {
+      error: err.message,
+      environment: env,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch live environment leaderboard data',
+      environment: env,
+      timestamp: new Date().toISOString()
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { query } from './_db.js';
+import { query } from '../config/database.js';
 
 /**
  * GET /api/miner-efficiency-cost
@@ -6,15 +6,19 @@ import { query } from './_db.js';
  * over the last 7 days. Filters out miners without valid cost data and with
  * insufficient recent activity.
  */
-export default async function handler(req, res) {
+export default async function minerEfficiencyCostHandler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only GET method is supported',
+      allowed_methods: ['GET']
+    });
   }
 
   try {
+    // This query robustly calculates the average score and AVERAGE TOKEN COST for each active miner.
     const sql = `
-      -- This query robustly calculates the average score and AVERAGE TOKEN COST for each active miner.
       SELECT
           hotkey,
           model,
@@ -54,10 +58,29 @@ export default async function handler(req, res) {
       ORDER BY
           hotkey;
     `;
+
     const { rows } = await query(sql);
-    return res.status(200).json(rows);
+
+    console.log(`Miner efficiency cost query returned ${rows.length} rows`);
+
+    return res.status(200).json({
+      success: true,
+      data: rows,
+      count: rows.length,
+      timestamp: new Date().toISOString()
+    });
+
   } catch (err) {
-    console.error('miner-efficiency-cost query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('Miner efficiency cost query error:', {
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch miner efficiency cost data',
+      timestamp: new Date().toISOString()
+    });
   }
 }

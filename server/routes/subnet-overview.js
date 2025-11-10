@@ -1,9 +1,16 @@
-import { query } from './_db.js';
+import { query } from '../config/database.js';
 
-export default async function handler(req, res) {
+/**
+ * GET /api/subnet-overview
+ */
+export default async function subnetOverviewHandler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only GET method is supported',
+      allowed_methods: ['GET']
+    });
   }
 
   try {
@@ -17,7 +24,6 @@ export default async function handler(req, res) {
     `;
     const envRes = await query(envSql);
     const envNames = envRes.rows.map(r => r.env_name);
-
     // 2) Build a dynamic pivot: one column per environment discovered above
     // Use parameter placeholders to avoid injection and handle arbitrary env names.
     const envSelectPieces = envNames.map((name, i) => {
@@ -26,7 +32,6 @@ export default async function handler(req, res) {
       return `MAX(CASE WHEN b.env_name = $${paramIndex} THEN b.avg_score * 100 ELSE NULL END) AS "${alias}"`;
     });
     const dynamicEnvSelect = envSelectPieces.length > 0 ? envSelectPieces.join(',\n        ') + ',\n        ' : '';
-
     // 3) Compute metrics and return a row per (hotkey, model, revision) with dynamic env columns
     const sql = `
       WITH
@@ -43,7 +48,7 @@ export default async function handler(req, res) {
             AVG(latency_seconds) AS avg_latency,
             (SUM(CASE WHEN success THEN 1 ELSE 0 END)::float / COUNT(*)) * 100 AS success_rate_percent
           FROM public.affine_results
-          WHERE ingested_at > NOW() - INTERVAL '${envWindowDays}' -- Use a recent window for relevance
+          WHERE ingested_at > NOW() - INTERVAL '${envWindowDays}' -- 使用最近窗口以保持相关性
           GROUP BY hotkey, model, revision, env_name
         ),
 
@@ -104,7 +109,7 @@ export default async function handler(req, res) {
       JOIN
         eligibility_check e ON b.hotkey = e.hotkey AND b.model = e.model AND b.revision = e.revision
       JOIN
-        overall_metrics om ON b.hotkey = om.hotkey AND b.model = om.model AND b.revision = om.revision
+        overall_metrics om ON b.hotkey = om.hotkey AND b.model = om.model AND b.revision = e.revision
       GROUP BY
         b.hotkey, b.model, b.revision, e.is_eligible, om.overall_avg_score, om.success_rate_percent, om.avg_latency, om.total_rollouts, om.last_rollout_at, om.chute_id
       ORDER BY
@@ -113,9 +118,28 @@ export default async function handler(req, res) {
 
     const params = envNames; // used in the dynamic CASE WHEN ... = $N clauses
     const { rows } = await query(sql, params);
-    return res.status(200).json(rows);
+
+    console.log(`Subnet overview query returned ${rows.length} rows for ${envNames.length} environments: ${envNames.join(', ')}`);
+
+    return res.status(200).json({
+      success: true,
+      data: rows,
+      count: rows.length,
+      environments: envNames,
+      timestamp: new Date().toISOString()
+    });
+
   } catch (err) {
-    console.error('Subnet overview query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('Subnet overview query error:', {
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch subnet overview data',
+      timestamp: new Date().toISOString()
+    });
   }
 }

@@ -1,16 +1,39 @@
-import { query } from './_db.js';
+import { query } from '../config/database.js';
 
-export default async function handler(req, res) {
+/**
+ * POST /api/live-enrichment
+ *
+ * request body:
+ * {
+ *   "items": [
+ *     { "uid": 123, "model": "gpt-4" },
+ *     { "uid": 456, "model": "claude-3" }
+ *   ]
+ * }
+ */
+export default async function liveEnrichmentHandler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only POST method is supported',
+      allowed_methods: ['POST']
+    });
   }
 
   try {
     const { items } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+
     if (!Array.isArray(items)) {
-      return res.status(400).json({ message: 'Invalid payload: expected { items: Array<{uid, model}> }' });
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Invalid payload: expected { items: Array<{uid, model}> }',
+        timestamp: new Date().toISOString()
+      });
     }
+
+    // 记录请求信息
+    console.log(`Live enrichment request received with ${items.length} items`);
 
     // Sanitize and normalize inputs
     const tuples = [];
@@ -24,7 +47,13 @@ export default async function handler(req, res) {
     }
 
     if (tuples.length === 0) {
-      return res.status(200).json([]); // nothing to enrich
+      console.log('No valid items to enrich');
+      return res.status(200).json({
+        success: true,
+        data: [],
+        count: 0,
+        timestamp: new Date().toISOString()
+      });
     }
 
     // Build a VALUES list with parameter placeholders safely
@@ -83,9 +112,28 @@ export default async function handler(req, res) {
 
     const { rows } = await query(sql, params);
     // rows: [{ uid, model, hotkey, total_rollouts, overall_avg_score, success_rate_percent, avg_latency, last_rollout_at, chute_id }]
-    return res.status(200).json(rows);
+
+    console.log(`Live enrichment processed ${tuples.length} input items, returned ${rows.length} enriched results`);
+
+    return res.status(200).json({
+      success: true,
+      data: rows,
+      count: rows.length,
+      input_count: tuples.length,
+      timestamp: new Date().toISOString()
+    });
+
   } catch (err) {
-    console.error('Live enrichment error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('Live enrichment error:', {
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to enrich live data',
+      timestamp: new Date().toISOString()
+    });
   }
 }

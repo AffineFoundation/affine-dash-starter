@@ -1,19 +1,23 @@
-import { query } from './_db.js';
+import { query } from '../config/database.js';
 
 /**
  * GET /api/gpu-market-share
  * Returns aggregated counts of unique, active miners per GPU configuration over the last 7 days.
  * Note: The 'gpus' field is a JSON-stringified array (or string) as stored in DB.
  */
-export default async function handler(req, res) {
+export default async function gpuMarketShareHandler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only GET method is supported',
+      allowed_methods: ['GET']
+    });
   }
 
   try {
+    // This query accurately calculates the number of unique miners per GPU type.
     const sql = `
-      -- This query accurately calculates the number of unique miners per GPU type.
       WITH latest_miner_config AS (
         -- This CTE gets the single, most recent record for each unique hotkey in the last 7 days.
         SELECT DISTINCT ON (hotkey)
@@ -33,10 +37,29 @@ export default async function handler(req, res) {
       GROUP BY gpus
       ORDER BY miner_count DESC;
     `;
+
     const { rows } = await query(sql);
-    return res.status(200).json(rows);
+
+    console.log(`GPU market share query returned ${rows.length} rows`);
+
+    return res.status(200).json({
+      success: true,
+      data: rows,
+      count: rows.length,
+      timestamp: new Date().toISOString()
+    });
+
   } catch (err) {
-    console.error('gpu-market-share query error:', err);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('GPU market share query error:', {
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to fetch GPU market share data',
+      timestamp: new Date().toISOString()
+    });
   }
 }
