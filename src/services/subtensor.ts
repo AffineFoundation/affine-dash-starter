@@ -1,20 +1,157 @@
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ApiPromise, HttpProvider, WsProvider } from '@polkadot/api'
 import { RAO_PER_TAO } from './pricing'
 
 export const DEFAULT_SUBTENSOR_ENDPOINT =
   import.meta.env.VITE_SUBTENSOR_ENDPOINT ?? 'wss://entrypoint-finney.opentensor.ai:443'
+
+type TransportKind = 'ws' | 'http'
+
+const parseTransportPreferenceFromEnv = (): TransportKind[] | null => {
+  const raw = import.meta.env.VITE_SUBTENSOR_TRANSPORT_ORDER
+  if (!raw) return null
+  const parsed = raw
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter((entry): entry is TransportKind => entry === 'ws' || entry === 'http')
+  return parsed.length ? parsed : null
+}
+
+const transportPreferenceOverride = parseTransportPreferenceFromEnv()
+
+const parsedTimeout = Number.parseInt(
+  import.meta.env.VITE_SUBTENSOR_CONNECT_TIMEOUT_MS ?? '',
+  10,
+)
+const CONNECT_TIMEOUT_MS = Number.isFinite(parsedTimeout) ? parsedTimeout : 8000
 
 let apiPromise: Promise<ApiPromise> | null = null
 
 const getEndpoint = (override?: string) =>
   override?.trim() || DEFAULT_SUBTENSOR_ENDPOINT
 
-export const getSubtensorApi = (endpointOverride?: string) => {
-  if (!apiPromise) {
-    const provider = new WsProvider(getEndpoint(endpointOverride))
-    apiPromise = ApiPromise.create({ provider })
+const isHttpProtocol = (value: string) => /^https?:\/\//i.test(value)
+const isWsProtocol = (value: string) => /^wss?:\/\//i.test(value)
+
+const stripLeadingSlashes = (value: string) => value.replace(/^\/+/, '')
+
+const toHttpEndpoint = (value: string) => {
+  if (isHttpProtocol(value)) return value
+  if (isWsProtocol(value)) {
+    return value.replace(/^ws(s)?:\/\//i, (_, secure: string | undefined) =>
+      secure ? 'https://' : 'http://',
+    )
   }
-  return apiPromise
+  return `https://${stripLeadingSlashes(value)}`
+}
+
+const toWsEndpoint = (value: string) => {
+  if (isWsProtocol(value)) return value
+  if (isHttpProtocol(value)) {
+    return value.replace(/^http(s)?:\/\//i, (_, secure: string | undefined) =>
+      secure ? 'wss://' : 'ws://',
+    )
+  }
+  return `wss://${stripLeadingSlashes(value)}`
+}
+
+const getTransportOrder = (endpoint: string): TransportKind[] => {
+  if (transportPreferenceOverride) return transportPreferenceOverride
+  if (isHttpProtocol(endpoint) && !isWsProtocol(endpoint)) return ['http']
+  return ['ws', 'http']
+}
+
+const withTimeout = <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string,
+  onTimeout?: () => void,
+): Promise<T> => {
+  if (!timeoutMs || timeoutMs <= 0) return promise
+  return new Promise<T>((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      onTimeout?.()
+      reject(new Error(message))
+    }, timeoutMs)
+    promise.then(
+      (value) => {
+        clearTimeout(timeoutId)
+        resolve(value)
+      },
+      (error) => {
+        clearTimeout(timeoutId)
+        reject(error)
+      },
+    )
+  })
+}
+
+const createProviderForTransport = (endpoint: string, transport: TransportKind) => {
+  if (transport === 'http') {
+    const url = toHttpEndpoint(endpoint)
+    return { provider: new HttpProvider(url), url }
+  }
+  const url = toWsEndpoint(endpoint)
+  return { provider: new WsProvider(url), url }
+}
+
+const connectSubtensorApi = async (endpoint: string): Promise<ApiPromise> => {
+  const errors: string[] = []
+  const transports = getTransportOrder(endpoint)
+  if (!transports.length) {
+    throw new Error('No transports configured for Subtensor endpoint')
+  }
+
+  for (const transport of transports) {
+    const { provider, url } = createProviderForTransport(endpoint, transport)
+    try {
+      const api = await withTimeout(
+        ApiPromise.create({ provider }),
+        CONNECT_TIMEOUT_MS,
+        `[subtensor] ${transport.toUpperCase()} connection timed out after ${CONNECT_TIMEOUT_MS}ms (${url})`,
+        () => {
+          try {
+            provider.disconnect()
+          } catch {
+            // ignore cleanup errors
+          }
+        },
+      )
+      console.info(`[subtensor] connected via ${transport.toUpperCase()} (${url})`)
+      return api
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : error ? String(error) : 'Unknown error'
+      errors.push(`${transport.toUpperCase()} ${url}: ${message}`)
+      console.warn(`[subtensor] ${transport.toUpperCase()} connection failed`, error)
+      try {
+        provider.disconnect()
+      } catch {
+        // ignore cleanup errors
+      }
+    }
+  }
+
+  throw new Error(
+    errors.length
+      ? `Unable to connect to Subtensor endpoint. Attempts: ${errors.join(' | ')}`
+      : 'Unable to connect to Subtensor endpoint.',
+  )
+}
+
+const establishApiPromise = (endpoint: string) => {
+  const promise = connectSubtensorApi(endpoint)
+  apiPromise = promise
+  promise.catch(() => {
+    if (apiPromise === promise) {
+      apiPromise = null
+    }
+  })
+  return promise
+}
+
+export const getSubtensorApi = (endpointOverride?: string) => {
+  if (apiPromise) return apiPromise
+  return establishApiPromise(getEndpoint(endpointOverride))
 }
 
 export const fetchCurrentBlock = async (
