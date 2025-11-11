@@ -1,0 +1,25 @@
+# 排除 node_modules
+**/node_modules
+node_modules
+
+# 排除日志文件
+**/logs
+logs
+*.log
+
+# 排除开发相关文件
+.git
+.gitignore
+README.md
+*.md
+
+# 排除环境变量文件
+.env
+.env.local
+.env*.local
+
+# 排除其他不需要的文件
+.DS_Store
+.vscode
+.idea
+

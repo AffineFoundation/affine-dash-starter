@@ -14,8 +14,6 @@
     "@tanstack/react-query": "^5.85.8",
     "buffer": "^6.0.3",
     "lucide-react": "^0.344.0",
-    "pg": "^8.11.3",
-    "pg-query-stream": "^4.10.3",
     "process": "^0.11.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

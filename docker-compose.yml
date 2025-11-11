@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: affine-dashboard-frontend
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - affine-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: affine-dashboard-backend
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:fidXe5-jefqij-tugxok@db.rvsaaoxgrfnxzklmbosw.supabase.co:5432/postgres
+      - PORT=3001
+    restart: unless-stopped
+    networks:
+      - affine-network
+    depends_on:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: affine-dashboard-nginx
+    ports:
+      - "8089:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    restart: unless-stopped
+    networks:
+      - affine-network
+    depends_on:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  affine-network:
+    driver: bridge
+    name: affine-dashboard-network
