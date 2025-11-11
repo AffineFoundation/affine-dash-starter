@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# 简单的健康检查脚本
+# simple health check script
 curl -f http://localhost:80/ || exit 1

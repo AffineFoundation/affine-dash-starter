@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # 前端React应用（开发模式）
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      target: builder
+    container_name: affine-dashboard-frontend-dev
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:3001/api
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+    networks:
+      - affine-dev-network
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    command: >
+      sh -c "
+        if [ ! -d '/app/dist' ]; then
+          npm run build;
+        fi;
+        npm run preview
+      "
+
+  # 后端Express API服务（开发模式）
+  backend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: affine-dashboard-backend-dev
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_SSL_ENABLED=${POSTGRES_SSL_ENABLED:-true}
+      - PORT=3001
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    networks:
+      - affine-dev-network
+    depends_on:
+      - frontend-dev
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: ["node", "index.cjs"]
+
+  # Nginx反向代理（开发模式）
+  nginx-dev:
+    image: nginx:alpine
+    container_name: affine-dashboard-nginx-dev
+    ports:
+      - "8888:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+    networks:
+      - affine-dev-network
+    depends_on:
+      - frontend-dev
+      - backend-dev
+
+networks:
+  affine-dev-network:
+    driver: bridge
+    name: affine-dashboard-dev-network
