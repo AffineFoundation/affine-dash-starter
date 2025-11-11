@@ -3,10 +3,12 @@ import { Check, MoreVertical, Search, ExternalLink } from 'lucide-react'
 import { LiveEnrichmentRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
-import TablePaginationControls from './TablePaginationControls'
 import ScoreCell, { getEnvScoreStats } from './ScoreCell'
 import { RAO_PER_TAO } from '../services/pricing'
 import { getEnvCodeUrl } from '../utils/envLinks'
+
+const INITIAL_VISIBLE_ROWS = 20
+const VISIBLE_INCREMENT = 20
 
 const buildRolloutsUrl = (modelName: string | null | undefined) => {
   if (!modelName) return '/api/rollouts/model'
@@ -155,10 +157,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [expandedModel, setExpandedModel] = useState<string | null>(null)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
-  const [pageSize, setPageSize] = useState<number>(20)
-  const [page, setPage] = useState<number>(1)
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE_ROWS)
   const { environments: envs, loading: envLoading } = useEnvironments()
   const actionContainerRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   const L_SUBSETS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']
 
@@ -344,16 +346,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     )
   }
 
-  const isAllRows = !Number.isFinite(pageSize)
-  const effectivePageSize = isAllRows ? rows.length || 1 : pageSize
-  const totalPages = isAllRows
-    ? 1
-    : Math.max(1, Math.ceil(rows.length / effectivePageSize))
-  const startIndex = isAllRows ? 0 : (page - 1) * effectivePageSize
-  const endIndex = isAllRows
-    ? rows.length
-    : Math.min(rows.length, startIndex + effectivePageSize)
-  const pagedRows = rows.slice(startIndex, endIndex)
+  const visibleRows = rows.slice(0, Math.min(rows.length, visibleCount))
+  const hasMoreRows = visibleRows.length < rows.length
 
   const envBestMin = useMemo(() => {
     if (viewMode !== 'live') return {}
@@ -372,13 +366,45 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     return best
   }, [rows, envs, viewMode])
 
-  useEffect(
-    () => setPage(1),
-    [pageSize, rows.length, sortField, sortDir, viewMode],
-  )
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages)
-  }, [page, totalPages])
+    setVisibleCount(INITIAL_VISIBLE_ROWS)
+  }, [sortField, sortDir, viewMode, searchQuery])
+
+  useEffect(() => {
+    setVisibleCount((prev) => {
+      if (rows.length === 0) return INITIAL_VISIBLE_ROWS
+      const nextMin = Math.max(prev, INITIAL_VISIBLE_ROWS)
+      return Math.min(nextMin, rows.length)
+    })
+  }, [rows.length])
+
+  useEffect(() => {
+    if (loading) return
+    if (!hasMoreRows) return
+    const sentinel = loadMoreRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleCount((prev) =>
+              Math.min(rows.length, prev + VISIBLE_INCREMENT),
+            )
+          }
+        })
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px 200px 0px',
+        threshold: 0,
+      },
+    )
+
+    observer.observe(sentinel)
+
+    return () => observer.disconnect()
+  }, [hasMoreRows, loading, rows.length])
 
   const fmt = (n: number | null | undefined, digits = 1) =>
     n == null ? '—' : n.toFixed(digits)
@@ -530,7 +556,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div />
-        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+        <div className="flex items-center justify-end w-full md:w-auto">
           <div className="relative hidden md:block">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -544,14 +570,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               className="pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <TablePaginationControls
-            theme={theme}
-            total={rows.length}
-            page={page}
-            setPage={setPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-          />
         </div>
       </div>
 
@@ -647,7 +665,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
             )}
             {loading &&
               !errorMsg &&
-              Array.from({ length: Math.min(pageSize, 10) }).map((_, i) => (
+              Array.from({ length: Math.min(INITIAL_VISIBLE_ROWS, 10) }).map(
+                (_, i) => (
                 <tr key={i} className="">
                   <td className={tdClasses}>
                     <SkeletonText theme={theme} className="h-4 w-48" />
@@ -675,10 +694,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     </div>
                   </td>
                 </tr>
-              ))}
+              ),
+              )}
             {!loading &&
               !errorMsg &&
-              pagedRows.map((model: any) => {
+              visibleRows.map((model: any) => {
                 const isLive = viewMode === 'live'
                 const enriched = isLive
                   ? enrichedMap[liveKey(model.uid, model.model)]
@@ -1215,6 +1235,11 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
           </tbody>
         </table>
       </div>
+      <div
+        ref={loadMoreRef}
+        className="h-8 w-full"
+        aria-hidden="true"
+      />
     </div>
   )
 }
