@@ -10,6 +10,10 @@ export type EnvScoreStats = {
   max: number;
   minFormatted: string;
   maxFormatted: string;
+  width: number;
+  midpoint: number;
+  widthFormatted: string;
+  midpointFormatted: string;
 };
 
 export const getEnvScoreStats = (
@@ -24,11 +28,19 @@ export const getEnvScoreStats = (
   const min = parseFloat(minRaw);
   const max = parseFloat(maxRaw);
   if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+  const width = max - min;
+  const midpoint = min + width / 2;
+  const formatCI = (value: number) =>
+    Number.isFinite(value) ? value.toFixed(3) : '—';
   return {
     min,
     max,
     minFormatted: minRaw,
     maxFormatted: maxRaw,
+    width,
+    midpoint,
+    widthFormatted: formatCI(width),
+    midpointFormatted: formatCI(midpoint),
   };
 };
 

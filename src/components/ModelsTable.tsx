@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, MoreVertical, Search } from 'lucide-react'
+import { Check, MoreVertical, Search, ExternalLink } from 'lucide-react'
 import { LiveEnrichmentRow } from '../services/api'
 import { useEnvironments } from '../contexts/EnvironmentsContext'
 import { Skeleton, SkeletonText } from './Skeleton'
 import TablePaginationControls from './TablePaginationControls'
 import ScoreCell, { getEnvScoreStats } from './ScoreCell'
 import { RAO_PER_TAO } from '../services/pricing'
-import ResponsiveNav from './ResponsiveNav'
+import { getEnvCodeUrl } from '../utils/envLinks'
 
 const buildRolloutsUrl = (modelName: string | null | undefined) => {
   if (!modelName) return '/api/rollouts/model'
@@ -157,19 +157,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
   const [pageSize, setPageSize] = useState<number>(20)
   const [page, setPage] = useState<number>(1)
-  const {
-    environments: envs,
-    loading: envLoading,
-    error: envError,
-  } = useEnvironments()
+  const { environments: envs, loading: envLoading } = useEnvironments()
   const actionContainerRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const L_SUBSETS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']
 
   type DetailCell = {
-    label: string
+    label?: string
     value: React.ReactNode
     emphasize?: boolean
+    custom?: boolean
   }
 
   type DetailItemProps = DetailCell & {
@@ -195,11 +192,16 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   }
 
   const DetailItem = ({
-    label,
+    label = '',
     value,
     emphasize = false,
     variant = 'horizontal',
+    custom = false,
   }: DetailItemProps) => {
+    if (custom) {
+      return <div className="py-1">{value}</div>
+    }
+
     const hasValue =
       value !== null && value !== undefined && value !== '' && value !== '—'
 
@@ -232,6 +234,112 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
         <span className={`flex items-center justify-end text-sm ${valueClass}`}>
           {display}
         </span>
+      </div>
+    )
+  }
+
+  type EnvTooltipData = {
+    lower: string
+    upper: string
+    width: string
+    midpoint: string
+  }
+
+  interface EnvironmentScoreRowProps {
+    label: string
+    displayValue: string
+    sampleText: string | null
+    tooltip: EnvTooltipData | null
+    codeUrl: string | null
+  }
+
+  const EnvironmentScoreRow: React.FC<EnvironmentScoreRowProps> = ({
+    label,
+    displayValue,
+    sampleText,
+    tooltip,
+    codeUrl,
+  }) => {
+    const handleClick = () => {
+      if (!codeUrl) return
+      window.open(codeUrl, '_blank', 'noopener,noreferrer')
+    }
+
+    return (
+      <div className="group relative">
+        <button
+          type="button"
+          onClick={handleClick}
+          className="w-full rounded-sm px-0 py-1 text-left focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-1 text-[11px] uppercase tracking-[0.18em] text-light-slate">
+              <span>{label}</span>
+              {codeUrl ? (
+                <ExternalLink size={10} className="text-light-slate" />
+              ) : null}
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-light-smoke">
+              <span>{displayValue || '—'}</span>
+              {sampleText ? (
+                <>
+                  <span className="text-[10px] tracking-[0.18em] text-light-iron">
+                    |
+                  </span>
+                  <span className="text-[11px] tracking-[0.12em] text-light-slate">
+                    {sampleText}
+                  </span>
+                </>
+              ) : null}
+            </span>
+          </div>
+        </button>
+        {tooltip ? (
+          <div className="pointer-events-none absolute left-0 top-full z-10 hidden w-64 translate-y-2 rounded-md border border-black/10 bg-white p-3 text-[11px] leading-relaxed text-light-smoke shadow-2xl group-hover:block group-focus-within:block dark:border-white/15 dark:bg-dark-200 dark:text-dark-500">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-light-slate">
+              {label} stats
+            </p>
+            <dl className="mt-2 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                  Lower Bound
+                </dt>
+                <dd className="font-semibold text-light-500 dark:text-dark-500">
+                  {tooltip.lower}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                  Upper Bound
+                </dt>
+                <dd className="font-semibold text-light-500 dark:text-dark-500">
+                  {tooltip.upper}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                  CI Width
+                </dt>
+                <dd className="font-semibold text-light-500 dark:text-dark-500">
+                  {tooltip.width}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                  CI Midpoint
+                </dt>
+                <dd className="font-semibold text-light-500 dark:text-dark-500">
+                  {tooltip.midpoint}
+                </dd>
+              </div>
+            </dl>
+            {codeUrl ? (
+              <p className="mt-3 text-[10px] uppercase tracking-[0.28em] text-blue-500">
+                Click to open repo code
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -421,12 +529,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <ResponsiveNav
-          environments={envs}
-          envLoading={envLoading}
-          envError={envError}
-          className="w-full md:max-w-[50vw]"
-        />
+        <div />
         <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
           <div className="relative hidden md:block">
             <Search
@@ -480,16 +583,46 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 <th className={thClasses}>Avg Latency (s)</th>
               )}
               {envs.map((env) => (
-                <th key={env} className={`${thClasses} hidden md:table-cell`}>
-                  <button
-                    disabled={viewMode !== 'live'}
-                    onClick={() => toggleSort(env)}
-                    className="flex items-center"
-                  >
-                    <span className="uppercase">{env.split(':')[1]}</span>
-                    <span>{sortIndicator(env)}</span>
-                  </button>
-                </th>
+              <th key={env} className={`${thClasses} hidden md:table-cell`}>
+                {(() => {
+                  const envLabel = env.includes(':')
+                    ? env.split(':')[1]
+                    : env
+                  const envCodeUrl = getEnvCodeUrl(env)
+                  return (
+                    <div className="flex items-center justify-between gap-2">
+                      <button
+                        disabled={viewMode !== 'live'}
+                        onClick={() => toggleSort(env)}
+                        className="flex items-center gap-1"
+                        title={`Sort by ${envLabel}`}
+                      >
+                        <span className="uppercase">{envLabel}</span>
+                        <span>{sortIndicator(env)}</span>
+                      </button>
+                      {envCodeUrl ? (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            window.open(
+                              envCodeUrl,
+                              '_blank',
+                              'noopener,noreferrer',
+                            )
+                          }}
+                          className="text-light-slate transition hover:text-light-smoke"
+                          aria-label={`Open ${envLabel} code`}
+                        >
+                          <ExternalLink size={12} />
+                        </button>
+                      ) : (
+                        <span className="w-3" />
+                      )}
+                    </div>
+                  )
+                })()}
+              </th>
               ))}
               <th className={`${thClasses} hidden md:table-cell`}>Age (days)</th>
               <th className={`${thClasses} hidden md:table-cell`}>Eligible</th>
@@ -665,33 +798,35 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       const sampleCount =
                         (model as any).envSamples?.[fullName] ?? null
                       const sampleText = fmtSamples(sampleCount)
-                      let valueNode: React.ReactNode = '—'
-                      if (stats != null || sampleText != null) {
-                        const rangeText =
-                          stats != null
-                            ? `${stats.minFormatted}-${stats.maxFormatted}`
-                            : null
-                        if (rangeText && sampleText) {
-                          valueNode = (
-                            <span className="inline-flex items-center gap-2">
-                              <span>{rangeText}</span>
-                              <span className="text-[10px] tracking-[0.18em] text-light-iron">
-                                |
-                              </span>
-                              <span className="text-[11px] tracking-[0.12em] text-light-slate">
-                                {sampleText} samples
-                              </span>
-                            </span>
-                          )
-                        } else if (rangeText) {
-                          valueNode = rangeText
-                        } else if (sampleText) {
-                          valueNode = `${sampleText} samples`
-                        }
-                      }
+                      const displayValue =
+                        stats != null
+                          ? `${stats.minFormatted}-${stats.maxFormatted}`
+                          : score
+                          ? score.replace(/\*/g, '')
+                          : dash
+                      const tooltip =
+                        stats != null
+                          ? {
+                              lower: stats.minFormatted,
+                              upper: stats.maxFormatted,
+                              width: stats.widthFormatted,
+                              midpoint: stats.midpointFormatted,
+                            }
+                          : null
                       return {
                         label,
-                        value: valueNode,
+                        custom: true,
+                        value: (
+                          <EnvironmentScoreRow
+                            label={label}
+                            displayValue={displayValue || dash}
+                            sampleText={
+                              sampleText ? `${sampleText} samples` : null
+                            }
+                            tooltip={tooltip}
+                            codeUrl={getEnvCodeUrl(fullName)}
+                          />
+                        ),
                       }
                     })
                   : envs.map((env) => {

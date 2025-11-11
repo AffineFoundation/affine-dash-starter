@@ -1,4 +1,5 @@
 import React from 'react'
+import { Info } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import {
   AreaChart,
@@ -137,8 +138,29 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
 
   const hasChartData = chartData.length > 0
 
+  const tooltipCopy =
+    'Average accuracy across all environments of the top-ranked model at each time interval'
+
+  const titleWithTooltip = (
+    <div className="flex items-center gap-2">
+      <span>Reward</span>
+      <span className="relative inline-flex group">
+        <button
+          type="button"
+          className="text-light-400 hover:text-light-smoke transition-colors duration-200 dark:text-dark-400 dark:hover:text-dark-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-light-400 dark:focus-visible:outline-dark-300 rounded-full p-1"
+          aria-label={tooltipCopy}
+        >
+          <Info size={16} aria-hidden="true" />
+        </button>
+        <span className="pointer-events-none absolute left-1/2 top-full z-20 hidden w-64 -translate-x-1/2 translate-y-2 rounded-md border border-black/10 bg-white p-3 text-[11px] leading-relaxed text-light-smoke shadow-2xl group-hover:block group-focus-within:block dark:border-white/15 dark:bg-dark-200 dark:text-dark-500">
+          {tooltipCopy}
+        </span>
+      </span>
+    </div>
+  )
+
   return (
-    <Card theme={theme} title="Performance">
+    <Card theme={theme} title={titleWithTooltip}>
       {error && (
         <div className="text-sm text-red-600 dark:text-red-400">
           {(error as Error).message ?? 'Failed to load trend data'}
