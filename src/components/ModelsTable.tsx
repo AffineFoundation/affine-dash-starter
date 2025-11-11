@@ -240,6 +240,185 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     )
   }
 
+  type MobileEnvRow = {
+    label: string
+    score: string
+    samples: string | null
+    codeUrl: string | null
+    tooltip: EnvTooltipData | null
+  }
+
+  type PerformanceRow = {
+    label: string
+    value: string
+  }
+
+  type MobileSection = {
+    title: string
+    items?: DetailCell[]
+    envRows?: MobileEnvRow[]
+    performanceRows?: PerformanceRow[]
+  }
+
+  const MobileEnvironmentTable: React.FC<{ rows: MobileEnvRow[] }> = ({
+    rows,
+  }) => {
+    if (!rows.length) {
+      return (
+        <div className="rounded border border-light-iron py-3 text-[11px] font-semibold text-light-iron dark:border-dark-350 dark:text-dark-400">
+          No environment data
+        </div>
+      )
+    }
+    return (
+      <div className="relative rounded border border-light-iron text-left dark:border-dark-350">
+        <table className="w-full border-collapse text-[11px]">
+          <thead className="bg-light-cream/70 text-[10px] uppercase tracking-[0.24em] text-light-slate dark:bg-dark-300/60 dark:text-dark-400">
+            <tr>
+              <th className="px-3 py-2 text-left font-semibold">Env</th>
+              <th className="px-3 py-2 text-right font-semibold">Score</th>
+              <th className="px-3 py-2 text-right font-semibold">Samples</th>
+            </tr>
+          </thead>
+          <tbody className="text-light-smoke dark:text-dark-500">
+            {rows.map((row, index) => {
+              const tooltip = row.tooltip
+              return (
+                <tr
+                  key={`${row.label}-${index}`}
+                  className="group border-t border-light-iron last:border-b-0 dark:border-dark-350"
+                >
+                  <td className="px-3 py-2">
+                    {row.codeUrl ? (
+                      <a
+                        href={row.codeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-light-smoke hover:text-blue-500 focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500 dark:text-dark-500"
+                      >
+                        <span>{row.label}</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    ) : (
+                      <span className="font-semibold">{row.label}</span>
+                    )}
+                  </td>
+                  <td className="relative px-3 py-2 text-right font-semibold">
+                    <span>{row.score || '—'}</span>
+                    {tooltip ? (
+                      <div className="pointer-events-none absolute right-0 top-full z-30 hidden w-64 translate-y-2 rounded-md border border-black/10 bg-white p-3 text-[11px] leading-relaxed text-light-smoke shadow-2xl group-hover:block group-focus-within:block dark:border-white/15 dark:bg-dark-200 dark:text-dark-500">
+                        <p className="text-[10px] uppercase tracking-[0.28em] text-light-slate">
+                          {row.label} stats
+                        </p>
+                        <dl className="mt-2 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                              Lower Bound
+                            </dt>
+                            <dd className="font-semibold text-light-500 dark:text-dark-500">
+                              {tooltip.lower}
+                            </dd>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                              Upper Bound
+                            </dt>
+                            <dd className="font-semibold text-light-500 dark:text-dark-500">
+                              {tooltip.upper}
+                            </dd>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                              CI Width
+                            </dt>
+                            <dd className="font-semibold text-light-500 dark:text-dark-500">
+                              {tooltip.width}
+                            </dd>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <dt className="text-[10px] uppercase tracking-[0.2em] text-light-slate">
+                              CI Midpoint
+                            </dt>
+                            <dd className="font-semibold text-light-500 dark:text-dark-500">
+                              {tooltip.midpoint}
+                            </dd>
+                          </div>
+                        </dl>
+                        <p className="mt-3 text-[10px] uppercase tracking-[0.28em] text-light-slate">
+                          Tap or hover to view stats
+                        </p>
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="px-3 py-2 text-right text-[10px] uppercase tracking-[0.18em] text-light-slate">
+                    {row.samples ?? '—'}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  const MobilePerformanceTable: React.FC<{ rows: PerformanceRow[] }> = ({
+    rows,
+  }) => {
+    if (!rows.length) return null
+    const [headline, ...rest] = rows
+    if (!headline) return null
+    const pairs: PerformanceRow[][] = []
+    for (let i = 0; i < rest.length; i += 2) {
+      pairs.push(rest.slice(i, i + 2))
+    }
+    return (
+      <div className="overflow-hidden rounded border border-light-iron text-left dark:border-dark-350">
+        <table className="w-full border-collapse text-[11px]">
+          <tbody className="text-light-smoke dark:text-dark-500">
+            <tr className="border-b border-light-iron bg-light-cream/60 dark:border-dark-350 dark:bg-dark-300/60">
+              <td className="px-3 py-3" colSpan={2}>
+                <p className="text-[10px] uppercase tracking-[0.28em] text-light-slate dark:text-dark-400">
+                  {headline.label}
+                </p>
+                <p className="text-lg font-semibold">
+                  {headline.value || '—'}
+                </p>
+              </td>
+            </tr>
+            {pairs.map((pair, rowIdx) => (
+              <tr
+                key={`perf-row-${rowIdx}`}
+                className="border-b border-light-iron last:border-b-0 dark:border-dark-350"
+              >
+                {pair.map((metric, cellIdx) => (
+                  <td
+                    key={metric.label}
+                    className={`w-1/2 px-3 py-2 ${
+                      cellIdx === 0
+                        ? 'border-r border-light-iron dark:border-dark-350'
+                        : ''
+                    }`}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-light-slate dark:text-dark-400">
+                      {metric.label}
+                    </p>
+                    <p className="text-sm font-semibold">
+                      {metric.value || '—'}
+                    </p>
+                  </td>
+                ))}
+                {pair.length === 1 ? (
+                  <td className="w-1/2 px-3 py-2" />
+                ) : null}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
   type EnvTooltipData = {
     lower: string
     upper: string
@@ -722,9 +901,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 const avgScoreValue = isLive
                   ? fmt(model.avgScore as number | null)
                   : fmt(model.overall_avg_score as number | null)
-                const avgLatencyValue = isLive
-                  ? fmt(toNumber(enriched?.avg_latency), 2)
-                  : fmt(toNumber((model as any).avg_latency), 2)
                 const firstBlockRaw = isLive
                   ? toNumber(model.firstBlk)
                   : toNumber(
@@ -811,13 +987,14 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 )
                 const detailLinkClass =
                   'inline-flex items-center gap-1 text-xs font-medium tracking-wide text-light-smoke hover:text-blue-500 focus-visible:outline focus-visible:outline-1 focus-visible:outline-blue-500'
-                const envEntries: DetailCell[] = isLive
+                const envDisplayRows = isLive
                   ? Object.entries(model.envScores).map(([fullName, score]) => {
                       const stats = getEnvScoreStats(score)
                       const label = fullName.split(':')[1] ?? fullName
                       const sampleCount =
                         (model as any).envSamples?.[fullName] ?? null
-                      const sampleText = fmtSamples(sampleCount)
+                      const sampleDisplay =
+                        sampleCount != null ? fmtSamples(sampleCount) : null
                       const displayValue =
                         stats != null
                           ? `${stats.minFormatted}-${stats.maxFormatted}`
@@ -835,18 +1012,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                           : null
                       return {
                         label,
-                        custom: true,
-                        value: (
-                          <EnvironmentScoreRow
-                            label={label}
-                            displayValue={displayValue || dash}
-                            sampleText={
-                              sampleText ? `${sampleText} samples` : null
-                            }
-                            tooltip={tooltip}
-                            codeUrl={getEnvCodeUrl(fullName)}
-                          />
-                        ),
+                        scoreDisplay: displayValue || dash,
+                        sampleCountDisplay: sampleDisplay,
+                        tooltip,
+                        codeUrl: getEnvCodeUrl(fullName),
                       }
                     })
                   : envs.map((env) => {
@@ -855,19 +1024,65 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       const raw = (model as any)[key]
                       return {
                         label,
-                        value: fmt(toNumber(raw)),
+                        scoreDisplay: fmt(toNumber(raw)),
+                        sampleCountDisplay: null,
+                        tooltip: null,
+                        codeUrl: getEnvCodeUrl(env),
                       }
                     })
+                const envEntries: DetailCell[] = envDisplayRows.map((row) =>
+                  isLive
+                    ? {
+                        label: row.label,
+                        custom: true,
+                        value: (
+                          <EnvironmentScoreRow
+                            label={row.label}
+                            displayValue={row.scoreDisplay || dash}
+                            sampleText={
+                              row.sampleCountDisplay
+                                ? `${row.sampleCountDisplay} samples`
+                                : null
+                            }
+                            tooltip={row.tooltip}
+                            codeUrl={row.codeUrl}
+                          />
+                        ),
+                      }
+                    : {
+                        label: row.label,
+                        value: row.scoreDisplay || dash,
+                      },
+                )
+                const mobileEnvRows: MobileEnvRow[] = envDisplayRows.map(
+                  (row) => ({
+                    label: row.label,
+                    score: row.scoreDisplay || dash,
+                    samples: row.sampleCountDisplay,
+                    codeUrl: row.codeUrl,
+                    tooltip: row.tooltip,
+                  }),
+                )
                 const envColumns = chunkList(envEntries, 2)
-                const lEntries = L_SUBSETS.map((subset) => {
-                  const raw = (model as any)[subset.toLowerCase()]
-                  const numeric = toNumber(raw)
-                  if (numeric == null) return null
-                  return {
-                    label: subset,
-                    value: fmt(numeric),
-                  }
-                }).filter(Boolean) as DetailCell[]
+                const subsetScoreData: PerformanceRow[] = L_SUBSETS.map(
+                  (subset) => {
+                    const raw = (model as any)[subset.toLowerCase()]
+                    const numeric = toNumber(raw)
+                    if (numeric == null) return null
+                    return {
+                      label: subset,
+                      value: fmt(numeric),
+                    }
+                  },
+                ).filter(
+                  (entry): entry is PerformanceRow => entry !== null,
+                )
+                const lEntries: DetailCell[] = subsetScoreData.map(
+                  ({ label, value }) => ({
+                    label,
+                    value,
+                  }),
+                )
                 const baseMetricItems: DetailCell[] = [
                   { label: 'Age (days)', value: ageValue },
                   ...(firstBlockRaw != null
@@ -879,6 +1094,19 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     label: 'Emission (ⴷ/hr)',
                     value: emissionDetailNode,
                   },
+                ]
+                const keyMetricItemsMobile: DetailCell[] = [
+                  { label: 'Average Accuracy', value: avgScoreValue },
+                  { label: 'Age (days)', value: ageValue },
+                  { label: 'Weight', value: weightValue },
+                  {
+                    label: 'Emission (ⴷ/hr)',
+                    value: emissionDetailNode,
+                  },
+                ]
+                const performanceRows: PerformanceRow[] = [
+                  { label: 'Points Total', value: ptsValue },
+                  ...subsetScoreData,
                 ]
                 const lowerColumns: DetailCell[][] = [
                   baseMetricItems,
@@ -968,7 +1196,6 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                       label: 'Accuracy',
                       value: avgScoreValue,
                     },
-                    { label: 'Avg Latency', value: avgLatencyValue },
                   ],
                   externalLinkItems,
                 ]
@@ -977,13 +1204,25 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                     ? summaryColumns.slice(0, summaryColumns.length - 1)
                     : summaryColumns
                 const summaryInfoItems = summaryInfoColumns.flat()
-                const mobileSections = [
-                  { title: 'Summary', items: summaryInfoItems },
-                  { title: 'Key Metrics', items: baseMetricItems },
-                  { title: 'Environments', items: envEntries },
-                  { title: 'Subset Scores', items: lEntries },
+                const mobileSections: MobileSection[] = [
                   { title: 'Links', items: externalLinkItems },
-                ].filter((section) => section.items.length)
+                  { title: 'Environments', envRows: mobileEnvRows },
+                  {
+                    title: 'Key Metrics',
+                    items: keyMetricItemsMobile,
+                    performanceRows:
+                      performanceRows.length > 0
+                        ? performanceRows
+                        : undefined,
+                  },
+                  { title: 'Summary', items: summaryInfoItems },
+                ].filter(
+                  (section) =>
+                    (section.items && section.items.length > 0) ||
+                    (section.envRows && section.envRows.length > 0) ||
+                    (section.performanceRows &&
+                      section.performanceRows.length > 0),
+                )
 
                 return (
                   <React.Fragment key={model.uniqueId}>
@@ -1168,15 +1407,27 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                                   <p className="text-[10px] uppercase tracking-[0.32em] text-black dark:text-white">
                                     {section.title}
                                   </p>
-                                  <div className="flex flex-col gap-1">
-                                    {section.items.map((item, itemIndex) => (
-                                      <DetailItem
-                                        key={`${section.title}-${item.label || 'item'}-${itemIndex}`}
-                                        {...item}
-                                        variant="stacked"
-                                      />
-                                    ))}
-                                  </div>
+                                  {section.items && section.items.length ? (
+                                    <div className="flex flex-col gap-1">
+                                      {section.items.map((item, itemIndex) => (
+                                        <DetailItem
+                                          key={`${section.title}-${item.label || 'item'}-${itemIndex}`}
+                                          {...item}
+                                          variant="stacked"
+                                        />
+                                      ))}
+                                    </div>
+                                  ) : null}
+                                  {section.envRows ? (
+                                    <MobileEnvironmentTable
+                                      rows={section.envRows}
+                                    />
+                                  ) : null}
+                                  {section.performanceRows ? (
+                                    <MobilePerformanceTable
+                                      rows={section.performanceRows}
+                                    />
+                                  ) : null}
                                 </div>
                               ))}
                             </div>
