@@ -592,12 +592,24 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     !iso ? '—' : new Date(iso).toLocaleString()
   const dash = '—'
   const BLOCK_TO_DAY_MULTIPLIER = 0.0001388889
+  const MODEL_DISPLAY_PREFIX = 6
+  const MODEL_DISPLAY_SUFFIX = 3
   const fmtSamples = (count: number | null | undefined) =>
     count == null ? null : count.toLocaleString()
   const midTrunc = (s: string, max = 36) =>
     s && s.length > max
       ? `${s.slice(0, max / 2)}…${s.slice(s.length - max / 2)}`
       : s
+  const formatModelName = (value: string | null | undefined) => {
+    const raw = (value ?? '').trim()
+    if (!raw) return dash
+    if (raw.length <= MODEL_DISPLAY_PREFIX + MODEL_DISPLAY_SUFFIX + 1) {
+      return raw
+    }
+    return `${raw.slice(0, MODEL_DISPLAY_PREFIX)}…${raw.slice(
+      -MODEL_DISPLAY_SUFFIX,
+    )}`
+  }
   const RAO_PER_TAO_NUMBER = Number(RAO_PER_TAO)
   const usdFormatter = useMemo(
     () =>
@@ -735,8 +747,8 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
     <div className="space-y-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div />
-        <div className="flex items-center justify-end w-full md:w-auto">
-          <div className="relative hidden md:block">
+        <div className="flex w-full items-center md:w-auto md:justify-end">
+          <div className="relative w-full md:w-auto">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={16}
@@ -746,7 +758,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search"
-              className="pl-10 pr-4 py-2 text-sm border rounded-md bg-light-haze text-light-smoke border-black/12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-black/12 bg-light-haze py-2 pl-10 pr-4 text-sm text-light-smoke focus:outline-none focus:ring-2 focus:ring-blue-500 md:w-auto"
             />
           </div>
         </div>
@@ -1236,7 +1248,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         className={`${tdClasses} truncate`}
                         title={model.model}
                       >
-                        {midTrunc(model.model, 48)}
+                        {formatModelName(model.model)}
                       </td>
                       <td className={`${tdClasses} text-right`}>
                         {emissionCellContent}
