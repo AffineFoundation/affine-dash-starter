@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
+import Hero from './components/Hero'
 import OverviewTable from './components/OverviewTable'
 import { useTheme } from './hooks/useTheme'
 import { useEnvironments } from './contexts/EnvironmentsContext'
@@ -216,6 +217,8 @@ function App() {
       <div className="px-3 md:px-5">
         <SubnetPerformanceChart theme={theme} />
       </div>
+
+      <Hero />
 
       {/* Main Content */}
       <main className="mt-10 md:mt-16 px-3 md:px-5 pb-20 w-full">

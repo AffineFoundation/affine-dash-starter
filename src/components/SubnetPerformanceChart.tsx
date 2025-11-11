@@ -22,6 +22,8 @@ interface Props {
   theme: 'light' | 'dark'
 }
 
+type TrendPointWithScore = SubnetPerformanceTrendPoint & { score: number }
+
 type TooltipProps = {
   active?: boolean
   payload?: Array<{
@@ -31,13 +33,40 @@ type TooltipProps = {
   label?: string
 }
 
+const buildXAxisTicks = (
+  points: TrendPointWithScore[],
+  targetTickCount = 6,
+) => {
+  if (points.length === 0) return []
+  if (points.length <= targetTickCount) {
+    return points.map((point) => point.timestamp).filter(Boolean)
+  }
+
+  const ticks: string[] = []
+  const step = Math.max(1, Math.round(points.length / (targetTickCount - 1)))
+
+  for (let index = 0; index < points.length; index += step) {
+    const ts = points[index]?.timestamp
+    if (ts && !ticks.includes(ts)) {
+      ticks.push(ts)
+    }
+  }
+
+  const lastTimestamp = points[points.length - 1]?.timestamp
+  if (lastTimestamp && !ticks.includes(lastTimestamp)) {
+    ticks.push(lastTimestamp)
+  }
+
+  return ticks
+}
+
 const formatDateLabel = (iso: string | undefined) => {
   if (!iso) return '—'
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return iso
   return date.toLocaleDateString(undefined, {
     month: 'short',
-    day: '2-digit',
+    day: 'numeric',
   })
 }
 
@@ -88,12 +117,17 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
     refetchOnMount: false,
   })
 
-  const points = data ?? []
-  const chartData = points.filter(
-    (point): point is SubnetPerformanceTrendPoint & { score: number } => {
+  const chartData = React.useMemo<TrendPointWithScore[]>(() => {
+    const points = data ?? []
+    return points.filter((point): point is TrendPointWithScore => {
       if (typeof point.score !== 'number') return false
       return Number.isFinite(point.score)
-    }
+    })
+  }, [data])
+
+  const xAxisTicks = React.useMemo(
+    () => buildXAxisTicks(chartData),
+    [chartData],
   )
 
   const axisColor = colors.primary ?? (theme === 'dark' ? '#e2e8f0' : '#475569')
@@ -147,6 +181,7 @@ const SubnetPerformanceChart: React.FC<Props> = ({ theme }) => {
                 tickFormatter={(value: string) => formatDateLabel(value)}
                 stroke={axisColor}
                 tickMargin={8}
+                ticks={xAxisTicks}
                 tick={{
                   fill: axisColor,
                   fontSize: 12,

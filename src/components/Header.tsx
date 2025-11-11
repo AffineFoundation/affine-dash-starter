@@ -2,7 +2,6 @@ import React from 'react'
 import { Code2, Moon, Sun, ExternalLink } from 'lucide-react'
 import HeaderLink from './HeaderLink'
 import RedIndicator from './RedIndicator'
-import TopMetricsBar from './TopMetricsBar'
 
 interface HeaderProps {
   theme: 'light' | 'dark'
@@ -31,8 +30,6 @@ const Header: React.FC<HeaderProps> = ({}) => {
           <RedIndicator text="Live" live />
         </div>
       </div>
-
-      <TopMetricsBar />
 
       {/* <nav className="flex items-center gap-8 text-xs font-medium text-black uppercase tracking-wide leading-[80%]">
         <a href="" className="text-light-slate relative">
