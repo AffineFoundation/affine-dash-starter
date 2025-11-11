@@ -6,6 +6,8 @@ import { Skeleton, SkeletonText } from './Skeleton'
 import ScoreCell, { getEnvScoreStats } from './ScoreCell'
 import { RAO_PER_TAO } from '../services/pricing'
 import { getEnvCodeUrl } from '../utils/envLinks'
+import { useOverviewMetrics } from '../hooks/useOverviewMetrics'
+import OverviewMetricCard from './OverviewMetricCard'
 
 const INITIAL_VISIBLE_ROWS = 20
 const VISIBLE_INCREMENT = 20
@@ -159,6 +161,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE_ROWS)
   const { environments: envs, loading: envLoading } = useEnvironments()
+  const { metrics: overviewMetrics } = useOverviewMetrics()
   const actionContainerRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
@@ -745,10 +748,19 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div />
-        <div className="flex w-full items-center md:w-auto md:justify-end">
-          <div className="relative w-full md:w-auto">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
+        <div className="hidden lg:flex flex-1 flex-nowrap items-stretch gap-2.5">
+          {overviewMetrics.map((metric) => (
+            <OverviewMetricCard
+              key={metric.label}
+              {...metric}
+              density="compact"
+              className="flex-1 basis-0 min-w-[120px]"
+            />
+          ))}
+        </div>
+        <div className="flex w-full items-center md:justify-end lg:w-auto lg:flex-shrink-0 lg:justify-end">
+          <div className="relative w-full md:w-72 lg:w-80">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={16}
@@ -758,7 +770,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search"
-              className="w-full rounded-md border border-black/12 bg-light-haze py-2 pl-10 pr-4 text-sm text-light-smoke focus:outline-none focus:ring-2 focus:ring-blue-500 md:w-auto"
+              className="w-full rounded-md border border-black/12 bg-light-haze py-2 pl-10 pr-4 text-sm text-light-smoke focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -980,6 +992,15 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   )
                 const rawHotkey =
                   typeof model.hotkey === 'string' ? model.hotkey.trim() : ''
+                const modelNameRaw =
+                  typeof model.model === 'string' ? model.model.trim() : ''
+                const modelFullNameValue = modelNameRaw
+                  ? (
+                      <span className="font-mono break-all" title={modelNameRaw}>
+                        {modelNameRaw}
+                      </span>
+                    )
+                  : dash
                 const hotkeyValue =
                   rawHotkey !== '' ? (
                     <CopyHotkeyButton
@@ -1189,6 +1210,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                 ]
                 const summaryColumns: DetailCell[][] = [
                   [
+                    {
+                      label: 'Model',
+                      value: modelFullNameValue,
+                    },
                     {
                       label: 'UID',
                       value: model.uid ?? '—',
