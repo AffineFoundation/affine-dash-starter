@@ -479,7 +479,7 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
           </div>
         </button>
         {tooltip ? (
-          <div className="pointer-events-none absolute left-0 top-full z-10 hidden w-64 translate-y-2 rounded-md border border-black/10 bg-white p-3 text-[11px] leading-relaxed text-light-smoke shadow-2xl group-hover:block group-focus-within:block dark:border-white/15 dark:bg-dark-200 dark:text-dark-500">
+          <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 top-full z-10 hidden w-64 translate-y-2 rounded-md border border-black/10 bg-white p-3 text-[11px] leading-relaxed text-light-smoke shadow-2xl group-hover:block group-focus-within:block dark:border-white/15 dark:bg-dark-200 dark:text-dark-500">
             <p className="text-[10px] uppercase tracking-[0.28em] text-light-slate">
               {label} stats
             </p>
@@ -846,7 +846,21 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
               </th>
               ))}
               <th className={`${thClasses} hidden md:table-cell`}>Age (days)</th>
-              <th className={`${thClasses} hidden md:table-cell`}>Eligible</th>
+              <th
+                className={`${thClasses} hidden md:table-cell text-center w-[90px]`}
+              >
+                {viewMode === 'live' ? (
+                  <button
+                    className="flex items-center justify-center gap-1 w-full"
+                    onClick={() => toggleSort('pts')}
+                  >
+                    <span className="uppercase">Points</span>
+                    <span>{sortIndicator('pts')}</span>
+                  </button>
+                ) : (
+                  <span className="uppercase">Points</span>
+                )}
+              </th>
             </tr>
           </thead>
           <tbody className="text-light-smoke divide-y divide-black/5">
@@ -888,13 +902,10 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                   <td className={`${tdClasses} hidden md:table-cell`}>
                     <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
-                  <td className={`${tdClasses} px-2 hidden md:table-cell`}>
-                    <div className="flex items-center justify-center gap-2">
-                      <Skeleton
-                        theme={theme}
-                        className="h-4 w-4 rounded-full"
-                      />
-                    </div>
+                  <td
+                    className={`${tdClasses} px-1 pr-6 text-center w-[90px] hidden md:table-cell`}
+                  >
+                    <SkeletonText theme={theme} className="h-4 w-12 mx-auto" />
                   </td>
                 </tr>
               ),
@@ -1305,126 +1316,94 @@ const ModelsTable: React.FC<ModelsTableProps> = ({
                         )
                       })}
                       <td className={`${tdClasses} hidden md:table-cell`}>{ageValue}</td>
-                      <td className={`${tdClasses} px-2 hidden md:table-cell`}>
-                        <div className="flex items-center justify-center gap-2">
-                          {model.eligible ? (
-                            <div
-                              style={{
-                                width: '14px',
-                                height: '14px',
-                                backgroundColor: '#D39C37',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: '2px',
-                              }}
-                            >
-                              <Check
-                                style={{
-                                  width: '8.5px',
-                                  height: '6px',
-                                  color: '#FFFFFF',
-                                  strokeWidth: '6',
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <span className="text-sm font-sans text-light-iron">
-                              {dash}
-                            </span>
-                          )}
-                          <div
-                            className="relative"
-                            ref={(node) => {
-                              if (node) {
-                                actionContainerRefs.current[model.uniqueId] =
-                                  node
-                              } else {
-                                delete actionContainerRefs.current[
-                                  model.uniqueId
-                                ]
-                              }
+                      <td
+                        className={`${tdClasses} hidden md:table-cell px-1 pr-6 text-center w-[90px] relative`}
+                      >
+                        <span title={ptsValue !== dash ? ptsValue : undefined}>
+                          {ptsValue}
+                        </span>
+                        <div
+                          className="absolute right-0 top-1/2 -translate-y-1/2"
+                          ref={(node) => {
+                            if (node) {
+                              actionContainerRefs.current[model.uniqueId] = node
+                            } else {
+                              delete actionContainerRefs.current[model.uniqueId]
+                            }
+                          }}
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              setOpenMenuId((prev) =>
+                                prev === model.uniqueId ? null : model.uniqueId,
+                              )
                             }}
-                            onClick={(event) => event.stopPropagation()}
+                            title="Actions (open menu)"
+                            className="h-6 w-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
                           >
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                setOpenMenuId((prev) =>
-                                  prev === model.uniqueId
-                                    ? null
-                                    : model.uniqueId,
-                                )
-                              }}
-                              title="Actions (open menu)"
-                              className="h-6 w-6 flex items-center justify-center opacity-0 cursor-none group-hover:opacity-100 group-hover:cursor-pointer transition-opacity duration-300"
+                            <MoreVertical size={16} />
+                          </button>
+                          {openMenuId === model.uniqueId && (
+                            <div
+                              className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75 text-light-500 dark:bg-dark-200 dark:text-dark-500"
+                              onClick={(event) => event.stopPropagation()}
                             >
-                              <MoreVertical size={16} />
-                            </button>
-                            {openMenuId === model.uniqueId && (
-                              <div
-                                className="absolute right-0 mt-1 w-56 z-20 rounded-md overflow-hidden shadow-lg bg-light-75 text-light-500 dark:bg-dark-200 dark:text-dark-500"
-                                onClick={(event) => event.stopPropagation()}
+                              <button
+                                onClick={() => {
+                                  toggleExpanded(model.uniqueId)
+                                  setOpenMenuId(null)
+                                }}
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                               >
-                                <button
-                                  onClick={() => {
-                                    toggleExpanded(model.uniqueId)
-                                    setOpenMenuId(null)
-                                  }}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm text-left transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                >
-                                  <span>Toggle details</span>
-                                  <span className="text-xs opacity-70">T</span>
-                                </button>
+                                <span>Toggle details</span>
+                                <span className="text-xs opacity-70">T</span>
+                              </button>
+                              <a
+                                href={`https://huggingface.co/${model.model}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => setOpenMenuId(null)}
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                              >
+                                <span>View on Hugging Face</span>
+                                <span className="text-xs opacity-70">H</span>
+                              </a>
+                              <a
+                                href={buildRolloutsUrl(model.model as string)}
+                                download={buildRolloutsDownloadName(
+                                  model.model as string,
+                                )}
+                                onClick={() => setOpenMenuId(null)}
+                                className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
+                              >
+                                <span>Download rollouts</span>
+                                <span className="text-xs opacity-70">D</span>
+                              </a>
+                              {chuteId ? (
                                 <a
-                                  href={`https://huggingface.co/${model.model}`}
+                                  href={`https://chutes.ai/app/chute/${chuteId}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenMenuId(null)}
                                   className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
                                 >
-                                  <span>View on Hugging Face</span>
-                                  <span className="text-xs opacity-70">H</span>
+                                  <span>Open Chutes</span>
+                                  <span className="text-xs opacity-70">C</span>
                                 </a>
-                                <a
-                                  href={buildRolloutsUrl(model.model as string)}
-                                  download={buildRolloutsDownloadName(
-                                    model.model as string,
-                                  )}
-                                  onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                >
-                                  <span>Download rollouts</span>
-                                  <span className="text-xs opacity-70">D</span>
-                                </a>
-                                {chuteId ? (
-                                  <a
-                                    href={`https://chutes.ai/app/chute/${chuteId}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={() => setOpenMenuId(null)}
-                                    className="flex w-full items-center justify-between px-3 h-9 text-sm transition-colors duration-300 hover:bg-light-200 dark:hover:bg-dark-350"
-                                  >
-                                    <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">
-                                      C
-                                    </span>
-                                  </a>
-                                ) : (
-                                  <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
-                                    <span>Open Chutes</span>
-                                    <span className="text-xs opacity-70">
-                                      C
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
-                                  Shortcuts: T, H, D, C, Esc
+                              ) : (
+                                <div className="flex w-full items-center justify-between px-3 h-9 text-sm opacity-50">
+                                  <span>Open Chutes</span>
+                                  <span className="text-xs opacity-70">C</span>
                                 </div>
+                              )}
+                              <div className="px-3 py-2 border-t text-[11px] font-sans opacity-70 border-light-200 dark:border-dark-350">
+                                Shortcuts: T, H, D, C, Esc
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>
